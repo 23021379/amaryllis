@@ -1,0 +1,380 @@
+[
+    {
+        "lpa_name_raw": "Tendring",
+        "lpa_name_clean": "Tendring",
+        "portal_url": "https://www.tendringdc.gov.uk/",
+        "vendor": "UNKNOWN",
+        "verification_status": "AUTO_GENERATED"
+    },
+    {
+        "lpa_name_raw": "Test Valley",
+        "lpa_name_clean": "Test Valley",
+        "portal_url": "https://testvalley.gov.uk/",
+        "vendor": "UNKNOWN",
+        "verification_status": "AUTO_GENERATED"
+    },
+    {
+        "lpa_name_raw": "Tewkesbury",
+        "lpa_name_clean": "Tewkesbury",
+        "portal_url": "https://tewkesbury.gov.uk/",
+        "vendor": "UNKNOWN",
+        "verification_status": "AUTO_GENERATED"
+    },
+    {
+        "lpa_name_raw": "Thanet",
+        "lpa_name_clean": "Thanet",
+        "portal_url": "https://www.thanet.gov.uk/",
+        "vendor": "UNKNOWN",
+        "verification_status": "AUTO_GENERATED"
+    },
+    {
+        "lpa_name_raw": "The Planning Inspectorate - National Infrastructure",
+        "lpa_name_clean": "The Planning Inspectorate - National Infrastructure",
+        "portal_url": "https://infrastructure.planninginspectorate.gov.uk/",
+        "vendor": "MANUAL_OVERRIDE",
+        "verification_status": "AUTO_GENERATED"
+    },
+    {
+        "lpa_name_raw": "Three Rivers",
+        "lpa_name_clean": "Three Rivers",
+        "portal_url": "https://www.threerivers.gov.uk/",
+        "vendor": "UNKNOWN",
+        "verification_status": "AUTO_GENERATED"
+    },
+    {
+        "lpa_name_raw": "Thurrock",
+        "lpa_name_clean": "Thurrock",
+        "portal_url": "https://www.thurrock.gov.uk/",
+        "vendor": "UNKNOWN",
+        "verification_status": "AUTO_GENERATED"
+    },
+    {
+        "lpa_name_raw": "Tonbridge and Malling",
+        "lpa_name_clean": "Tonbridge and Malling",
+        "portal_url": "https://www.tmbc.gov.uk/",
+        "vendor": "MANUAL_OVERRIDE",
+        "verification_status": "AUTO_GENERATED"
+    },
+    {
+        "lpa_name_raw": "Torbay",
+        "lpa_name_clean": "Torbay",
+        "portal_url": "https://www.torbay.gov.uk/",
+        "vendor": "UNKNOWN",
+        "verification_status": "AUTO_GENERATED"
+    },
+    {
+        "lpa_name_raw": "Torfaen",
+        "lpa_name_clean": "Torfaen",
+        "portal_url": "https://www.torfaen.gov.uk/",
+        "vendor": "UNKNOWN",
+        "verification_status": "AUTO_GENERATED"
+    },
+    {
+        "lpa_name_raw": "Torridge",
+        "lpa_name_clean": "Torridge",
+        "portal_url": "https://www.torridge.gov.uk/",
+        "vendor": "UNKNOWN",
+        "verification_status": "AUTO_GENERATED"
+    },
+    {
+        "lpa_name_raw": "Tower Hamlets",
+        "lpa_name_clean": "Tower Hamlets",
+        "portal_url": "https://www.towerhamlets.gov.uk/",
+        "vendor": "UNKNOWN",
+        "verification_status": "AUTO_GENERATED"
+    },
+    {
+        "lpa_name_raw": "Trafford",
+        "lpa_name_clean": "Trafford",
+        "portal_url": "https://www.trafford.gov.uk/",
+        "vendor": "UNKNOWN",
+        "verification_status": "AUTO_GENERATED"
+    },
+    {
+        "lpa_name_raw": "Tunbridge Wells",
+        "lpa_name_clean": "Tunbridge Wells",
+        "portal_url": "https://tunbridgewells.gov.uk/",
+        "vendor": "UNKNOWN",
+        "verification_status": "AUTO_GENERATED"
+    },
+    {
+        "lpa_name_raw": "Uttlesford",
+        "lpa_name_clean": "Uttlesford",
+        "portal_url": "https://www.uttlesford.gov.uk/",
+        "vendor": "UNKNOWN",
+        "verification_status": "AUTO_GENERATED"
+    },
+    {
+        "lpa_name_raw": "Vale of Glamorgan",
+        "lpa_name_clean": "Vale of Glamorgan",
+        "portal_url": "https://www.valeofglamorgan.gov.uk/",
+        "vendor": "UNKNOWN",
+        "verification_status": "AUTO_GENERATED"
+    },
+    {
+        "lpa_name_raw": "Vale of White Horse",
+        "lpa_name_clean": "Vale of White Horse",
+        "portal_url": "https://www.whitehorsedc.gov.uk/",
+        "vendor": "UNKNOWN",
+        "verification_status": "AUTO_GENERATED"
+    },
+    {
+        "lpa_name_raw": "Wakefield",
+        "lpa_name_clean": "Wakefield",
+        "portal_url": "https://www.wakefield.gov.uk/",
+        "vendor": "UNKNOWN",
+        "verification_status": "AUTO_GENERATED"
+    },
+    {
+        "lpa_name_raw": "Walsall",
+        "lpa_name_clean": "Walsall",
+        "portal_url": "https://go.walsall.gov.uk/",
+        "vendor": "UNKNOWN",
+        "verification_status": "AUTO_GENERATED"
+    },
+    {
+        "lpa_name_raw": "Waltham Forest",
+        "lpa_name_clean": "Waltham Forest",
+        "portal_url": "https://www.walthamforest.gov.uk/",
+        "vendor": "UNKNOWN",
+        "verification_status": "AUTO_GENERATED"
+    },
+    {
+        "lpa_name_raw": "Wandsworth",
+        "lpa_name_clean": "Wandsworth",
+        "portal_url": "https://wandsworth.gov.uk/",
+        "vendor": "UNKNOWN",
+        "verification_status": "AUTO_GENERATED"
+    },
+    {
+        "lpa_name_raw": "Warrington",
+        "lpa_name_clean": "Warrington",
+        "portal_url": "https://www.warrington.gov.uk/",
+        "vendor": "UNKNOWN",
+        "verification_status": "AUTO_GENERATED"
+    },
+    {
+        "lpa_name_raw": "Warwick",
+        "lpa_name_clean": "Warwick",
+        "portal_url": "https://www.warwickdc.gov.uk/",
+        "vendor": "UNKNOWN",
+        "verification_status": "AUTO_GENERATED"
+    },
+    {
+        "lpa_name_raw": "Watford",
+        "lpa_name_clean": "Watford",
+        "portal_url": "https://www.watford.gov.uk/",
+        "vendor": "UNKNOWN",
+        "verification_status": "AUTO_GENERATED"
+    },
+    {
+        "lpa_name_raw": "Waverley",
+        "lpa_name_clean": "Waverley",
+        "portal_url": "https://www.waverley.gov.uk/",
+        "vendor": "UNKNOWN",
+        "verification_status": "AUTO_GENERATED"
+    },
+    {
+        "lpa_name_raw": "Wealden",
+        "lpa_name_clean": "Wealden",
+        "portal_url": "https://www.wealden.gov.uk/",
+        "vendor": "UNKNOWN",
+        "verification_status": "AUTO_GENERATED"
+    },
+    {
+        "lpa_name_raw": "Welsh Government (NSIP)",
+        "lpa_name_clean": "Welsh Government (NSIP)",
+        "portal_url": "https://planning.gov.wales/",
+        "vendor": "MANUAL_OVERRIDE",
+        "verification_status": "AUTO_GENERATED"
+    },
+    {
+        "lpa_name_raw": "Welwyn Hatfield",
+        "lpa_name_clean": "Welwyn Hatfield",
+        "portal_url": "https://www.welhat.gov.uk/",
+        "vendor": "MANUAL_OVERRIDE",
+        "verification_status": "AUTO_GENERATED"
+    },
+    {
+        "lpa_name_raw": "West Berkshire",
+        "lpa_name_clean": "West Berkshire",
+        "portal_url": "https://www.westberks.gov.uk/",
+        "vendor": "UNKNOWN",
+        "verification_status": "AUTO_GENERATED"
+    },
+    {
+        "lpa_name_raw": "West Devon",
+        "lpa_name_clean": "West Devon",
+        "portal_url": "https://www.westdevon.gov.uk/",
+        "vendor": "UNKNOWN",
+        "verification_status": "AUTO_GENERATED"
+    },
+    {
+        "lpa_name_raw": "West Dunbartonshire",
+        "lpa_name_clean": "West Dunbartonshire",
+        "portal_url": "https://www.west-dunbarton.gov.uk/",
+        "vendor": "UNKNOWN",
+        "verification_status": "AUTO_GENERATED"
+    },
+    {
+        "lpa_name_raw": "West Lancashire",
+        "lpa_name_clean": "West Lancashire",
+        "portal_url": "https://www.westlancs.gov.uk/",
+        "vendor": "UNKNOWN",
+        "verification_status": "AUTO_GENERATED"
+    },
+    {
+        "lpa_name_raw": "West Lindsey",
+        "lpa_name_clean": "West Lindsey",
+        "portal_url": "https://www.west-lindsey.gov.uk/",
+        "vendor": "UNKNOWN",
+        "verification_status": "AUTO_GENERATED"
+    },
+    {
+        "lpa_name_raw": "West Lothian",
+        "lpa_name_clean": "West Lothian",
+        "portal_url": "https://www.westlothian.gov.uk/",
+        "vendor": "UNKNOWN",
+        "verification_status": "AUTO_GENERATED"
+    },
+    {
+        "lpa_name_raw": "West Northamptonshire",
+        "lpa_name_clean": "West Northamptonshire",
+        "portal_url": "https://www.westnorthants.gov.uk/",
+        "vendor": "UNKNOWN",
+        "verification_status": "AUTO_GENERATED"
+    },
+    {
+        "lpa_name_raw": "West Oxfordshire",
+        "lpa_name_clean": "West Oxfordshire",
+        "portal_url": "https://www.westoxon.gov.uk/",
+        "vendor": "UNKNOWN",
+        "verification_status": "AUTO_GENERATED"
+    },
+    {
+        "lpa_name_raw": "West Suffolk",
+        "lpa_name_clean": "West Suffolk",
+        "portal_url": "https://www.westsuffolk.gov.uk/",
+        "vendor": "UNKNOWN",
+        "verification_status": "AUTO_GENERATED"
+    },
+    {
+        "lpa_name_raw": "Westminster",
+        "lpa_name_clean": "Westminster",
+        "portal_url": "https://www.westminster.gov.uk/",
+        "vendor": "UNKNOWN",
+        "verification_status": "AUTO_GENERATED"
+    },
+    {
+        "lpa_name_raw": "Westmorland and Furness",
+        "lpa_name_clean": "Westmorland and Furness",
+        "portal_url": "https://www.westmorlandandfurness.gov.uk/",
+        "vendor": "UNKNOWN",
+        "verification_status": "AUTO_GENERATED"
+    },
+    {
+        "lpa_name_raw": "Wigan",
+        "lpa_name_clean": "Wigan",
+        "portal_url": "https://www.wigan.gov.uk/",
+        "vendor": "UNKNOWN",
+        "verification_status": "AUTO_GENERATED"
+    },
+    {
+        "lpa_name_raw": "Wiltshire",
+        "lpa_name_clean": "Wiltshire",
+        "portal_url": "https://www.wiltshire.gov.uk/",
+        "vendor": "UNKNOWN",
+        "verification_status": "AUTO_GENERATED"
+    },
+    {
+        "lpa_name_raw": "Winchester",
+        "lpa_name_clean": "Winchester",
+        "portal_url": "https://www.winchester.gov.uk/",
+        "vendor": "UNKNOWN",
+        "verification_status": "AUTO_GENERATED"
+    },
+    {
+        "lpa_name_raw": "Windsor and Maidenhead",
+        "lpa_name_clean": "Windsor and Maidenhead",
+        "portal_url": "https://publicaccess.rbwm.gov.uk/",
+        "vendor": "IDOX",
+        "verification_status": "AUTO_GENERATED"
+    },
+    {
+        "lpa_name_raw": "Wirral",
+        "lpa_name_clean": "Wirral",
+        "portal_url": "https://www.wirral.gov.uk/",
+        "vendor": "UNKNOWN",
+        "verification_status": "AUTO_GENERATED"
+    },
+    {
+        "lpa_name_raw": "Woking",
+        "lpa_name_clean": "Woking",
+        "portal_url": "https://www.woking.gov.uk/",
+        "vendor": "UNKNOWN",
+        "verification_status": "AUTO_GENERATED"
+    },
+    {
+        "lpa_name_raw": "Wokingham",
+        "lpa_name_clean": "Wokingham",
+        "portal_url": "https://www.wokingham.gov.uk/",
+        "vendor": "UNKNOWN",
+        "verification_status": "AUTO_GENERATED"
+    },
+    {
+        "lpa_name_raw": "Wolverhampton",
+        "lpa_name_clean": "Wolverhampton",
+        "portal_url": "https://www.wolverhampton.gov.uk/",
+        "vendor": "UNKNOWN",
+        "verification_status": "AUTO_GENERATED"
+    },
+    {
+        "lpa_name_raw": "Worcester",
+        "lpa_name_clean": "Worcester",
+        "portal_url": "https://www.worcester.gov.uk/planning/planning-application-search",
+        "vendor": "MANUAL_OVERRIDE",
+        "verification_status": "AUTO_GENERATED"
+    },
+    {
+        "lpa_name_raw": "Worthing",
+        "lpa_name_clean": "Worthing",
+        "portal_url": "https://www.adur-worthing.gov.uk/",
+        "vendor": "MANUAL_OVERRIDE",
+        "verification_status": "AUTO_GENERATED"
+    },
+    {
+        "lpa_name_raw": "Wrexham",
+        "lpa_name_clean": "Wrexham",
+        "portal_url": "https://www.wrexham.gov.uk/",
+        "vendor": "UNKNOWN",
+        "verification_status": "AUTO_GENERATED"
+    },
+    {
+        "lpa_name_raw": "Wychavon",
+        "lpa_name_clean": "Wychavon",
+        "portal_url": "https://www.wychavon.gov.uk/",
+        "vendor": "UNKNOWN",
+        "verification_status": "AUTO_GENERATED"
+    },
+    {
+        "lpa_name_raw": "Wyre",
+        "lpa_name_clean": "Wyre",
+        "portal_url": "https://www.wyre.gov.uk/",
+        "vendor": "UNKNOWN",
+        "verification_status": "AUTO_GENERATED"
+    },
+    {
+        "lpa_name_raw": "Wyre Forest",
+        "lpa_name_clean": "Wyre Forest",
+        "portal_url": "https://www.wyre.gov.uk/",
+        "vendor": "UNKNOWN",
+        "verification_status": "AUTO_GENERATED"
+    },
+    {
+        "lpa_name_raw": "York",
+        "lpa_name_clean": "York",
+        "portal_url": "https://www.york.gov.uk/",
+        "vendor": "UNKNOWN",
+        "verification_status": "AUTO_GENERATED"
+    }
+]

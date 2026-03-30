@@ -1,0 +1,74 @@
+{
+  "domain": "www.liverpool.gov.uk",
+  "plan_version": "3.0",
+  "last_updated": "2026-03-24T20:24:23.334109Z",
+  "instructions": [
+    {
+      "command": "GOTO_URL",
+      "params": {
+        "url": "https://lar.liverpool.gov.uk/planning/index.html?fa=search"
+      },
+      "description": "Navigate to the search page.",
+      "frame_name": null
+    },
+    {
+      "command": "FILL_INPUT",
+      "params": {
+        "selector": "#application_reference_number",
+        "value": "{{REFERENCE_ID}}"
+      },
+      "description": "Enter the planning application reference number into the specific input field located in the 'Application Details' section.",
+      "frame_name": null
+    },
+    {
+      "command": "CLICK_ELEMENT",
+      "params": {
+        "selector": "button.btn-success:has-text('Search')"
+      },
+      "description": "Click the green 'Search' button to submit the query.",
+      "frame_name": null
+    },
+    {
+      "command": "WAIT_FOR_SELECTOR",
+      "params": {
+        "selector": ".table-responsive, h1:has-text('Summary'), h1:has-text('Application Detail'), .alert-info, .alert-warning"
+      },
+      "description": "Wait for the interface to transition to either a results list table or the specific application's summary details page.",
+      "frame_name": null
+    },
+    {
+      "command": "WAIT_FOR_SELECTOR",
+      "params": {
+        "selector": "#application_results_table tbody tr >> button.view_application"
+      },
+      "description": "Wait for search results.",
+      "frame_name": null
+    },
+    {
+      "command": "CLICK_ELEMENT",
+      "params": {
+        "selector": "#application_results_table tbody tr >> button.view_application"
+      },
+      "description": "Click the search result to view details.",
+      "frame_name": null
+    }
+  ],
+  "results_page_processing": {
+    "listing_container_selector": "#application_results_table tbody tr",
+    "listing_link_blueprint": {
+      "selector": "button.view_application",
+      "extraction_method": "ATTRIBUTE",
+      "attribute_name": "data-id",
+      "post_processing": null
+    },
+    "listing_address_blueprint": {
+      "selector": "td[data-label='Application Reference']",
+      "extraction_method": "TEXT",
+      "attribute_name": null,
+      "post_processing": null
+    },
+    "pagination_blueprint": null
+  },
+  "detail_page_processing": {},
+  "document_page_processing": null
+}

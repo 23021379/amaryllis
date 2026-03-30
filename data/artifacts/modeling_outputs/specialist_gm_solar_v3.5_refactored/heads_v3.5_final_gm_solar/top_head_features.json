@@ -1,0 +1,98 @@
+{
+    "COHORT_PUBLIC_AMENITY": [
+        "SIC_Amenity_Conflict_Intensity",
+        "nhlc_urban_density_2km",
+        "ohl_total_tower_count_2km",
+        "SIC_Cumulative_Amenity_Pressure",
+        "SIC_IMPACT_AMENITY_SATURATION",
+        "aw_dist_to_nearest_m",
+        "SIC_ENV_HERITAGE_SETTING_CONFLICT",
+        "crow_total_area_in_10km_sqkm",
+        "sic_greenbelt_pressure_cooker",
+        "crow_dist_to_nearest_m"
+    ],
+    "COHORT_AGRI_ENVIRONMENTAL_SCHEMES": [
+        "cs_avg_value_2km",
+        "cs_count_20km",
+        "es_hls_density_5km",
+        "cs_density_10km",
+        "es_hls_avg_cost_20km",
+        "cs_avg_value_10km",
+        "cs_density_2km",
+        "es_hls_density_10km",
+        "cs_density_5km",
+        "es_total_area_ha_2km"
+    ],
+    "COHORT_LPA_ALL": [
+        "SIC_LPA_ROLLING_VOLUME_180D",
+        "SIC_LPA_QUEUE_RELATIVE_SCALE",
+        "knn_avg_distance_km",
+        "knn_anomaly_score_gcv",
+        "SIC_LPA_INSTABILITY_RISK",
+        "lpa_avg_decision_days",
+        "SIC_LPA_CONGESTION_SEVERITY",
+        "FI_LPA_Capacity_Experience_Ratio",
+        "knn_duration_variance_gcv",
+        "nearby_legacy_count"
+    ],
+    "COHORT_GRID_ALL": [
+        "sec_sub_gov_customer_density_per_sqkm",
+        "kva_per_mwelec_ratio",
+        "ohl_33kv_dist_to_nearest_corridor_m",
+        "dist_to_nearest_substation_km",
+        "ltds_years_to_nearest_completion",
+        "sitevoltage",
+        "idno_is_within",
+        "forecast_vs_empirical_headroom_delta_pct",
+        "der_sub1mw_density_count_5km",
+        "primary_sub_tx_count"
+    ],
+    "COHORT_ENV_ALL": [
+        "SIC_ECO_IRZ_PROXY_RATIO",
+        "SIC_ECO_PRESSURE_GOLDEN_RATIO",
+        "ph_total_area_in_5km_ha",
+        "SIC_ECO_SCALE_SENSITIVITY",
+        "aw_dist_to_nearest_m",
+        "es_hls_density_5km",
+        "alc_grade_at_site",
+        "es_hls_density_10km",
+        "ph_priority_area_pct_in_10km",
+        "spa_dist_to_nearest_m"
+    ],
+    "COHORT_SOCIO_ECONOMIC_ALL": [
+        "nhlc_settlement_density_10km",
+        "nhlc_urban_cell_count_2km",
+        "lpa_lsoa_agg_property_value_idx_stddev",
+        "site_lsoa_oac_e_Rational_Utilitarians",
+        "nhlc_urban_density_2km",
+        "lpa_lsoa_agg_property_value_idx",
+        "nhlc_urban_density_10km",
+        "lpa_lsoa_agg_env_health_disadvantage_idx_stddev",
+        "sic_greenbelt_pressure_cooker",
+        "lpa_lsoa_agg_retail_vice_density_idx"
+    ],
+    "COHORT_NATIONAL_PROXY_ALL": [
+        "dist_to_nearest_substation_km",
+        "pct_area_urban_fabric_1km",
+        "major_road_length_1km",
+        "SIC_Corridor_Intensity",
+        "pct_area_urban_fabric_2km",
+        "nhlc_urban_density_2km",
+        "pct_area_industrial_commercial_5km",
+        "nhlc_settlement_density_10km",
+        "SIC_Urban_Fringe_Pressure",
+        "pct_area_protected_natural_10km"
+    ],
+    "COHORT_CONSOLIDATED_SPECIALIST": [
+        "SIC_ECO_IRZ_PROXY_RATIO",
+        "ltds_years_to_nearest_completion",
+        "SIC_LOGISTICS_NARROW_LANE_RATIO",
+        "TFI_Grid_Headroom_Decay",
+        "SIC_GRID_POLICY_FRICTION",
+        "SIC_ECO_PRESSURE_GOLDEN_RATIO",
+        "FI_NIMBY_Effectiveness_Score",
+        "SIC_SOCIAL_OCCUPATION_RATIO",
+        "mounting_type_for_solar",
+        "TFI_Grid_Proximity_Value"
+    ]
+}

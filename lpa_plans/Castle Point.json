@@ -1,0 +1,122 @@
+{
+  "domain": "castlepoint.gov.uk",
+  "plan_version": "3.0",
+  "last_updated": "2026-03-11T20:58:44.782092Z",
+  "instructions": [
+    {
+      "command": "GOTO_URL",
+      "params": {
+        "url": "https://publicaccess.castlepoint.gov.uk/online-applications/"
+      },
+      "description": "Navigate to the search page."
+    },
+    {
+      "command": "FILL_INPUT",
+      "params": {
+        "selector": "#simpleSearchString",
+        "value": "{{REFERENCE_ID}}"
+      },
+      "description": "Enter the Reference ID into the search field."
+    },
+    {
+      "command": "CLICK_ELEMENT",
+      "params": {
+        "selector": "input.button.primary.recaptcha-submit"
+      },
+      "description": "Click the Search button to submit the form."
+    },
+    {
+      "command": "WAIT_FOR_SELECTOR",
+      "params": {
+        "selector": "#searchresults, .search-results, .tabs, h1:has-text('Application Details'), h1:has-text('Search Results')"
+      },
+      "description": "Wait for the search results page or individual application details page to load."
+    },
+    {
+      "command": "WAIT_FOR_SELECTOR",
+      "params": {
+        "selector": "#simpleDetailsTable"
+      },
+      "description": "Wait for Application Details modal/view to appear."
+    },
+    {
+      "command": "WAIT_FOR_SELECTOR",
+      "params": {
+        "selector": "a#tab_documents"
+      },
+      "description": "Wait for detail page."
+    },
+    {
+      "command": "CLICK_ELEMENT",
+      "params": {
+        "selector": "a#tab_documents"
+      },
+      "description": "Open Documents tab."
+    },
+    {
+      "command": "WAIT_FOR_SELECTOR",
+      "params": {
+        "selector": "p.associateddocument > a"
+      },
+      "description": "Wait for 'View Documents' link/button."
+    },
+    {
+      "command": "CLICK_ELEMENT",
+      "params": {
+        "selector": "p.associateddocument > a"
+      },
+      "description": "Click 'View Documents' link."
+    },
+    {
+      "command": "WAIT_FOR_SELECTOR",
+      "params": {
+        "selector": "table#Documents tbody tr:not(:first-child)"
+      },
+      "description": "Wait for documents table."
+    }
+  ],
+  "results_page_processing": {
+    "listing_container_selector": "#simpleDetailsTable",
+    "listing_link_blueprint": {
+      "selector": "body",
+      "extraction_method": "ATTRIBUTE",
+      "attribute_name": "id",
+      "post_processing": null
+    },
+    "listing_address_blueprint": {
+      "selector": "tr:has-text('Address') td",
+      "extraction_method": "TEXT",
+      "attribute_name": null,
+      "post_processing": null
+    },
+    "pagination_blueprint": null
+  },
+  "detail_page_processing": {},
+  "document_page_processing": {
+    "document_container_selector": "table#Documents tbody tr:not(:first-child)",
+    "document_link_blueprint": {
+      "selector": "td:nth-child(5) a",
+      "extraction_method": "ATTRIBUTE",
+      "attribute_name": "href",
+      "post_processing": null
+    },
+    "document_date_blueprint": {
+      "selector": "td:nth-child(2)",
+      "extraction_method": "TEXT",
+      "attribute_name": null,
+      "post_processing": null
+    },
+    "document_type_blueprint": {
+      "selector": "td:nth-child(3)",
+      "extraction_method": "TEXT",
+      "attribute_name": null,
+      "post_processing": null
+    },
+    "pagination_blueprint": null,
+    "batch_processing": {
+      "checkbox_selector": "td input.bulkCheck",
+      "select_all_selector": null,
+      "batch_action_button_selector": "button#downloadFiles"
+    }
+  }
+}

@@ -1,0 +1,691 @@
+(base) PS C:\Users\brand\Desktop\renewables>  c:; cd 'c:\Users\brand\Desktop\renewables'; & 'c:\Users\brand\AppData\Local\Programs\Python\Python313\python.exe' 'c:\Users\brand\.vscode\extensions\ms-python.debugpy-2025.16.0-win32-x64\bundled\libs\debugpy\launcher' '57944' '--' 'c:\Users\brand\Desktop\renewables\scripts\3_step_3.22_test.py'
+--- EXECUTING DIRECTIVE AD-AM-17: Remediation of the Log-Transform Catastrophe ---
+--- Phase 1: Data Ingestion & Sanitization ---
+Purged 8 metadata columns.
+Removed 209 features with 100% missing values.
+  - WARNING: 'lpa_name' missing. Attempting forensic reconstruction from OHE columns...
+  - CRITICAL WARNING: Could not reconstruct 'lpa_name'. Downstream queue metrics may fail.
+  - Applying Capacity Outlier Filter (> 75MW)...
+  - Removed 326 samples with capacity > 75MW.
+Phase 1 Complete. Sanitized feature matrix shape: (2848, 433)
+--- Engineering Input-Only LPA Congestion Metrics ---
+  - Pre-split Temporal, Congestion, BESS & Tower Engineering Complete.
+  - Pre-split Temporal, Congestion, BESS, Tower & Infra Crossing Engineering Complete.
+  - Pre-split Temporal, Congestion, BESS, Tower, Infra & Ecological Engineering Complete.
+  - Pre-split Temporal, Congestion, BESS, Tower, Infra, Eco & Demographic Engineering Complete.
+  - Pre-split Temporal, Congestion, BESS, Tower, Infra, Eco, Demo & Physical Footprint Engineering Complete.
+--- Engineering Stratified Ecological Drag Features ---
+  - Pre-split Temporal, Congestion, BESS, Tower, Infra, Eco, Demo, Physical, Shield & Eco-Drag Engineering Complete.
+--- Engineering Input-Only Temporal Velocity ---
+--- Engineering National Grid Congestion Metrics ---
+  - Pre-split Temporal (Velocity) & National Queue Engineering Complete.
+
+--- Phase 0b: Identifying Unlearnable Samples via OOF Error Analysis (Threshold: >900 days) ---
+  - Processing fold 1/5...
+  - Processing fold 2/5...
+  - Processing fold 3/5...
+  - Processing fold 4/5...
+  - Processing fold 5/5...
+  - Analysis Complete. Identified 0 potentially unlearnable samples.
+  Data split complete: Train (2434), Validation (129), Test (285)
+
+--- Engineering LPA Risk Features (Bayesian Smoothing) ---
+  - Generated 5 Bayesian Features. Sample check: 132.8837304847987
+--- Engineering Friction Matrix Features (Directive 006) ---
+  SUCCESS: All 19 Bayesian/Friction features present before purge.
+  VERIFIED: Bayesian Features survived the purge.
+
+--- Phase 0: Tuning & Forging Global Oracle (Train-Set Only) ---
+  [CONFIRMED] 2 Bayesian Features detected in Phase 0 Input.
+  Example: LPA_Bayesian_Mean_Duration mean value: 132.8837
+ORACLE FEATURE COUNT: 590
+ORACLE FEATURES (Sample):
+  - technology_type, installed_capacity_mwelec, chp_enabled, mounting_type_for_solar, easting_x
+  - northing_x, submission_year, submission_day, submission_month_sin, submission_month_cos
+  - total_applications_received, total_applications_withdrawn, total_enforcement_actions, lpa_withdrawal_rate, lpa_avg_yearly_workload
+  - lpa_total_experience, lpa_workload_trend, lpa_major_commercial_approval_rate, lpa_major_decision_compliance_rate, lpa_approval_rate_cps2
+  - lpa_avg_decision_days, lpa_decision_speed_variance, lpa_p90_decision_days, lpa_industrial_application_approval_rate_cps2, lpa_grant_refuse_speed_ratio
+  - nearby_legacy_count, nearby_legacy_approval_rate, distance_to_nearest_legacy_site_km, distance_to_nearest_legacy_success_km, distance_to_nearest_legacy_refusal_km
+  - knn_avg_distance_km, knn_std_distance_km, knn_dist_to_nearest_km, knn_approval_rate, knn_inverse_dist_weighted_approval
+  - knn_count_solar, knn_dist_to_nearest_solar_km, knn_dist_to_nearest_refusal_km, dist_to_nearest_substation_km, nearest_substation_voltage_kv
+  - nearest_substation_headroom_mw, avg_dist_to_5nn_substations_km, avg_headroom_5nn_substations_mw, std_headroom_5nn_substations_mw, nearest_sub_max_3ph_fault_ka
+  - nearest_sub_max_ef_fault_ka, avg_max_3ph_fault_5nn_ka, avg_max_ef_fault_5nn_ka, submission_month, der_sub1mw_density_count_2km
+  - der_sub1mw_capacity_density_mw_2km, der_over1mw_density_count_2km, der_over1mw_capacity_density_mw_2km, der_total_density_count_2km, der_total_capacity_density_mw_2km
+  - der_sub1mw_density_count_5km, der_sub1mw_capacity_density_mw_5km, der_over1mw_density_count_5km, der_over1mw_capacity_density_mw_5km, der_total_density_count_5km
+  - der_total_capacity_density_mw_5km, der_sub1mw_density_count_10km, der_sub1mw_capacity_density_mw_10km, der_over1mw_density_count_10km, der_over1mw_capacity_density_mw_10km
+  - der_total_density_count_10km, der_total_capacity_density_mw_10km, nearest_substation_total_kva, avg_total_kva_5nn, total_kva_in_10km_radius
+  - idno_is_within, idno_distance_to_nearest_boundary, idno_count_in_5km, idno_total_area_in_10km, idno_crosses_connection_path
+  - lpa_idno_area_as_percent_of_total_area, lpa_idno_count_per_100km2, ltds_nearest_upgrade_dist_m, ltds_nearest_upgrade_completion_year, ltds_years_to_nearest_completion
+  - ltds_count_in_10km, ltds_count_reinforcement_in_10km, ltds_count_new_tx_in_10km, ltds_count_new_sub_in_10km, lct_secondary_sub_count_in_5km
+  - lct_total_connections_in_5km, lct_total_import_kw_in_5km, lct_total_export_kw_in_5km, lct_demand_connections_in_5km, lct_generation_connections_in_5km
+  - lct_ev_connections_in_5km, lct_generation_demand_ratio_in_5km, primary_sub_total_lct_connections, primary_sub_total_lct_import_kw, primary_sub_total_lct_export_kw
+  - primary_sub_demand_connections, primary_sub_generation_connections, primary_sub_lct_generation_demand_ratio, primary_direct_total_connections, primary_direct_total_import_kw
+  - primary_direct_total_export_kw, primary_direct_demand_connections, primary_direct_generation_connections, primary_direct_gen_dem_ratio, lct_reconciliation_delta_connections
+  - lct_reconciliation_delta_export_kw, max_secondary_connections_for_primary, lct_primary_concentration_idx, lct_aggregation_completeness_ratio, dnoa_dist_to_nearest_constrained_tx_m
+  - dnoa_imminence_of_nearest_constraint_yrs, dnoa_constrained_tx_count_knn, dnoa_avg_dist_knn_m, dnoa_avg_deferred_kva_knn, dnoa_earliest_constraint_year_knn
+  - dnoa_procure_flex_ratio_knn, primary_sub_downstream_constrained_tx_count, primary_sub_downstream_total_deferred_kva, primary_sub_downstream_earliest_constraint_year, pq_idw_thd_knn5
+  - pq_idw_h5_highest_knn5, pq_idw_avg_odd_harmonics_knn5, pq_dist_to_nearest_monitor_km, pq_max_thd_in_knn5, pq_std_thd_in_knn5
+  - primary_sub_total_kva, primary_sub_tx_count, primary_sub_avg_tx_kva, primary_sub_max_tx_kva, primary_sub_min_tx_kva
+  - primary_sub_tx_kva_variance, kva_per_mwelec_ratio, sitevoltage, powertransformercount, transratingwinter
+  - transratingsummer, maxdemandsummer, maxdemandwinter, resistance_ohm, reversepower_encoded
+  - substation_age_at_submission, is_hot_site, has_demand_data, winter_nameplate_loading_pct, summer_nameplate_loading_pct
+  - kva_per_transformer, ohl_33kv_dist_to_nearest_corridor_m, ohl_33kv_corridor_intersects_site, ohl_33kv_density_in_2km_km_per_km2, ohl_33kv_nearest_primary_substation_dist_ratio
+  - ohl_dist_to_nearest_pole_m, ohl_dist_to_nearest_tower_m, ohl_local_structure_count, ohl_local_tower_count, ohl_local_tower_ratio
+  - ohl_structure_dist_from_line_avg_m, ohl_132kv_dist_to_nearest_corridor_m, ohl_132kv_dist_to_nearest_tower_m, ohl_132kv_tower_count_2km, ohl_132kv_tower_density_in_2km_per_km2
+  - ohl_132kv_corridor_intersects_site, ohl_33kv_to_132kv_dist_ratio, ohl_nearest_voltage, ohl_total_tower_count_2km, dhv_line_density_in_2km_km_per_km2
+  - dhv_pole_density_in_2km_per_km2, dhv_connection_path_intersection_count, dhv_network_complexity_in_2km, dlv_line_density_in_2km_km_per_km2, dlv_pole_density_in_2km_per_km2
+  - ohl_total_connection_path_intersections, firm_capacity_winter_mw, firm_capacity_summer_mw, unutilised_capacity_pct, demandrag_Green_Over_5_headroom_
+  - constraint_season_Summer, constraint_season_Winter, dist_to_governing_substation_centroid_km, forecast_vs_empirical_headroom_delta_pct, primary_sub_downstream_avg_utilisation
+  - sec_sub_gov_customer_count, sec_sub_gov_onan_rating_kva, sec_sub_gov_utilisation_pct, sec_sub_gov_area_sqm, sec_sub_gov_customer_density_per_sqkm
+  - dlv_connection_path_intersection_count, lpa_lsoa_agg_property_value_idx, lpa_lsoa_agg_property_value_idx_stddev, lpa_lsoa_agg_env_health_disadvantage_idx, lpa_lsoa_agg_env_health_disadvantage_idx_stddev
+  - lpa_lsoa_agg_retail_vice_density_idx, lpa_lsoa_agg_retail_vice_density_idx_stddev, site_lsoa_property_value_idx, site_lsoa_env_health_disadvantage_idx, site_lsoa_retail_vice_density_idx      
+  - site_lsoa_oac_Digital_Seniors, site_lsoa_oac_Passive_and_Uncommitted_Users, site_lsoa_oac_Settled_Offline_Communities, site_lsoa_oac_Youthful_Urban_Fringe, site_lsoa_oac_e_Cultural_Creators  
+  - site_lsoa_oac_e_Mainstream, site_lsoa_oac_e_Professionals, site_lsoa_oac_e_Rational_Utilitarians, site_lsoa_oac_e_Veterans, site_lsoa_oac_e_Withdrawn
+  - site_lsoa_ruc_Larger_rural_Further_from_a_major_town_or_city, site_lsoa_ruc_Larger_rural_Nearer_to_a_major_town_or_city, site_lsoa_ruc_Smaller_rural_Further_from_a_major_town_or_city, site_lsoa_ruc_Smaller_rural_Nearer_to_a_major_town_or_city, site_lsoa_ruc_Urban_Further_from_a_major_town_or_city
+  - site_lsoa_ruc_Urban_Nearer_to_a_major_town_or_city, sic_env_justice_conflict, delta_property_value, delta_env_health_disadvantage, sic_greenbelt_pressure_cooker
+  - pct_area_urban_fabric_1km, pct_area_agricultural_1km, pct_area_industrial_commercial_1km, major_road_length_1km, railway_length_1km
+  - pct_area_protected_natural_1km, pct_area_urban_fabric_2km, pct_area_agricultural_2km, pct_area_industrial_commercial_2km, major_road_length_2km
+  - railway_length_2km, pct_area_protected_natural_2km, pct_area_urban_fabric_5km, pct_area_agricultural_5km, pct_area_industrial_commercial_5km
+  - major_road_length_5km, railway_length_5km, pct_area_protected_natural_5km, pct_area_urban_fabric_10km, pct_area_agricultural_10km
+  - pct_area_industrial_commercial_10km, major_road_length_10km, railway_length_10km, pct_area_protected_natural_10km, SIC_Corridor_Intensity
+  - SIC_Urban_Fringe_Pressure, aw_dist_to_nearest_m, aonb_dist_to_nearest_m, aw_count_in_2km, aw_total_area_in_2km
+  - aw_ASNW_count_in_2km, aw_PAWS_count_in_2km, aw_count_in_5km, aw_total_area_in_5km, aw_ASNW_count_in_5km
+  - aw_PAWS_count_in_5km, aw_count_in_10km, aw_total_area_in_10km, aw_ASNW_count_in_10km, aw_PAWS_count_in_10km
+  - aw_count_in_20km, aw_total_area_in_20km, aw_ASNW_count_in_20km, aw_PAWS_count_in_20km, aonb_count_in_2km
+  - aonb_total_area_in_2km, aonb_count_in_5km, aonb_total_area_in_5km, aonb_count_in_10km, aonb_total_area_in_10km
+  - aonb_count_in_20km, aonb_total_area_in_20km, aonb_density_focus_ratio_5km_to_20km, aw_density_focus_ratio_2km_to_20km, env_count_of_constraints_in_2km
+  - sssi_dist_to_nearest_m, sssi_nearest_area_ha, sssi_is_within, sssi_count_in_2km, sssi_total_area_in_2km_ha
+  - sssi_count_in_5km, sssi_total_area_in_5km_ha, sssi_count_in_10km, sssi_total_area_in_10km_ha, sssi_count_in_20km
+  - sssi_total_area_in_20km_ha, sssi_density_focus_ratio_2km_to_20km, env_min_dist_to_any_constraint_m, sssi_unit_dist_to_nearest_m, np_dist_to_nearest_m
+  - np_total_area_in_5km_sqkm, np_count_in_5km, np_total_area_in_10km_sqkm, np_count_in_10km, np_total_area_in_20km_sqkm
+  - np_count_in_20km, sac_dist_to_nearest_m, sac_nearest_area_ha, sac_is_within, sac_total_area_in_2km_ha
+  - sac_count_in_2km, sac_total_area_in_5km_ha, sac_count_in_5km, sac_total_area_in_10km_ha, sac_count_in_10km
+  - sac_total_area_in_20km_ha, sac_count_in_20km, spa_dist_to_nearest_m, spa_is_within, spa_total_area_in_2km_ha
+  - spa_count_in_2km, spa_total_area_in_5km_ha, spa_count_in_5km, spa_total_area_in_10km_ha, spa_count_in_10km
+  - spa_total_area_in_20km_ha, spa_count_in_20km, env_count_of_european_designations_in_5km, alc_grade_at_site, alc_is_bmv_at_site
+  - alc_dist_to_nearest_bmv_m, alc_dist_to_nearest_grade1_m, alc_bmv_area_pct_in_2km, alc_bmv_area_pct_in_5km, alc_bmv_area_pct_in_10km
+  - nt_dist_to_nearest_m, nt_length_in_2km, nt_intersection_count_in_2km, nt_length_in_5km, nt_intersection_count_in_5km
+  - nt_length_in_10km, nt_intersection_count_in_10km, nt_length_in_20km, nt_intersection_count_in_20km, crow_dist_to_nearest_m
+  - crow_is_within, crow_total_area_in_2km_sqkm, crow_total_area_in_5km_sqkm, crow_total_area_in_10km_sqkm, crow_total_area_in_20km_sqkm
+  - crow_nearest_is_rcl, crow_nearest_is_s15, crow_rcl_area_pct_in_5km, hp_dist_to_nearest_m, hp_nearest_area_ha
+  - hp_is_within, hp_total_area_in_2km_ha, hp_count_in_2km, hp_total_area_in_5km_ha, hp_count_in_5km
+  - hp_total_area_in_10km_ha, hp_count_in_10km, hp_total_area_in_20km_ha, hp_count_in_20km, ph_dist_to_nearest_m
+  - ph_nearest_is_priority, ph_is_within, ph_total_area_in_2km_ha, ph_priority_area_pct_in_2km, ph_total_area_in_5km_ha
+  - ph_priority_area_pct_in_5km, ph_total_area_in_10km_ha, ph_priority_area_pct_in_10km, ph_total_area_in_20km_ha, ph_priority_area_pct_in_20km
+  - cs_on_site_bool, cs_on_site_total_value, cs_count_2km, cs_hightier_count_2km, cs_midtier_count_2km
+  - cs_total_area_ha_2km, cs_density_2km, cs_avg_value_2km, cs_count_5km, cs_hightier_count_5km
+  - cs_midtier_count_5km, cs_total_area_ha_5km, cs_density_5km, cs_avg_value_5km, cs_count_10km
+  - cs_hightier_count_10km, cs_midtier_count_10km, cs_total_area_ha_10km, cs_density_10km, cs_avg_value_10km
+  - cs_count_20km, cs_hightier_count_20km, cs_midtier_count_20km, cs_total_area_ha_20km, cs_density_20km
+  - cs_avg_value_20km, es_on_site_bool, es_hls_on_site_bool, es_count_2km, es_hls_count_2km
+  - es_total_area_ha_2km, es_hls_density_2km, es_hls_avg_cost_2km, es_count_5km, es_hls_count_5km
+  - es_total_area_ha_5km, es_hls_density_5km, es_hls_avg_cost_5km, es_count_10km, es_hls_count_10km
+  - es_total_area_ha_10km, es_hls_density_10km, es_hls_avg_cost_10km, es_count_20km, es_hls_count_20km
+  - es_total_area_ha_20km, es_hls_density_20km, es_hls_avg_cost_20km, nhlc_urban_on_site_bool, nhlc_urban_cell_count_2km
+  - nhlc_urban_density_2km, nhlc_settlement_density_2km, nhlc_urban_cell_count_5km, nhlc_urban_density_5km, nhlc_settlement_density_5km
+  - nhlc_urban_cell_count_10km, nhlc_urban_density_10km, nhlc_settlement_density_10km, dno_source_nged, dno_source_ukpn
+  - lpa_planning_time_overall_n, lpa_planning_time_overall_mean, lpa_planning_time_overall_std, lpa_planning_time_overall_median, lpa_planning_time_overall_min
+  - lpa_planning_time_overall_max, lpa_planning_time_bin_n, lpa_planning_time_bin_mean, lpa_planning_time_bin_std, lpa_planning_time_bin_median
+  - lpa_planning_time_bin_min, lpa_planning_time_bin_max, days_to_next_general_election, is_pre_election_paralysis_window, SIC_POLICY_REGIME_ID
+  - SIC_IS_PURDAH_PERIOD, TFI_Grid_Saturation_Penalty, TFI_Grid_Proximity_Value, TFI_Grid_Headroom_Decay, TFI_BMV_Land_Conflict
+  - TFI_Agri_Scheme_Friction, TFI_Ancient_Woodland_Veto, TFI_LPA_Permissiveness_Decay, TFI_Legacy_Precedent_Decay, TFI_Election_Paralysis_Workload
+  - SIC_LPA_ROLLING_VOLUME_180D, SIC_LPA_CONGESTION_SEVERITY, SIC_LPA_QUEUE_RELATIVE_SCALE, SIC_BESS_CO_LOCATION_INTENSITY, SIC_BESS_FIRE_SAFETY_FRICTION
+  - SIC_BESS_GRID_HEADROOM_COMPLEXITY, SIC_BESS_LPA_VOLATILITY_AMPLIFIER, SIC_BESS_GREENFIELD_INDUSTRIALIZATION_CONFLICT, SIC_TOWER_FATIGUE_INDEX, SIC_TOWER_TECHNICAL_COMPLEXITY
+  - SIC_TOWER_URBAN_FRINGE_CONFLICT, SIC_TOWER_LAND_STERILIZATION_IMPACT, SIC_INFRA_WAYLEAVE_VOLUME, SIC_INFRA_PATH_TORTUOSITY, SIC_INFRA_CAPACITY_CROSSING_DIFFICULTY
+  - SIC_INFRA_VISUAL_CLUTTER_CROSSING, SIC_INFRA_LOGISTICAL_ENCIRCLEMENT, SIC_PH_WETLAND_RISK, SIC_PH_HEATHLAND_RISK, SIC_PH_WOODLAND_RISK
+  - SIC_PH_COASTAL_RISK, SIC_PH_UNCERTAINTY_RISK, SIC_AW_IRREPLACEABLE_FRICTION, SIC_AW_RESTORATION_COMPLEXITY, SIC_SAC_HRA_COMPLEXITY
+  - SIC_ECO_TRIPLE_LOCK_VETO, SIC_ECO_SCALE_SENSITIVITY, SIC_DEMO_RESISTANCE_BLOC_STRENGTH, SIC_DEMO_DIGITAL_EXCLUSION_FRICTION, SIC_DEMO_CAPACITY_RESISTANCE
+  - SIC_DEMO_AMENITY_DEFENCE_INTENSITY, SIC_DEMO_RURAL_CHARACTER_DEFENCE, SIC_PHYSICAL_SITE_AREA_LOG, SIC_POWER_DENSITY_W_PER_SQM, SIC_SPRAWL_FRICTION
+  - SIC_LEGACY_SHIELD_INTENSITY, SIC_BROWNFIELD_CONTEXT_SCORE, SIC_VARIANCE_DAMPENER_SCORE, SIC_SHIELDED_CAPACITY, SIC_PRECEDENT_PROXIMITY_LOG
+  - SIC_ECO_DECAY_BUFFER_SCORE, SIC_ECO_DRAG_HIGH_CAPACITY, SIC_ECO_SHIELD_LOW_CAPACITY, SIC_ECO_IRZ_PROXY_RATIO, SIC_ECO_UNCERTAINTY_FLAG
+  - SIC_ECO_PRESSURE_GOLDEN_RATIO, SIC_TEMP_NATIONAL_VOLUME_LOAD, SIC_TEMP_NATIONAL_VELOCITY_PROXY, SIC_TEMP_IS_WINTER, SIC_NAT_QUEUE_MOMENTUM_MW
+  - SIC_NAT_QUEUE_LATENCY_RISK, LPA_Bayesian_Mean_Duration, LPA_Bayesian_Risk_P90, LPA_Chaos_Index, LPA_Stability_Index
+  - lpa_extension_propensity, FI_Chaos_x_Constraint_Density, FI_Paranoia_Factor_SSSI, FI_Visual_Impact_Hesitancy, FI_Grid_Complexity_Drag
+  - FI_Constraint_Deferral_Risk, FI_LPA_Capacity_Experience_Ratio, FI_Big_Fish_Small_Pond, FI_NIMBY_Effectiveness_Score, FI_Political_Cowardice
+  - SIC_LPA_STABILITY_VOLUME, SIC_LPA_SPEED_CONSISTENCY, SIC_LPA_CHAOS_APPROVAL, SIC_LPA_CONGESTION_STABILITY, SIC_LPA_VARIANCE_AMPLIFIER
+  - SIC_GRID_POLICY_FRICTION, SIC_BROWNFIELD_BONUS, SIC_TIME_RISK_LARGE_SCALE_IN_STRESSED_GRID, SIC_TIME_RISK_LARGE_SCALE_NEAR_ENV_CONSTRAINT, SIC_TIME_RISK_LARGE_SCALE_IN_TOUGH_LPA
+  - SIC_Amenity_Conflict_Intensity, SIC_Cumulative_Amenity_Pressure, SIC_LPA_PRECEDENT_BIAS, SIC_GRID_QUEUE_PRESSURE_PROXY, SIC_GRID_FORWARD_LOOKING_RISK
+  - SIC_GRID_STABILITY_VULNERABILITY, SIC_DNOA_IMMINENCE_PENALTY, SIC_PRIMARY_SUB_SATURATION, SIC_LCT_INTEGRATION_STRESS, SIC_LPA_DECISION_FATIGUE
+  - SIC_LPA_RENEWABLE_BIAS, SIC_LPA_INSTABILITY_RISK, SIC_LPA_PROCEDURAL_FRICTION, SIC_ENV_ECOLOGICAL_FRAGMENTATION_RISK, SIC_ENV_HERITAGE_ASSET_CONFLICT
+  - SIC_SOCIO_URBAN_FRINGE_TENSION, SIC_SOCIO_REGENERATION_POTENTIAL, SIC_SOCIO_DIGITAL_DIVIDE_RISK, SIC_SOCIO_SETTLEMENT_PROXIMITY_CONFLICT, SIC_XD_PROCEDURAL_GRIDLOCK
+  - SIC_XD_ENV_POLICY_AMPLIFICATION, SIC_XD_CUMULATIVE_DEVELOPMENT_PRESSURE, TSIC_GRID_SATURATION_ACCELERATION, TSIC_POLICY_HARDENING_VETO, TSIC_PRECEDENT_EROSION
+  - SIC_CORE_LOGISTICAL_ACCESS_CHALLENGE, SIC_CORE_MOUNTING_LAND_CONFLICT, SIC_CORE_DISLOCATED_CHP_ANOMALY, SIC_SYNTH_GRID_REALITY_GAP, SIC_SYNTH_LPA_PRECEDENT_PARADOX
+  - SIC_CONTEXT_SCALE_VS_GRID_CAPACITY, SIC_CONTEXT_CONNECTION_PATH_INEFFICIENCY, SIC_CONTEXT_HEADROOM_RELIABILITY_RISK, SIC_CONTEXT_LPA_INEXPERIENCE_VS_COMPLEXITY, SIC_CONTEXT_ISOLATION_ANOMALY 
+  - SIC_UNC_LCT_DATA_UNCERTAINTY_PENALTY, SIC_GRID_TOPOLOGY_CONNECTION_DELTA, SIC_IMPACT_ECOLOGICAL_CONSTRAINT_FOCUS, SIC_IMPACT_HIGH_VOLTAGE_CHARACTER, SIC_IMPACT_AMENITY_SATURATION
+  - SIC_GRID_OPS_REVERSE_POWER_RISK, SIC_GRID_OPS_POWER_QUALITY_RISK, SIC_LOGISTICS_CONNECTION_TORTUOSITY, SIC_ECOLOGY_DENSE_NETWORK_CONFLICT, SIC_POL_LPA_POLITICAL_VOLATILITY
+  - SIC_INFRA_AGING_ASSET_RISK, SIC_GRID_CUMULATIVE_GENERATION_PRESSURE, SIC_LOGISTICS_DENSE_CORRIDOR_FRICTION, SIC_ECONOMIC_VS_ECOLOGICAL_TENSION, SIC_LPA_DECISION_CHAOS
+  - SIC_LPA_INFRASTRUCTURE_AVERSION, SIC_LPA_PROCEDURAL_INSTABILITY_RISK, SIC_LPA_POLITICAL_VOLATILITY, SIC_LPA_QUIET_REFUSAL_FRICTION, SIC_GRID_QUEUE_FRICTION
+  - SIC_LPA_PRECEDENT_POLICY_CONFLICT, SIC_GRID_QUEUE_PRESSURE, SIC_GRID_FORWARD_CONSTRAINT_RISK, SIC_GRID_NETWORK_STABILITY_VULNERABILITY, SIC_GRID_DNOA_IMMINENCE_PENALTY
+  - SIC_GRID_PRIMARY_SUBSTATION_SATURATION, SIC_GRID_LCT_INTEGRATION_FRICTION, SIC_ENV_HERITAGE_SETTING_CONFLICT, SIC_CAPACITY_X_URBAN_DENIAL, SIC_CAPACITY_X_PRIORITY_HABITAT
+  - SIC_CAPACITY_X_INFRA_CROSSING, SIC_CAPACITY_X_BROWNFIELD_PROXIMITY, SIC_NSIP_REGIME_FLAG, SIC_CO_LOCATION_COMPLEXITY, feat_grid_connection_friction_index
+  - Injecting Specialist Features into Oracle Training Data...
+ORACLE FEATURE COUNT: 652
+ORACLE FEATURES:
+
+  -   technology_type, installed_capacity_mwelec, chp_enabled, mounting_type_for_solar, easting_x
+  -   installed_capacity_mwelec, chp_enabled, mounting_type_for_solar, easting_x, northing_x
+  -   chp_enabled, mounting_type_for_solar, easting_x, northing_x, submission_year
+  -   mounting_type_for_solar, easting_x, northing_x, submission_year, submission_day
+  -   easting_x, northing_x, submission_year, submission_day, submission_month_sin
+  -   northing_x, submission_year, submission_day, submission_month_sin, submission_month_cos
+  -   submission_year, submission_day, submission_month_sin, submission_month_cos, total_applications_received
+  -   submission_day, submission_month_sin, submission_month_cos, total_applications_received, total_applications_withdrawn
+  -   submission_month_sin, submission_month_cos, total_applications_received, total_applications_withdrawn, total_enforcement_actions
+  -   submission_month_cos, total_applications_received, total_applications_withdrawn, total_enforcement_actions, lpa_withdrawal_rate
+  -   total_applications_received, total_applications_withdrawn, total_enforcement_actions, lpa_withdrawal_rate, lpa_avg_yearly_workload
+  -   total_applications_withdrawn, total_enforcement_actions, lpa_withdrawal_rate, lpa_avg_yearly_workload, lpa_total_experience
+  -   total_enforcement_actions, lpa_withdrawal_rate, lpa_avg_yearly_workload, lpa_total_experience, lpa_workload_trend
+  -   lpa_withdrawal_rate, lpa_avg_yearly_workload, lpa_total_experience, lpa_workload_trend, lpa_major_commercial_approval_rate
+  -   lpa_avg_yearly_workload, lpa_total_experience, lpa_workload_trend, lpa_major_commercial_approval_rate, lpa_major_decision_compliance_rate
+  -   lpa_total_experience, lpa_workload_trend, lpa_major_commercial_approval_rate, lpa_major_decision_compliance_rate, lpa_approval_rate_cps2
+  -   lpa_workload_trend, lpa_major_commercial_approval_rate, lpa_major_decision_compliance_rate, lpa_approval_rate_cps2, lpa_avg_decision_days
+  -   lpa_major_commercial_approval_rate, lpa_major_decision_compliance_rate, lpa_approval_rate_cps2, lpa_avg_decision_days, lpa_decision_speed_variance
+  -   lpa_major_decision_compliance_rate, lpa_approval_rate_cps2, lpa_avg_decision_days, lpa_decision_speed_variance, lpa_p90_decision_days
+  -   lpa_approval_rate_cps2, lpa_avg_decision_days, lpa_decision_speed_variance, lpa_p90_decision_days, lpa_industrial_application_approval_rate_cps2
+  -   lpa_avg_decision_days, lpa_decision_speed_variance, lpa_p90_decision_days, lpa_industrial_application_approval_rate_cps2, lpa_grant_refuse_speed_ratio
+  -   lpa_decision_speed_variance, lpa_p90_decision_days, lpa_industrial_application_approval_rate_cps2, lpa_grant_refuse_speed_ratio, nearby_legacy_count
+  -   lpa_p90_decision_days, lpa_industrial_application_approval_rate_cps2, lpa_grant_refuse_speed_ratio, nearby_legacy_count, nearby_legacy_approval_rate
+  -   lpa_industrial_application_approval_rate_cps2, lpa_grant_refuse_speed_ratio, nearby_legacy_count, nearby_legacy_approval_rate, distance_to_nearest_legacy_site_km
+  -   lpa_grant_refuse_speed_ratio, nearby_legacy_count, nearby_legacy_approval_rate, distance_to_nearest_legacy_site_km, distance_to_nearest_legacy_success_km
+  -   nearby_legacy_count, nearby_legacy_approval_rate, distance_to_nearest_legacy_site_km, distance_to_nearest_legacy_success_km, distance_to_nearest_legacy_refusal_km
+  -   nearby_legacy_approval_rate, distance_to_nearest_legacy_site_km, distance_to_nearest_legacy_success_km, distance_to_nearest_legacy_refusal_km, knn_avg_distance_km
+  -   distance_to_nearest_legacy_site_km, distance_to_nearest_legacy_success_km, distance_to_nearest_legacy_refusal_km, knn_avg_distance_km, knn_std_distance_km
+  -   distance_to_nearest_legacy_success_km, distance_to_nearest_legacy_refusal_km, knn_avg_distance_km, knn_std_distance_km, knn_dist_to_nearest_km
+  -   distance_to_nearest_legacy_refusal_km, knn_avg_distance_km, knn_std_distance_km, knn_dist_to_nearest_km, knn_approval_rate
+  -   knn_avg_distance_km, knn_std_distance_km, knn_dist_to_nearest_km, knn_approval_rate, knn_inverse_dist_weighted_approval
+  -   knn_std_distance_km, knn_dist_to_nearest_km, knn_approval_rate, knn_inverse_dist_weighted_approval, knn_count_solar
+  -   knn_dist_to_nearest_km, knn_approval_rate, knn_inverse_dist_weighted_approval, knn_count_solar, knn_dist_to_nearest_solar_km
+  -   knn_approval_rate, knn_inverse_dist_weighted_approval, knn_count_solar, knn_dist_to_nearest_solar_km, knn_dist_to_nearest_refusal_km
+  -   knn_inverse_dist_weighted_approval, knn_count_solar, knn_dist_to_nearest_solar_km, knn_dist_to_nearest_refusal_km, dist_to_nearest_substation_km
+  -   knn_count_solar, knn_dist_to_nearest_solar_km, knn_dist_to_nearest_refusal_km, dist_to_nearest_substation_km, nearest_substation_voltage_kv
+  -   knn_dist_to_nearest_solar_km, knn_dist_to_nearest_refusal_km, dist_to_nearest_substation_km, nearest_substation_voltage_kv, nearest_substation_headroom_mw
+  -   knn_dist_to_nearest_refusal_km, dist_to_nearest_substation_km, nearest_substation_voltage_kv, nearest_substation_headroom_mw, avg_dist_to_5nn_substations_km
+  -   dist_to_nearest_substation_km, nearest_substation_voltage_kv, nearest_substation_headroom_mw, avg_dist_to_5nn_substations_km, avg_headroom_5nn_substations_mw
+  -   nearest_substation_voltage_kv, nearest_substation_headroom_mw, avg_dist_to_5nn_substations_km, avg_headroom_5nn_substations_mw, std_headroom_5nn_substations_mw
+  -   nearest_substation_headroom_mw, avg_dist_to_5nn_substations_km, avg_headroom_5nn_substations_mw, std_headroom_5nn_substations_mw, nearest_sub_max_3ph_fault_ka
+  -   avg_dist_to_5nn_substations_km, avg_headroom_5nn_substations_mw, std_headroom_5nn_substations_mw, nearest_sub_max_3ph_fault_ka, nearest_sub_max_ef_fault_ka
+  -   avg_headroom_5nn_substations_mw, std_headroom_5nn_substations_mw, nearest_sub_max_3ph_fault_ka, nearest_sub_max_ef_fault_ka, avg_max_3ph_fault_5nn_ka
+  -   std_headroom_5nn_substations_mw, nearest_sub_max_3ph_fault_ka, nearest_sub_max_ef_fault_ka, avg_max_3ph_fault_5nn_ka, avg_max_ef_fault_5nn_ka
+  -   nearest_sub_max_3ph_fault_ka, nearest_sub_max_ef_fault_ka, avg_max_3ph_fault_5nn_ka, avg_max_ef_fault_5nn_ka, submission_month
+  -   nearest_sub_max_ef_fault_ka, avg_max_3ph_fault_5nn_ka, avg_max_ef_fault_5nn_ka, submission_month, der_sub1mw_density_count_2km
+  -   avg_max_3ph_fault_5nn_ka, avg_max_ef_fault_5nn_ka, submission_month, der_sub1mw_density_count_2km, der_sub1mw_capacity_density_mw_2km
+  -   avg_max_ef_fault_5nn_ka, submission_month, der_sub1mw_density_count_2km, der_sub1mw_capacity_density_mw_2km, der_over1mw_density_count_2km
+  -   submission_month, der_sub1mw_density_count_2km, der_sub1mw_capacity_density_mw_2km, der_over1mw_density_count_2km, der_over1mw_capacity_density_mw_2km
+  -   der_sub1mw_density_count_2km, der_sub1mw_capacity_density_mw_2km, der_over1mw_density_count_2km, der_over1mw_capacity_density_mw_2km, der_total_density_count_2km
+  -   der_sub1mw_capacity_density_mw_2km, der_over1mw_density_count_2km, der_over1mw_capacity_density_mw_2km, der_total_density_count_2km, der_total_capacity_density_mw_2km
+  -   der_over1mw_density_count_2km, der_over1mw_capacity_density_mw_2km, der_total_density_count_2km, der_total_capacity_density_mw_2km, der_sub1mw_density_count_5km
+  -   der_over1mw_capacity_density_mw_2km, der_total_density_count_2km, der_total_capacity_density_mw_2km, der_sub1mw_density_count_5km, der_sub1mw_capacity_density_mw_5km
+  -   der_total_density_count_2km, der_total_capacity_density_mw_2km, der_sub1mw_density_count_5km, der_sub1mw_capacity_density_mw_5km, der_over1mw_density_count_5km
+  -   der_total_capacity_density_mw_2km, der_sub1mw_density_count_5km, der_sub1mw_capacity_density_mw_5km, der_over1mw_density_count_5km, der_over1mw_capacity_density_mw_5km
+  -   der_sub1mw_density_count_5km, der_sub1mw_capacity_density_mw_5km, der_over1mw_density_count_5km, der_over1mw_capacity_density_mw_5km, der_total_density_count_5km
+  -   der_sub1mw_capacity_density_mw_5km, der_over1mw_density_count_5km, der_over1mw_capacity_density_mw_5km, der_total_density_count_5km, der_total_capacity_density_mw_5km
+  -   der_over1mw_density_count_5km, der_over1mw_capacity_density_mw_5km, der_total_density_count_5km, der_total_capacity_density_mw_5km, der_sub1mw_density_count_10km
+  -   der_over1mw_capacity_density_mw_5km, der_total_density_count_5km, der_total_capacity_density_mw_5km, der_sub1mw_density_count_10km, der_sub1mw_capacity_density_mw_10km
+  -   der_total_density_count_5km, der_total_capacity_density_mw_5km, der_sub1mw_density_count_10km, der_sub1mw_capacity_density_mw_10km, der_over1mw_density_count_10km
+  -   der_total_capacity_density_mw_5km, der_sub1mw_density_count_10km, der_sub1mw_capacity_density_mw_10km, der_over1mw_density_count_10km, der_over1mw_capacity_density_mw_10km
+  -   der_sub1mw_density_count_10km, der_sub1mw_capacity_density_mw_10km, der_over1mw_density_count_10km, der_over1mw_capacity_density_mw_10km, der_total_density_count_10km
+  -   der_sub1mw_capacity_density_mw_10km, der_over1mw_density_count_10km, der_over1mw_capacity_density_mw_10km, der_total_density_count_10km, der_total_capacity_density_mw_10km
+  -   der_over1mw_density_count_10km, der_over1mw_capacity_density_mw_10km, der_total_density_count_10km, der_total_capacity_density_mw_10km, nearest_substation_total_kva
+  -   der_over1mw_capacity_density_mw_10km, der_total_density_count_10km, der_total_capacity_density_mw_10km, nearest_substation_total_kva, avg_total_kva_5nn
+  -   der_total_density_count_10km, der_total_capacity_density_mw_10km, nearest_substation_total_kva, avg_total_kva_5nn, total_kva_in_10km_radius
+  -   der_total_capacity_density_mw_10km, nearest_substation_total_kva, avg_total_kva_5nn, total_kva_in_10km_radius, idno_is_within
+  -   nearest_substation_total_kva, avg_total_kva_5nn, total_kva_in_10km_radius, idno_is_within, idno_distance_to_nearest_boundary
+  -   avg_total_kva_5nn, total_kva_in_10km_radius, idno_is_within, idno_distance_to_nearest_boundary, idno_count_in_5km
+  -   total_kva_in_10km_radius, idno_is_within, idno_distance_to_nearest_boundary, idno_count_in_5km, idno_total_area_in_10km
+  -   idno_is_within, idno_distance_to_nearest_boundary, idno_count_in_5km, idno_total_area_in_10km, idno_crosses_connection_path
+  -   idno_distance_to_nearest_boundary, idno_count_in_5km, idno_total_area_in_10km, idno_crosses_connection_path, lpa_idno_area_as_percent_of_total_area
+  -   idno_count_in_5km, idno_total_area_in_10km, idno_crosses_connection_path, lpa_idno_area_as_percent_of_total_area, lpa_idno_count_per_100km2
+  -   idno_total_area_in_10km, idno_crosses_connection_path, lpa_idno_area_as_percent_of_total_area, lpa_idno_count_per_100km2, ltds_nearest_upgrade_dist_m
+  -   idno_crosses_connection_path, lpa_idno_area_as_percent_of_total_area, lpa_idno_count_per_100km2, ltds_nearest_upgrade_dist_m, ltds_nearest_upgrade_completion_year
+  -   lpa_idno_area_as_percent_of_total_area, lpa_idno_count_per_100km2, ltds_nearest_upgrade_dist_m, ltds_nearest_upgrade_completion_year, ltds_years_to_nearest_completion
+  -   lpa_idno_count_per_100km2, ltds_nearest_upgrade_dist_m, ltds_nearest_upgrade_completion_year, ltds_years_to_nearest_completion, ltds_count_in_10km
+  -   ltds_nearest_upgrade_dist_m, ltds_nearest_upgrade_completion_year, ltds_years_to_nearest_completion, ltds_count_in_10km, ltds_count_reinforcement_in_10km
+  -   ltds_nearest_upgrade_completion_year, ltds_years_to_nearest_completion, ltds_count_in_10km, ltds_count_reinforcement_in_10km, ltds_count_new_tx_in_10km
+  -   ltds_years_to_nearest_completion, ltds_count_in_10km, ltds_count_reinforcement_in_10km, ltds_count_new_tx_in_10km, ltds_count_new_sub_in_10km
+  -   ltds_count_in_10km, ltds_count_reinforcement_in_10km, ltds_count_new_tx_in_10km, ltds_count_new_sub_in_10km, lct_secondary_sub_count_in_5km
+  -   ltds_count_reinforcement_in_10km, ltds_count_new_tx_in_10km, ltds_count_new_sub_in_10km, lct_secondary_sub_count_in_5km, lct_total_connections_in_5km
+  -   ltds_count_new_tx_in_10km, ltds_count_new_sub_in_10km, lct_secondary_sub_count_in_5km, lct_total_connections_in_5km, lct_total_import_kw_in_5km
+  -   ltds_count_new_sub_in_10km, lct_secondary_sub_count_in_5km, lct_total_connections_in_5km, lct_total_import_kw_in_5km, lct_total_export_kw_in_5km
+  -   lct_secondary_sub_count_in_5km, lct_total_connections_in_5km, lct_total_import_kw_in_5km, lct_total_export_kw_in_5km, lct_demand_connections_in_5km
+  -   lct_total_connections_in_5km, lct_total_import_kw_in_5km, lct_total_export_kw_in_5km, lct_demand_connections_in_5km, lct_generation_connections_in_5km
+  -   lct_total_import_kw_in_5km, lct_total_export_kw_in_5km, lct_demand_connections_in_5km, lct_generation_connections_in_5km, lct_ev_connections_in_5km
+  -   lct_total_export_kw_in_5km, lct_demand_connections_in_5km, lct_generation_connections_in_5km, lct_ev_connections_in_5km, lct_generation_demand_ratio_in_5km
+  -   lct_demand_connections_in_5km, lct_generation_connections_in_5km, lct_ev_connections_in_5km, lct_generation_demand_ratio_in_5km, primary_sub_total_lct_connections
+  -   lct_generation_connections_in_5km, lct_ev_connections_in_5km, lct_generation_demand_ratio_in_5km, primary_sub_total_lct_connections, primary_sub_total_lct_import_kw
+  -   lct_ev_connections_in_5km, lct_generation_demand_ratio_in_5km, primary_sub_total_lct_connections, primary_sub_total_lct_import_kw, primary_sub_total_lct_export_kw
+  -   lct_generation_demand_ratio_in_5km, primary_sub_total_lct_connections, primary_sub_total_lct_import_kw, primary_sub_total_lct_export_kw, primary_sub_demand_connections
+  -   primary_sub_total_lct_connections, primary_sub_total_lct_import_kw, primary_sub_total_lct_export_kw, primary_sub_demand_connections, primary_sub_generation_connections
+  -   primary_sub_total_lct_import_kw, primary_sub_total_lct_export_kw, primary_sub_demand_connections, primary_sub_generation_connections, primary_sub_lct_generation_demand_ratio
+  -   primary_sub_total_lct_export_kw, primary_sub_demand_connections, primary_sub_generation_connections, primary_sub_lct_generation_demand_ratio, primary_direct_total_connections
+  -   primary_sub_demand_connections, primary_sub_generation_connections, primary_sub_lct_generation_demand_ratio, primary_direct_total_connections, primary_direct_total_import_kw
+  -   primary_sub_generation_connections, primary_sub_lct_generation_demand_ratio, primary_direct_total_connections, primary_direct_total_import_kw, primary_direct_total_export_kw
+  -   primary_sub_lct_generation_demand_ratio, primary_direct_total_connections, primary_direct_total_import_kw, primary_direct_total_export_kw, primary_direct_demand_connections
+  -   primary_direct_total_connections, primary_direct_total_import_kw, primary_direct_total_export_kw, primary_direct_demand_connections, primary_direct_generation_connections
+  -   primary_direct_total_import_kw, primary_direct_total_export_kw, primary_direct_demand_connections, primary_direct_generation_connections, primary_direct_gen_dem_ratio
+  -   primary_direct_total_export_kw, primary_direct_demand_connections, primary_direct_generation_connections, primary_direct_gen_dem_ratio, lct_reconciliation_delta_connections
+  -   primary_direct_demand_connections, primary_direct_generation_connections, primary_direct_gen_dem_ratio, lct_reconciliation_delta_connections, lct_reconciliation_delta_export_kw
+  -   primary_direct_generation_connections, primary_direct_gen_dem_ratio, lct_reconciliation_delta_connections, lct_reconciliation_delta_export_kw, max_secondary_connections_for_primary
+  -   primary_direct_gen_dem_ratio, lct_reconciliation_delta_connections, lct_reconciliation_delta_export_kw, max_secondary_connections_for_primary, lct_primary_concentration_idx
+  -   lct_reconciliation_delta_connections, lct_reconciliation_delta_export_kw, max_secondary_connections_for_primary, lct_primary_concentration_idx, lct_aggregation_completeness_ratio
+  -   lct_reconciliation_delta_export_kw, max_secondary_connections_for_primary, lct_primary_concentration_idx, lct_aggregation_completeness_ratio, dnoa_dist_to_nearest_constrained_tx_m
+  -   max_secondary_connections_for_primary, lct_primary_concentration_idx, lct_aggregation_completeness_ratio, dnoa_dist_to_nearest_constrained_tx_m, dnoa_imminence_of_nearest_constraint_yrs    
+  -   lct_primary_concentration_idx, lct_aggregation_completeness_ratio, dnoa_dist_to_nearest_constrained_tx_m, dnoa_imminence_of_nearest_constraint_yrs, dnoa_constrained_tx_count_knn
+  -   lct_aggregation_completeness_ratio, dnoa_dist_to_nearest_constrained_tx_m, dnoa_imminence_of_nearest_constraint_yrs, dnoa_constrained_tx_count_knn, dnoa_avg_dist_knn_m
+  -   dnoa_dist_to_nearest_constrained_tx_m, dnoa_imminence_of_nearest_constraint_yrs, dnoa_constrained_tx_count_knn, dnoa_avg_dist_knn_m, dnoa_avg_deferred_kva_knn
+  -   dnoa_imminence_of_nearest_constraint_yrs, dnoa_constrained_tx_count_knn, dnoa_avg_dist_knn_m, dnoa_avg_deferred_kva_knn, dnoa_earliest_constraint_year_knn
+  -   dnoa_constrained_tx_count_knn, dnoa_avg_dist_knn_m, dnoa_avg_deferred_kva_knn, dnoa_earliest_constraint_year_knn, dnoa_procure_flex_ratio_knn
+  -   dnoa_avg_dist_knn_m, dnoa_avg_deferred_kva_knn, dnoa_earliest_constraint_year_knn, dnoa_procure_flex_ratio_knn, primary_sub_downstream_constrained_tx_count
+  -   dnoa_avg_deferred_kva_knn, dnoa_earliest_constraint_year_knn, dnoa_procure_flex_ratio_knn, primary_sub_downstream_constrained_tx_count, primary_sub_downstream_total_deferred_kva
+  -   dnoa_earliest_constraint_year_knn, dnoa_procure_flex_ratio_knn, primary_sub_downstream_constrained_tx_count, primary_sub_downstream_total_deferred_kva, primary_sub_downstream_earliest_constraint_year
+  -   dnoa_procure_flex_ratio_knn, primary_sub_downstream_constrained_tx_count, primary_sub_downstream_total_deferred_kva, primary_sub_downstream_earliest_constraint_year, pq_idw_thd_knn5        
+  -   primary_sub_downstream_constrained_tx_count, primary_sub_downstream_total_deferred_kva, primary_sub_downstream_earliest_constraint_year, pq_idw_thd_knn5, pq_idw_h5_highest_knn5
+  -   primary_sub_downstream_total_deferred_kva, primary_sub_downstream_earliest_constraint_year, pq_idw_thd_knn5, pq_idw_h5_highest_knn5, pq_idw_avg_odd_harmonics_knn5
+  -   primary_sub_downstream_earliest_constraint_year, pq_idw_thd_knn5, pq_idw_h5_highest_knn5, pq_idw_avg_odd_harmonics_knn5, pq_dist_to_nearest_monitor_km
+  -   pq_idw_thd_knn5, pq_idw_h5_highest_knn5, pq_idw_avg_odd_harmonics_knn5, pq_dist_to_nearest_monitor_km, pq_max_thd_in_knn5
+  -   pq_idw_h5_highest_knn5, pq_idw_avg_odd_harmonics_knn5, pq_dist_to_nearest_monitor_km, pq_max_thd_in_knn5, pq_std_thd_in_knn5
+  -   pq_idw_avg_odd_harmonics_knn5, pq_dist_to_nearest_monitor_km, pq_max_thd_in_knn5, pq_std_thd_in_knn5, primary_sub_total_kva
+  -   pq_dist_to_nearest_monitor_km, pq_max_thd_in_knn5, pq_std_thd_in_knn5, primary_sub_total_kva, primary_sub_tx_count
+  -   pq_max_thd_in_knn5, pq_std_thd_in_knn5, primary_sub_total_kva, primary_sub_tx_count, primary_sub_avg_tx_kva
+  -   pq_std_thd_in_knn5, primary_sub_total_kva, primary_sub_tx_count, primary_sub_avg_tx_kva, primary_sub_max_tx_kva
+  -   primary_sub_total_kva, primary_sub_tx_count, primary_sub_avg_tx_kva, primary_sub_max_tx_kva, primary_sub_min_tx_kva
+  -   primary_sub_tx_count, primary_sub_avg_tx_kva, primary_sub_max_tx_kva, primary_sub_min_tx_kva, primary_sub_tx_kva_variance
+  -   primary_sub_avg_tx_kva, primary_sub_max_tx_kva, primary_sub_min_tx_kva, primary_sub_tx_kva_variance, kva_per_mwelec_ratio
+  -   primary_sub_max_tx_kva, primary_sub_min_tx_kva, primary_sub_tx_kva_variance, kva_per_mwelec_ratio, sitevoltage
+  -   primary_sub_min_tx_kva, primary_sub_tx_kva_variance, kva_per_mwelec_ratio, sitevoltage, powertransformercount
+  - Enforcing temporal sort for TimeSeriesSplit...
+    Sorted by ['submission_year', 'submission_month']. First Year: 2012.0, Last Year: 2025.0
+  Tuning oracle on 2434 samples and 650 features over 5 trials...
+[I 2025-12-03 18:03:13,118] A new study created in memory with name: no-name-51ad44cb-fa31-4d4a-90a5-2806bfce9d31
+[I 2025-12-03 18:04:25,764] Trial 0 finished with value: 99.24695516553804 and parameters: {'n_estimators': 1584, 'learning_rate': 0.030447561583974596, 'num_leaves': 32, 'max_depth': 25, 'min_child_samples': 77, 'reg_alpha': 1.361464076566715, 'reg_lambda': 3.8739624644768305, 'colsample_bytree': 0.7881071423062804}. Best is trial 0 with value: 99.24695516553804.
+[I 2025-12-03 18:05:16,398] Trial 1 finished with value: 98.68326519848395 and parameters: {'n_estimators': 1189, 'learning_rate': 0.03367470623539144, 'num_leaves': 17, 'max_depth': 24, 'min_child_samples': 54, 'reg_alpha': 6.482597860329714, 'reg_lambda': 5.708910201710949, 'colsample_bytree': 0.6170045016732768}. Best is trial 1 with value: 98.68326519848395.
+[I 2025-12-03 18:06:21,037] Trial 2 finished with value: 102.04861619447804 and parameters: {'n_estimators': 1600, 'learning_rate': 0.09800666514016698, 'num_leaves': 21, 'max_depth': 25, 'min_child_samples': 85, 'reg_alpha': 2.7967878124692698, 'reg_lambda': 5.002690612751127, 'colsample_bytree': 0.7029746920789687}. Best is trial 1 with value: 98.68326519848395.
+[I 2025-12-03 18:06:54,204] Trial 3 finished with value: 99.73105118632111 and parameters: {'n_estimators': 1463, 'learning_rate': 0.04149372940080909, 'num_leaves': 43, 'max_depth': 5, 'min_child_samples': 64, 'reg_alpha': 4.399781331130872, 'reg_lambda': 4.772573572334329, 'colsample_bytree': 0.46820285341916706}. Best is trial 1 with value: 98.68326519848395.
+[I 2025-12-03 18:07:59,753] Trial 4 finished with value: 97.7092052207302 and parameters: {'n_estimators': 1128, 'learning_rate': 0.0236612039273843, 'num_leaves': 29, 'max_depth': 16, 'min_child_samples': 43, 'reg_alpha': 5.250273160175358, 'reg_lambda': 4.233611510117743, 'colsample_bytree': 0.5191788343045626}. Best is trial 4 with value: 97.7092052207302.
+  Oracle tuning complete. Best RMSE: 97.7092
+  Training final oracle with best parameters...
+  Oracle trained.
+  Executing SHAP analysis on Oracle...
+  SHAP analysis complete.
+  Global Context Vector (GCV) defined with Top 40 features.
+  - Persisted Oracle model to C:\Users\brand\Desktop\renewables\data\artifacts\modeling_outputs\specialist_gm_solar_v3.5_refactored\oralce_v3.5.joblib
+  - Synchronizing Feature Space: Injecting Specialist Features into Main Dataframes...
+
+--- Phase 1b (AD-AM-33): Forging k-NN Anomaly Features ---
+  - Success Atlas defined with 2434 samples on 40 GCV features.
+  - k-NN Anomaly Engine (k=10), GCV Imputer, and GCV Scaler fitted on Success Atlas.
+  - Forging features for the training set...
+  - Forging features for the validation set...
+  - Forging features for the test set...
+--- k-NN Anomaly Feature Forging Complete ---
+  - Persisted k-NN imputer, scaler, and engine artifacts to C:\Users\brand\Desktop\renewables\data\artifacts\modeling_outputs\specialist_gm_solar_v3.5_refactored
+
+--- Phase 1c (AD-AM-43): Engineering k-NN Dependent SICs ---
+  - `SIC_LPA_PRECEDENT_UNCERTAINTY` forged and appended to all data partitions.
+
+--- Phase D (AD-AM-37): Forging 5 Project Regimes via Clustering ---
+  - Defining regimes based on 5 strategic features.
+  - K-Means clusterer fitted on training data.
+  - `project_regime_id` feature forged and appended.
+  - Persisted project regime scaler and model artifacts to C:\Users\brand\Desktop\renewables\data\artifacts\modeling_outputs\specialist_gm_solar_v3.5_refactored
+
+--- v3.5 Specialist Cohort Definitions Finalized ---
+  - COHORT_PUBLIC_AMENITY: 46 features
+  - COHORT_AGRI_ENVIRONMENTAL_SCHEMES: 48 features
+  - COHORT_TOPOGRAPHY_AND_ACCESS: 4 features
+  - COHORT_LPA_ALL: 42 features
+  - COHORT_GRID_ALL: 145 features
+  - COHORT_ENV_ALL: 125 features
+  - COHORT_SOCIO_ECONOMIC_ALL: 39 features
+  - COHORT_NATIONAL_PROXY_ALL: 41 features
+  - COHORT_METADATA_AND_FLAGS: 6 features
+  - COHORT_CONSOLIDATED_SPECIALIST: 49 features
+
+--- Generating Oracle predictions for train, validation, and test sets ---
+  - Generating Out-of-Fold (OOF) predictions for Training Set (Leakage Prevention)...
+  - Generating Standard Inference predictions for Validation and Test Sets...
+
+--- Forging Specialist Heads for the Conclave of Experts ---
+
+--- AD-AM-42.1: Specialist Head Target Changed to 5-Class Classification ---
+0    0.031224
+1    0.183237
+2    0.626130
+3    0.087921
+4    0.071487
+Name: proportion, dtype: float64
+
+--- AD-AM-32: Weighted Error Focusing Active ---
+  Sample weights created for specialist training. Max weight: 32.03
+
+--- Phase A (v3.9): Tuning 'Anti-Oracle' Error Correction Heads ---
+
+  - Tuning Head: COHORT_PUBLIC_AMENITY (5 trials) on Weighted Oracle Error...
+[I 2025-12-03 18:08:37,669] A new study created in memory with name: no-name-1ca7843e-cf74-44e1-9c10-ab2ec9d20d92
+[I 2025-12-03 18:09:26,080] Trial 0 finished with value: 1.3031539615124283 and parameters: {'max_depth': 6, 'num_leaves': 32, 'colsample_bytree': 0.516207639568518, 'learning_rate': 0.012297589330832439, 'n_estimators': 1196, 'min_child_samples': 28, 'reg_alpha': 3.0241530683526756, 'reg_lambda': 0.3185541712054194}. Best is trial 0 with value: 1.3031539615124283.
+[I 2025-12-03 18:10:06,288] Trial 1 finished with value: 1.4346770208762558 and parameters: {'max_depth': 6, 'num_leaves': 16, 'colsample_bytree': 0.7943581832891085, 'learning_rate': 0.013311666365018576, 'n_estimators': 1169, 'min_child_samples': 26, 'reg_alpha': 0.7247952076899947, 'reg_lambda': 0.04967623748192768}. Best is trial 0 with value: 1.3031539615124283.
+[I 2025-12-03 18:10:22,170] Trial 2 finished with value: 1.2771548086758155 and parameters: {'max_depth': 5, 'num_leaves': 25, 'colsample_bytree': 0.5281362692081275, 'learning_rate': 0.04379635849655516, 'n_estimators': 775, 'min_child_samples': 49, 'reg_alpha': 9.259875078413662, 'reg_lambda': 0.6594000317565635}. Best is trial 2 with value: 1.2771548086758155.
+[I 2025-12-03 18:10:44,360] Trial 3 finished with value: 1.3226645551265823 and parameters: {'max_depth': 4, 'num_leaves': 15, 'colsample_bytree': 0.6264607339798598, 'learning_rate': 0.02909124227337331, 'n_estimators': 962, 'min_child_samples': 23, 'reg_alpha': 4.187332286731904, 'reg_lambda': 0.01218338206391144}. Best is trial 2 with value: 1.2771548086758155.
+[I 2025-12-03 18:11:08,639] Trial 4 finished with value: 1.2902886024226674 and parameters: {'max_depth': 6, 'num_leaves': 38, 'colsample_bytree': 0.7530276673156526, 'learning_rate': 0.029245177886101658, 'n_estimators': 1158, 'min_child_samples': 38, 'reg_alpha': 6.7370313450639285, 'reg_lambda': 0.023049322737624788}. Best is trial 2 with value: 1.2771548086758155.
+    Best Oracle Error Log Loss for COHORT_PUBLIC_AMENITY: 1.2772
+
+  - Tuning Head: COHORT_AGRI_ENVIRONMENTAL_SCHEMES (5 trials) on Weighted Oracle Error...
+[I 2025-12-03 18:11:08,641] A new study created in memory with name: no-name-d5fa0eaf-8be5-4132-8c25-afa5fb5e3ba9
+[I 2025-12-03 18:11:22,876] Trial 0 finished with value: 1.4588871202166573 and parameters: {'max_depth': 7, 'num_leaves': 23, 'colsample_bytree': 0.5745605004392722, 'learning_rate': 0.04815671914454677, 'n_estimators': 907, 'min_child_samples': 39, 'reg_alpha': 8.860678823466237, 'reg_lambda': 0.025614710906872177}. Best is trial 0 with value: 1.4588871202166573.
+[I 2025-12-03 18:12:00,949] Trial 1 finished with value: 1.7450722965662842 and parameters: {'max_depth': 4, 'num_leaves': 39, 'colsample_bytree': 0.5614867026615808, 'learning_rate': 0.03640921148434818, 'n_estimators': 1886, 'min_child_samples': 34, 'reg_alpha': 0.48253140810973094, 'reg_lambda': 0.10301695817635534}. Best is trial 0 with value: 1.4588871202166573.
+[I 2025-12-03 18:12:56,341] Trial 2 finished with value: 1.518752517809058 and parameters: {'max_depth': 8, 'num_leaves': 28, 'colsample_bytree': 0.5833832006291237, 'learning_rate': 0.008117134954423956, 'n_estimators': 1744, 'min_child_samples': 46, 'reg_alpha': 0.5334859341317748, 'reg_lambda': 0.23174651879148309}. Best is trial 0 with value: 1.4588871202166573.
+[I 2025-12-03 18:13:19,944] Trial 3 finished with value: 1.4818812811149136 and parameters: {'max_depth': 5, 'num_leaves': 26, 'colsample_bytree': 0.5424180017733643, 'learning_rate': 0.019783701068627764, 'n_estimators': 714, 'min_child_samples': 33, 'reg_alpha': 2.067713459120599, 'reg_lambda': 2.4224648484452604}. Best is trial 0 with value: 1.4588871202166573.
+[I 2025-12-03 18:14:33,437] Trial 4 finished with value: 1.6438770256033568 and parameters: {'max_depth': 8, 'num_leaves': 40, 'colsample_bytree': 0.6677657255187848, 'learning_rate': 0.015159261549320355, 'n_estimators': 1780, 'min_child_samples': 44, 'reg_alpha': 0.1873798834618965, 'reg_lambda': 1.4554697510691568}. Best is trial 0 with value: 1.4588871202166573.
+    Best Oracle Error Log Loss for COHORT_AGRI_ENVIRONMENTAL_SCHEMES: 1.4589
+
+  - Tuning Head: COHORT_TOPOGRAPHY_AND_ACCESS (5 trials) on Weighted Oracle Error...
+[I 2025-12-03 18:14:33,439] A new study created in memory with name: no-name-a326b1f6-ada6-43be-99ca-b0e34bc150da
+[I 2025-12-03 18:15:00,783] Trial 0 finished with value: 1.4998625375467545 and parameters: {'max_depth': 5, 'num_leaves': 6, 'colsample_bytree': 0.9233784162866621, 'learning_rate': 0.024304595612663807, 'n_estimators': 1530, 'min_child_samples': 50, 'reg_alpha': 1.2752308310877245, 'reg_lambda': 1.443040050527151}. Best is trial 0 with value: 1.4998625375467545.
+[I 2025-12-03 18:15:16,490] Trial 1 finished with value: 1.5181731056026033 and parameters: {'max_depth': 5, 'num_leaves': 10, 'colsample_bytree': 0.8352675710423934, 'learning_rate': 0.04357901490949576, 'n_estimators': 866, 'min_child_samples': 44, 'reg_alpha': 2.8417251532388526, 'reg_lambda': 0.09886841600979136}. Best is trial 0 with value: 1.4998625375467545.
+[I 2025-12-03 18:15:34,735] Trial 2 finished with value: 1.5155906889620323 and parameters: {'max_depth': 3, 'num_leaves': 15, 'colsample_bytree': 0.9181349605163758, 'learning_rate': 0.031853257199558574, 'n_estimators': 1186, 'min_child_samples': 27, 'reg_alpha': 2.472509979798282, 'reg_lambda': 0.3158884076760059}. Best is trial 0 with value: 1.4998625375467545.
+[I 2025-12-03 18:15:51,323] Trial 3 finished with value: 1.471106755573525 and parameters: {'max_depth': 3, 'num_leaves': 6, 'colsample_bytree': 0.9903602540002008, 'learning_rate': 0.030014019480646213, 'n_estimators': 1339, 'min_child_samples': 42, 'reg_alpha': 9.005785343282058, 'reg_lambda': 0.16574180380605366}. Best is trial 3 with value: 1.471106755573525.
+[I 2025-12-03 18:16:09,386] Trial 4 finished with value: 1.494704829221093 and parameters: {'max_depth': 3, 'num_leaves': 12, 'colsample_bytree': 0.9413698911848101, 'learning_rate': 0.0130864791367882, 'n_estimators': 955, 'min_child_samples': 32, 'reg_alpha': 0.5730790324890894, 'reg_lambda': 0.017619511421856665}. Best is trial 3 with value: 1.471106755573525.
+    Best Oracle Error Log Loss for COHORT_TOPOGRAPHY_AND_ACCESS: 1.4711
+
+  - Tuning Head: COHORT_LPA_ALL (5 trials) on Weighted Oracle Error...
+[I 2025-12-03 18:16:09,388] A new study created in memory with name: no-name-9227dadc-7173-4ea4-816a-bbddfe51f9ff
+[I 2025-12-03 18:16:47,212] Trial 0 finished with value: 1.2188991637307425 and parameters: {'max_depth': 5, 'num_leaves': 22, 'colsample_bytree': 0.6847203341916618, 'learning_rate': 0.007588891182357978, 'n_estimators': 1436, 'min_child_samples': 48, 'reg_alpha': 4.223695043648156, 'reg_lambda': 0.018414260042932874}. Best is trial 0 with value: 1.2188991637307425.
+[I 2025-12-03 18:17:34,538] Trial 1 finished with value: 1.234286251381337 and parameters: {'max_depth': 7, 'num_leaves': 33, 'colsample_bytree': 0.6517977818214358, 'learning_rate': 0.008738053035948903, 'n_estimators': 1060, 'min_child_samples': 36, 'reg_alpha': 0.14307822540828716, 'reg_lambda': 3.218727976689148}. Best is trial 0 with value: 1.2188991637307425.
+[I 2025-12-03 18:17:51,982] Trial 2 finished with value: 1.2188055306716716 and parameters: {'max_depth': 4, 'num_leaves': 31, 'colsample_bytree': 0.6677792789004348, 'learning_rate': 0.031529311001925374, 'n_estimators': 1391, 'min_child_samples': 32, 'reg_alpha': 8.809566581420004, 'reg_lambda': 0.07389565642922022}. Best is trial 2 with value: 1.2188055306716716.
+[I 2025-12-03 18:18:30,511] Trial 3 finished with value: 1.2056470848004293 and parameters: {'max_depth': 5, 'num_leaves': 24, 'colsample_bytree': 0.540895311515694, 'learning_rate': 0.005644186637574954, 'n_estimators': 1220, 'min_child_samples': 46, 'reg_alpha': 1.0856515234202522, 'reg_lambda': 1.891884785903299}. Best is trial 3 with value: 1.2056470848004293.
+[I 2025-12-03 18:19:20,006] Trial 4 finished with value: 1.5371894817237741 and parameters: {'max_depth': 7, 'num_leaves': 39, 'colsample_bytree': 0.6900660599388497, 'learning_rate': 0.015785615763042517, 'n_estimators': 1349, 'min_child_samples': 49, 'reg_alpha': 0.1366257491784161, 'reg_lambda': 0.12084687260657731}. Best is trial 3 with value: 1.2056470848004293.
+    Best Oracle Error Log Loss for COHORT_LPA_ALL: 1.2056
+
+  - Tuning Head: COHORT_GRID_ALL (5 trials) on Weighted Oracle Error...
+[I 2025-12-03 18:19:20,009] A new study created in memory with name: no-name-0b79b540-e636-4573-8bd9-58dc42d7dbb4
+[I 2025-12-03 18:20:42,238] Trial 0 finished with value: 1.689303908518832 and parameters: {'max_depth': 15, 'num_leaves': 118, 'colsample_bytree': 0.5052394758466612, 'learning_rate': 0.03655782099084918, 'n_estimators': 1145, 'min_child_samples': 32, 'reg_alpha': 0.18390948456463585, 'reg_lambda': 0.41690932737245034}. Best is trial 0 with value: 1.689303908518832.
+[I 2025-12-03 18:22:51,250] Trial 1 finished with value: 1.5361205784877598 and parameters: {'max_depth': 9, 'num_leaves': 32, 'colsample_bytree': 0.3615688108811179, 'learning_rate': 0.00913353508655283, 'n_estimators': 1892, 'min_child_samples': 40, 'reg_alpha': 0.2773001919751352, 'reg_lambda': 0.2642371140472996}. Best is trial 1 with value: 1.5361205784877598.
+[I 2025-12-03 18:23:18,594] Trial 2 finished with value: 1.346764623712863 and parameters: {'max_depth': 7, 'num_leaves': 125, 'colsample_bytree': 0.534714169239678, 'learning_rate': 0.04763159294178243, 'n_estimators': 808, 'min_child_samples': 33, 'reg_alpha': 2.097295749071315, 'reg_lambda': 1.0022768975225265}. Best is trial 2 with value: 1.346764623712863.
+[I 2025-12-03 18:24:48,536] Trial 3 finished with value: 1.4464992140868784 and parameters: {'max_depth': 6, 'num_leaves': 57, 'colsample_bytree': 0.3643110316407513, 'learning_rate': 0.015484457211863503, 'n_estimators': 1593, 'min_child_samples': 45, 'reg_alpha': 0.5966123887991444, 'reg_lambda': 4.110274556291321}. Best is trial 2 with value: 1.346764623712863.
+[I 2025-12-03 18:26:23,750] Trial 4 finished with value: 1.3260391573404835 and parameters: {'max_depth': 12, 'num_leaves': 31, 'colsample_bytree': 0.5934007098378598, 'learning_rate': 0.013428026651856849, 'n_estimators': 1253, 'min_child_samples': 28, 'reg_alpha': 2.020001827569737, 'reg_lambda': 0.048815108041373005}. Best is trial 4 with value: 1.3260391573404835.
+    Best Oracle Error Log Loss for COHORT_GRID_ALL: 1.3260
+
+  - Tuning Head: COHORT_ENV_ALL (5 trials) on Weighted Oracle Error...
+[I 2025-12-03 18:26:23,753] A new study created in memory with name: no-name-bb84c462-fe47-4ed8-be58-096b504063da
+[I 2025-12-03 18:27:00,021] Trial 0 finished with value: 1.3784614712565366 and parameters: {'max_depth': 8, 'num_leaves': 82, 'colsample_bytree': 0.40169455295107803, 'learning_rate': 0.045234926808978414, 'n_estimators': 1517, 'min_child_samples': 36, 'reg_alpha': 5.118505441473708, 'reg_lambda': 0.1525889545664469}. Best is trial 0 with value: 1.3784614712565366.
+[I 2025-12-03 18:29:15,202] Trial 1 finished with value: 1.9921592797522851 and parameters: {'max_depth': 14, 'num_leaves': 47, 'colsample_bytree': 0.5098978042366589, 'learning_rate': 0.014774338663807793, 'n_estimators': 1560, 'min_child_samples': 28, 'reg_alpha': 0.1132478037095576, 'reg_lambda': 0.05967968313045614}. Best is trial 0 with value: 1.3784614712565366.
+[I 2025-12-03 18:31:05,385] Trial 2 finished with value: 1.863949697365267 and parameters: {'max_depth': 12, 'num_leaves': 89, 'colsample_bytree': 0.41724196434065586, 'learning_rate': 0.017553703175296885, 'n_estimators': 1817, 'min_child_samples': 50, 'reg_alpha': 0.2087747819051852, 'reg_lambda': 0.46792796782520046}. Best is trial 0 with value: 1.3784614712565366.
+[I 2025-12-03 18:33:15,133] Trial 3 finished with value: 1.6572017473820064 and parameters: {'max_depth': 11, 'num_leaves': 37, 'colsample_bytree': 0.30630918801592144, 'learning_rate': 0.011596516365007204, 'n_estimators': 1843, 'min_child_samples': 28, 'reg_alpha': 0.3751421859349437, 'reg_lambda': 1.5293840365409566}. Best is trial 0 with value: 1.3784614712565366.
+[I 2025-12-03 18:34:38,501] Trial 4 finished with value: 1.4532252695236032 and parameters: {'max_depth': 13, 'num_leaves': 63, 'colsample_bytree': 0.35548938029656446, 'learning_rate': 0.009647997252474467, 'n_estimators': 1008, 'min_child_samples': 30, 'reg_alpha': 0.311922601205079, 'reg_lambda': 0.09517620958479764}. Best is trial 0 with value: 1.3784614712565366.
+    Best Oracle Error Log Loss for COHORT_ENV_ALL: 1.3785
+
+  - Tuning Head: COHORT_SOCIO_ECONOMIC_ALL (5 trials) on Weighted Oracle Error...
+[I 2025-12-03 18:34:38,504] A new study created in memory with name: no-name-4ec4c784-d00a-42eb-abba-6c0593927f4f
+[I 2025-12-03 18:34:55,716] Trial 0 finished with value: 1.4254469352840209 and parameters: {'max_depth': 4, 'num_leaves': 25, 'colsample_bytree': 0.5245078916092474, 'learning_rate': 0.022599643208342804, 'n_estimators': 897, 'min_child_samples': 41, 'reg_alpha': 5.669368614946488, 'reg_lambda': 0.019418752498574686}. Best is trial 0 with value: 1.4254469352840209.
+[I 2025-12-03 18:35:12,500] Trial 1 finished with value: 1.590555050099435 and parameters: {'max_depth': 6, 'num_leaves': 15, 'colsample_bytree': 0.6298766129825769, 'learning_rate': 0.027810508050604154, 'n_estimators': 625, 'min_child_samples': 36, 'reg_alpha': 0.21205513135435589, 'reg_lambda': 0.6095110003290297}. Best is trial 0 with value: 1.4254469352840209.
+[I 2025-12-03 18:35:36,242] Trial 2 finished with value: 1.968549328971557 and parameters: {'max_depth': 4, 'num_leaves': 39, 'colsample_bytree': 0.6097328964688771, 'learning_rate': 0.03656913048886734, 'n_estimators': 1229, 'min_child_samples': 37, 'reg_alpha': 0.10962896168136392, 'reg_lambda': 0.054134379256241386}. Best is trial 0 with value: 1.4254469352840209.
+[I 2025-12-03 18:35:52,316] Trial 3 finished with value: 1.5704276097835623 and parameters: {'max_depth': 5, 'num_leaves': 32, 'colsample_bytree': 0.7468282709554864, 'learning_rate': 0.03669334978810199, 'n_estimators': 619, 'min_child_samples': 31, 'reg_alpha': 2.046330062068774, 'reg_lambda': 0.04134171055933071}. Best is trial 0 with value: 1.4254469352840209.
+[I 2025-12-03 18:36:30,695] Trial 4 finished with value: 2.0166988827925585 and parameters: {'max_depth': 7, 'num_leaves': 15, 'colsample_bytree': 0.778617972908384, 'learning_rate': 0.03666659123698042, 'n_estimators': 1235, 'min_child_samples': 23, 'reg_alpha': 0.18299153135983567, 'reg_lambda': 2.660697812420891}. Best is trial 0 with value: 1.4254469352840209.
+    Best Oracle Error Log Loss for COHORT_SOCIO_ECONOMIC_ALL: 1.4254
+
+  - Tuning Head: COHORT_NATIONAL_PROXY_ALL (5 trials) on Weighted Oracle Error...
+[I 2025-12-03 18:36:30,697] A new study created in memory with name: no-name-6b7504c7-78e7-4e23-b849-22df4d194e86
+[I 2025-12-03 18:37:30,666] Trial 0 finished with value: 1.2910071870183675 and parameters: {'max_depth': 7, 'num_leaves': 26, 'colsample_bytree': 0.6431527004948592, 'learning_rate': 0.008987374364957283, 'n_estimators': 1354, 'min_child_samples': 21, 'reg_alpha': 7.556110333260209, 'reg_lambda': 0.31717664330485984}. Best is trial 0 with value: 1.2910071870183675.
+[I 2025-12-03 18:37:47,466] Trial 1 finished with value: 1.33285348798724 and parameters: {'max_depth': 7, 'num_leaves': 25, 'colsample_bytree': 0.7036909375281876, 'learning_rate': 0.041028857751537584, 'n_estimators': 518, 'min_child_samples': 29, 'reg_alpha': 6.607412248164796, 'reg_lambda': 0.12489939071863637}. Best is trial 0 with value: 1.2910071870183675.
+[I 2025-12-03 18:38:49,599] Trial 2 finished with value: 1.3262099398021188 and parameters: {'max_depth': 6, 'num_leaves': 24, 'colsample_bytree': 0.5113214734511615, 'learning_rate': 0.006700930274463833, 'n_estimators': 1841, 'min_child_samples': 49, 'reg_alpha': 3.2998735436856075, 'reg_lambda': 3.8138741262583093}. Best is trial 0 with value: 1.2910071870183675.
+[I 2025-12-03 18:39:07,490] Trial 3 finished with value: 1.3150078348662617 and parameters: {'max_depth': 5, 'num_leaves': 38, 'colsample_bytree': 0.5985153422804282, 'learning_rate': 0.011334956063457002, 'n_estimators': 590, 'min_child_samples': 46, 'reg_alpha': 3.1293387217216098, 'reg_lambda': 0.03334910116085321}. Best is trial 0 with value: 1.2910071870183675.
+[I 2025-12-03 18:39:44,623] Trial 4 finished with value: 1.6421639076320655 and parameters: {'max_depth': 5, 'num_leaves': 30, 'colsample_bytree': 0.7418840897569087, 'learning_rate': 0.032157066195657634, 'n_estimators': 1002, 'min_child_samples': 29, 'reg_alpha': 0.5726240550532543, 'reg_lambda': 2.077467921165683}. Best is trial 0 with value: 1.2910071870183675.
+    Best Oracle Error Log Loss for COHORT_NATIONAL_PROXY_ALL: 1.2910
+
+  - Tuning Head: COHORT_METADATA_AND_FLAGS (5 trials) on Weighted Oracle Error...
+[I 2025-12-03 18:39:44,625] A new study created in memory with name: no-name-a8448800-797b-485b-8d83-cc36cdda6d70
+[I 2025-12-03 18:40:05,076] Trial 0 finished with value: 1.5761768131871072 and parameters: {'max_depth': 4, 'num_leaves': 12, 'colsample_bytree': 0.8344981889442145, 'learning_rate': 0.01676346486413738, 'n_estimators': 1279, 'min_child_samples': 28, 'reg_alpha': 0.12630765861385698, 'reg_lambda': 2.3262251951852804}. Best is trial 0 with value: 1.5761768131871072.
+[I 2025-12-03 18:40:22,561] Trial 1 finished with value: 1.6518440124435156 and parameters: {'max_depth': 5, 'num_leaves': 11, 'colsample_bytree': 0.9188495657956519, 'learning_rate': 0.04081267807585481, 'n_estimators': 930, 'min_child_samples': 35, 'reg_alpha': 0.6042771566688334, 'reg_lambda': 0.020408724526658886}. Best is trial 0 with value: 1.5761768131871072.
+[I 2025-12-03 18:40:47,074] Trial 2 finished with value: 1.6054385216051439 and parameters: {'max_depth': 5, 'num_leaves': 8, 'colsample_bytree': 0.826369742737314, 'learning_rate': 0.01967777329068635, 'n_estimators': 1572, 'min_child_samples': 35, 'reg_alpha': 0.2767555937516637, 'reg_lambda': 0.013368388522851094}. Best is trial 0 with value: 1.5761768131871072.
+[I 2025-12-03 18:41:05,816] Trial 3 finished with value: 1.5620128016611996 and parameters: {'max_depth': 2, 'num_leaves': 7, 'colsample_bytree': 0.9008616399055873, 'learning_rate': 0.007312587358074399, 'n_estimators': 1884, 'min_child_samples': 29, 'reg_alpha': 2.7359510551095116, 'reg_lambda': 0.049467076119721114}. Best is trial 3 with value: 1.5620128016611996.
+[I 2025-12-03 18:41:21,485] Trial 4 finished with value: 1.580602413674975 and parameters: {'max_depth': 2, 'num_leaves': 5, 'colsample_bytree': 0.9182159979367279, 'learning_rate': 0.017456580550588078, 'n_estimators': 1444, 'min_child_samples': 29, 'reg_alpha': 0.6563548198200296, 'reg_lambda': 0.03185999233857881}. Best is trial 3 with value: 1.5620128016611996.
+    Best Oracle Error Log Loss for COHORT_METADATA_AND_FLAGS: 1.5620
+
+  - Tuning Head: COHORT_CONSOLIDATED_SPECIALIST (5 trials) on Weighted Oracle Error...
+[I 2025-12-03 18:41:21,488] A new study created in memory with name: no-name-27850c07-7d9b-406b-98ab-4ad57287a0f2
+[I 2025-12-03 18:41:55,589] Trial 0 finished with value: 1.6776581880174095 and parameters: {'max_depth': 6, 'num_leaves': 25, 'colsample_bytree': 0.6981840233814895, 'learning_rate': 0.038252588012035606, 'n_estimators': 1163, 'min_child_samples': 38, 'reg_alpha': 0.23971038891833485, 'reg_lambda': 0.06600729354790597}. Best is trial 0 with value: 1.6776581880174095.
+[I 2025-12-03 18:42:20,552] Trial 1 finished with value: 1.2151450537126929 and parameters: {'max_depth': 4, 'num_leaves': 17, 'colsample_bytree': 0.5592491287901147, 'learning_rate': 0.01248226409520581, 'n_estimators': 882, 'min_child_samples': 20, 'reg_alpha': 1.0407500886747088, 'reg_lambda': 0.2964332417726221}. Best is trial 1 with value: 1.2151450537126929.
+[I 2025-12-03 18:43:08,776] Trial 2 finished with value: 1.4956858467557206 and parameters: {'max_depth': 8, 'num_leaves': 22, 'colsample_bytree': 0.6187548357572834, 'learning_rate': 0.020947565055509966, 'n_estimators': 1083, 'min_child_samples': 29, 'reg_alpha': 0.11304132197652732, 'reg_lambda': 1.817009174220944}. Best is trial 1 with value: 1.2151450537126929.
+[I 2025-12-03 18:43:47,821] Trial 3 finished with value: 1.56268735143857 and parameters: {'max_depth': 8, 'num_leaves': 39, 'colsample_bytree': 0.7593071492613788, 'learning_rate': 0.02645482753864101, 'n_estimators': 1061, 'min_child_samples': 49, 'reg_alpha': 0.3514297310622113, 'reg_lambda': 0.012220871106529673}. Best is trial 1 with value: 1.2151450537126929.
+[I 2025-12-03 18:44:23,038] Trial 4 finished with value: 1.4560379263192478 and parameters: {'max_depth': 8, 'num_leaves': 33, 'colsample_bytree': 0.717828523673916, 'learning_rate': 0.02449894942060184, 'n_estimators': 700, 'min_child_samples': 23, 'reg_alpha': 0.3847011036325007, 'reg_lambda': 0.0532956260398464}. Best is trial 1 with value: 1.2151450537126929.
+    Best Oracle Error Log Loss for COHORT_CONSOLIDATED_SPECIALIST: 1.2151
+
+Phase A Complete. All heads individually tuned on weighted error target.
+
+--- Phase E (v3.9): Forging & Analyzing 10 'Anti-Oracle' Heads ---
+  - Training head classifier: COHORT_PUBLIC_AMENITY on 46 specialist features
+    - Analyzing head for top 10 specialist features...
+  - Training head classifier: COHORT_AGRI_ENVIRONMENTAL_SCHEMES on 48 specialist features
+    - Analyzing head for top 10 specialist features...
+  - Training head classifier: COHORT_TOPOGRAPHY_AND_ACCESS on 4 specialist features
+    - Analyzing head for top 10 specialist features...
+  - Training head classifier: COHORT_LPA_ALL on 42 specialist features
+    - Analyzing head for top 10 specialist features...
+  - Training head classifier: COHORT_GRID_ALL on 145 specialist features
+    - Analyzing head for top 10 specialist features...
+  - Training head classifier: COHORT_ENV_ALL on 125 specialist features
+    - Analyzing head for top 10 specialist features...
+  - Training head classifier: COHORT_SOCIO_ECONOMIC_ALL on 39 specialist features
+    - Analyzing head for top 10 specialist features...
+  - Training head classifier: COHORT_NATIONAL_PROXY_ALL on 41 specialist features
+    - Analyzing head for top 10 specialist features...
+  - Training head classifier: COHORT_METADATA_AND_FLAGS on 6 specialist features
+    - Analyzing head for top 10 specialist features...
+  - Training head classifier: COHORT_CONSOLIDATED_SPECIALIST on 49 specialist features
+    - Analyzing head for top 10 specialist features...
+
+  Residual Correction heads and top-feature intelligence persisted to C:\Users\brand\Desktop\renewables\data\artifacts\modeling_outputs\specialist_gm_solar_v3.5_refactored\heads_v3.5_final_gm_solar
+
+--- Generating head probabilities for all data splits ---
+  - Forging feature matrix for Ridge Arbiter...
+  - Forging feature matrix for Ridge Arbiter...
+  - Forging feature matrix for Ridge Arbiter...
+
+--- Phase G: Tuning & Training Final LightGBM Arbiter ---
+[I 2025-12-03 18:45:34,729] A new study created in memory with name: no-name-3ea009bb-015c-4afd-95b5-1256170b0c1d
+[I 2025-12-03 18:45:37,649] Trial 0 finished with value: 66.16165863388896 and parameters: {'n_estimators': 3467, 'learning_rate': 0.001047862092596915, 'max_depth': 6, 'num_leaves': 55, 'colsample_bytree': 0.5311073997825887, 'subsample': 0.6490888585789057, 'reg_alpha': 7.823947340781246, 'reg_lambda': 2.2005594490604703}. Best is trial 0 with value: 66.16165863388896.
+[I 2025-12-03 18:45:40,716] Trial 1 finished with value: 65.79148296548912 and parameters: {'n_estimators': 4798, 'learning_rate': 0.0018437715974162227, 'max_depth': 5, 'num_leaves': 17, 'colsample_bytree': 0.49771526857304993, 'subsample': 0.8294264365096609, 'reg_alpha': 1.9587014234950344, 'reg_lambda': 3.8917928242874416}. Best is trial 1 with value: 65.79148296548912.
+[I 2025-12-03 18:45:45,333] Trial 2 finished with value: 65.36812540380606 and parameters: {'n_estimators': 4435, 'learning_rate': 0.015933249382821035, 'max_depth': 6, 'num_leaves': 53, 'colsample_bytree': 0.5321505946067198, 'subsample': 0.8986835576285632, 'reg_alpha': 3.7652731855676254, 'reg_lambda': 7.307490200386955}. Best is trial 2 with value: 65.36812540380606.
+[I 2025-12-03 18:45:48,176] Trial 3 finished with value: 65.95781429720842 and parameters: {'n_estimators': 2880, 'learning_rate': 0.005128584379947837, 'max_depth': 6, 'num_leaves': 47, 'colsample_bytree': 0.6678437719939161, 'subsample': 0.8366277096599046, 'reg_alpha': 5.000336414895792, 'reg_lambda': 1.7249334741065632}. Best is trial 2 with value: 65.36812540380606.
+[I 2025-12-03 18:45:49,669] Trial 4 finished with value: 65.84515707220098 and parameters: {'n_estimators': 4250, 'learning_rate': 0.005773962624757238, 'max_depth': 3, 'num_leaves': 57, 'colsample_bytree': 0.49725594427206293, 'subsample': 0.6440790164942073, 'reg_alpha': 2.579158951980919, 'reg_lambda': 6.297791028671132}. Best is trial 2 with value: 65.36812540380606.
+  - Arbiter tuning complete. Best Validation RMSE: 65.3681
+  - Retraining final Arbiter on combined train+validation data...
+  - Final LightGBM Arbiter trained.
+
+========================================================
+EXECUTING SOLAR SPECIALIST CASCADE (Techno-Type 21 Only)
+========================================================
+
+--- Phase H: Forging Solar Bridge (Feature Compression with Signal Protection) ---
+  - Training Probe Model to identify Top Solar Signals on 2019 samples...
+  - Protected Features (Raw Pass-Through): ['mounting_type_for_solar', 'technology_type', 'installed_capacity_mwelec', 'SIC_POLICY_REGIME_ID', 'lpa_major_commercial_approval_rate', 'winter_nameplate_loading_pct', 'lpa_workload_trend', 'SIC_GRID_QUEUE_FRICTION', 'SIC_LPA_POLITICAL_VOLATILITY']
+  - Top 39 Features (Raw Pass-Through)
+  - Compressing 608 features into 10 PCA components...
+  - Solar Bridge Forged. Output Shape: (2019, 58)
+  - Injecting Consolidated Specialist Features (All Directives) into Solar Bridge...
+  - Solar Bridge Artifacts (PCA, Scaler, Features) persisted to C:\Users\brand\Desktop\renewables\data\artifacts\modeling_outputs\specialist_gm_solar_v3.5_refactored
+Shape of X_train_solar_comp: (2019, 114)
+
+--- Phase I: Training Solar Residual Specialist ---
+  - Solar Residual Specialist Trained.
+
+--- Phase J: Training Robust Stratified Capacity Residual Models ---
+  - Stratum Micro_0_1: 966 samples.
+  - Stratum Small_1_5: 369 samples.
+  - Stratum Mid_5_10: 332 samples.
+  - Stratum Mid_10_15: 92 samples.
+  - Stratum Mid_15_20: 55 samples.
+  - Stratum Large_20_30: 74 samples.
+  - Stratum Large_30_40: 31 samples.
+  - Stratum Large_40_50: 96 samples.
+  - Stratum Major_50_100: 4 samples.
+    WARNING: Insufficient data for Major_50_100. Skipping.
+  - Stratum Major_100_Plus: 0 samples.
+    WARNING: Insufficient data for Major_100_Plus. Skipping.
+  - Solar Stratified Models & Bins persisted to C:\Users\brand\Desktop\renewables\data\artifacts\modeling_outputs\specialist_gm_solar_v3.5_refactored\solar_stratified_models_v3.5.joblib
+
+==========================================================
+EXECUTING GROUND MOUNT SPECIALIST CASCADE (Mount Type 1)
+==========================================================
+  - Injecting V16 Consolidated Specialist Features into GM Training Data...
+  - Injecting V16 Consolidated Specialist Features into GM Test Data...
+  - Isolated 1053 GM Training Samples
+  - Constructing Feature Matrix for GM Specialist (Base + V16 FIs)...
+    - Final GM Specialist Feature Matrix Shape: (1053, 116)
+--- Calculating Data Maturity Weights (Anti-Recency Bias) ---
+  - Reference Date for weighting: 2025-07-21
+  - Weight Distribution: Mean=0.97, Min=0.10
+  - Training GM Specialist on 116 features with Maturity Weights...
+
+--- Phase K: Training Stratified Ground Mount Specialist ---
+GM HEADER                                                     mounting_type_for_solar  technology_type  ...  SIC_GM_GRID_DEATH_ZONE_INTERACTION  SIC_GM_GRID_GAP_IMPEDANCE_RISK_IND
+amaryllis_id                                                                                  ...
+e86bc6d2ca956701be65a5b6de21f4765934420de799131...                      1.0             21.0  ...                                   0                            6.513026
+06691923a7402ca242f6e09325a8cec2cc69514cfcd18d4...                      1.0             21.0  ...                                   0                           24.387317
+003ef5e142c724bd94faab89bb2222645b73e107f39b13c...                      1.0             21.0  ...                                   0                            0.684900
+70649e8f167e4f3cc2930f5b0051e659b1ebfc4bebdd85d...                      1.0             21.0  ...                                   0                            1.031512
+a2a399a231ffbbaa4892cb1daccef2d0e04d58b9dbbac2a...                      1.0             21.0  ...                                   0                            6.202453
+
+[5 rows x 116 columns]
+  - GM Stratum Micro_0_1: 106 samples.
+  - GM Stratum Small_1_5: 272 samples.
+  - GM Stratum Mid_5_10: 322 samples.
+  - GM Stratum Mid_10_15: 92 samples.
+  - GM Stratum Mid_15_20: 55 samples.
+  - GM Stratum Large_20_30: 74 samples.
+  - GM Stratum Large_30_40: 31 samples.
+  - GM Stratum Large_40_50: 96 samples.
+  - GM Stratum Major_50_100: 4 samples.
+    WARNING: Insufficient data for Major_50_100. Skipping.
+  - GM Stratum Major_100_Plus: 0 samples.
+    WARNING: Insufficient data for Major_100_Plus. Skipping.
+  - Stratified Ground Mount Specialist Trained.
+
+--- Phase L: Training Ground Mount Scale Corrector ---
+  - Scale Corrector trained on 5 continuous features.
+  - GM Scale Corrector persisted to C:\Users\brand\Desktop\renewables\data\artifacts\modeling_outputs\specialist_gm_solar_v3.5_refactored\gm_stratified_models_v3.5.joblib
+
+--- Synthesizing Final Ground Mount Solar Predictions ---
+  - Final Prediction Vector Shape: (119,)
+
+--- DEBUG: Exporting Feature Matrices to C:\Users\brand\Desktop\renewables\data\artifacts\modeling_outputs\specialist_gm_solar_v3.5_refactored\debug_exports ---
+  - Saving X_train_gm_final ((1053, 116))...
+    [WARNING] NaNs detected in X_train_gm_final:
+mounting_type_for_solar                             1
+technology_type                                     1
+installed_capacity_mwelec                           1
+SIC_POLICY_REGIME_ID                                1
+lpa_major_commercial_approval_rate                  1
+winter_nameplate_loading_pct                        1
+lpa_workload_trend                                  1
+SIC_GRID_QUEUE_FRICTION                             1
+SIC_LPA_POLITICAL_VOLATILITY                        1
+knn_duration_mean_gcv                               1
+lpa_planning_time_bin_mean                          1
+SIC_GRID_PHYSICS_STIFFNESS_RISK_IND                 1
+lpa_planning_time_bin_median                        1
+SIC_LPA_QUEUE_RELATIVE_SCALE                        1
+SIC_LPA_PRECEDENT_UNCERTAINTY                       1
+ltds_years_to_nearest_completion                    1
+lpa_planning_time_bin_std                           1
+knn_duration_variance_gcv                           1
+lpa_planning_time_bin_max                           1
+SIC_GRID_QUEUE_PRESSURE_PROXY                       1
+unutilised_capacity_pct                             1
+sec_sub_gov_area_sqm                                1
+SIC_SYNTH_GRID_REALITY_GAP                          1
+SIC_NAT_QUEUE_LATENCY_RISK                          1
+ohl_33kv_nearest_primary_substation_dist_ratio      1
+SIC_CO_LOCATION_COMPLEXITY                          1
+days_to_next_general_election                       1
+SIC_LPA_ROLLING_VOLUME_180D                         1
+knn_anomaly_score_gcv                               1
+alc_grade_at_site                                   1
+knn_count_solar                                     1
+SIC_ECO_IRZ_PROXY_RATIO                             1
+sic_greenbelt_pressure_cooker                       1
+der_sub1mw_capacity_density_mw_5km                  1
+pct_area_industrial_commercial_1km                  1
+SIC_IMPACT_HIGH_VOLTAGE_CHARACTER                   1
+SIC_CONTEXT_ISOLATION_ANOMALY                       1
+ltds_count_reinforcement_in_10km                    1
+ph_priority_area_pct_in_10km                        1
+primary_sub_downstream_earliest_constraint_year     1
+sec_sub_gov_utilisation_pct                         1
+SIC_GRID_TOPOLOGY_CONNECTION_DELTA                  1
+SIC_CAPACITY_X_URBAN_DENIAL                         1
+ohl_132kv_dist_to_nearest_corridor_m                1
+dlv_connection_path_intersection_count              1
+SIC_GM_AMPERAGE_STRESS_INDEX_IND                    1
+der_total_capacity_density_mw_10km                  1
+SIC_NAT_QUEUE_MOMENTUM_MW                           1
+PCA_0                                               1
+PCA_1                                               1
+PCA_2                                               1
+PCA_3                                               1
+PCA_4                                               1
+PCA_5                                               1
+PCA_6                                               1
+PCA_7                                               1
+PCA_8                                               1
+PCA_9                                               1
+SIC_GM_SATURATION_EXP_SMALL                        11
+dtype: int64
+  - Saving X_train_solar_comp ((2019, 114))...
+--- DEBUG: Export Complete ---
+
+
+--- Phase M: Training Terminal Calibrator (The Truth-Teller) ---
+  - Terminal Calibrator Trained.
+  - Terminal Calibrator persisted to C:\Users\brand\Desktop\renewables\data\artifacts\modeling_outputs\specialist_gm_solar_v3.5_refactored\terminal_calibrator_v3.5.joblib
+--- v4.8 GROUND MOUNT SPECIALIST Final Performance ---
+  RMSE (Days): 127.2663
+  MAE (Days):  107.3003
+  R-squared:   -0.2596
+  Test N:      119
+
+
+--- REMEDIATION COMPLETE. Initial performance dossier saved to C:\Users\brand\Desktop\renewables\data\artifacts\modeling_outputs\specialist_gm_solar_v3.5_refactored\Amaryllis_v3.5_Diagnostic_Dossier.md
+
+
+--- EXECUTING DIRECTIVE AD-AM-18: The Diagnostic Gauntlet ---
+
+--- Diagnostic Phase 3: Systematic Bias Investigation ---
+  Residuals plot saved to C:\Users\brand\Desktop\renewables\data\artifacts\modeling_outputs\specialist_gm_solar_v3.5_refactored\residuals_vs_predicted_v3.3.png
+
+--- Diagnostic Phase 4: Feature Engineering Hypothesis Report ---
+
+--- Diagnostic Phase 5: All-Heads Granular SHAP Analysis ---
+  - Analyzing head: COHORT_AGRI_ENVIRONMENTAL_SCHEMES
+  - Analyzing head: COHORT_CONSOLIDATED_SPECIALIST
+  - Analyzing head: COHORT_ENV_ALL
+  - Analyzing head: COHORT_GRID_ALL
+  - Analyzing head: COHORT_LPA_ALL
+  - Analyzing head: COHORT_METADATA_AND_FLAGS
+  - Analyzing head: COHORT_NATIONAL_PROXY_ALL
+  - Analyzing head: COHORT_PUBLIC_AMENITY
+  - Analyzing head: COHORT_SOCIO_ECONOMIC_ALL
+  - Analyzing head: COHORT_TOPOGRAPHY_AND_ACCESS
+    ! SHAP analysis failed for COHORT_TOPOGRAPHY_AND_ACCESS: index 4 is out of bounds for axis 1 with size 4
+
+
+--- EXECUTING DIRECTIVE AD-AM-31: The Forensic Diagnostic Gauntlet ---
+
+--- Diagnostic Phase 7: Expert Correlation Analysis ---
+  - Generated expert correlation heatmap: C:\Users\brand\Desktop\renewables\data\artifacts\modeling_outputs\specialist_gm_solar_v3.5_refactored\expert_correlation_heatmap.png
+
+--- Diagnostic Phase 8: Performance Stratification Report ---
+
+  -- Performance by Project Scale (installed_capacity_mwelec) --
+scale_quartile
+0    101.778482
+1    136.623509
+2    114.728745
+3    150.305141
+
+  -- Performance by LPA Toughness (lpa_major_commercial_approval_rate) --
+lpa_quartile
+0    130.427480
+1    141.054681
+2    102.475820
+3    131.102802
+(base) PS C:\Users\brand\Desktop\renewables>

@@ -1,0 +1,74 @@
+{
+  "domain": "www.wirral.gov.uk",
+  "plan_version": "3.0",
+  "last_updated": "2026-03-29T15:43:51.528765Z",
+  "instructions": [
+    {
+      "command": "GOTO_URL",
+      "params": {
+        "url": "https://online.wirral.gov.uk/planning/index.html?fa=search"
+      },
+      "description": "Navigate to the search page.",
+      "frame_name": null
+    },
+    {
+      "command": "FILL_INPUT",
+      "params": {
+        "selector": "#application_reference_number",
+        "value": "{{REFERENCE_ID}}"
+      },
+      "description": "Fill the 'Application Reference Number' input field with the provided reference ID.",
+      "frame_name": null
+    },
+    {
+      "command": "CLICK_ELEMENT",
+      "params": {
+        "selector": "button.btn-success:has-text('Search')"
+      },
+      "description": "Click the 'Search' button to submit the form.",
+      "frame_name": null
+    },
+    {
+      "command": "WAIT_FOR_SELECTOR",
+      "params": {
+        "selector": "table.dataTable, .search-results, h1:not(:has-text(\"Search Planning Applications\"))"
+      },
+      "description": "Wait for the search results table, a div containing search results, or a new page with a different main heading to become visible, indicating the search has completed.",
+      "frame_name": null
+    },
+    {
+      "command": "WAIT_FOR_SELECTOR",
+      "params": {
+        "selector": "table#application_results_table > tbody > tr >> td > button.view_application"
+      },
+      "description": "Wait for search results.",
+      "frame_name": null
+    },
+    {
+      "command": "CLICK_ELEMENT",
+      "params": {
+        "selector": "table#application_results_table > tbody > tr >> td > button.view_application"
+      },
+      "description": "Click the search result to view details.",
+      "frame_name": null
+    }
+  ],
+  "results_page_processing": {
+    "listing_container_selector": "table#application_results_table > tbody > tr",
+    "listing_link_blueprint": {
+      "selector": "td > button.view_application",
+      "extraction_method": "ATTRIBUTE",
+      "attribute_name": "data-id",
+      "post_processing": null
+    },
+    "listing_address_blueprint": {
+      "selector": "td[data-label=\"Location Details\"]",
+      "extraction_method": "TEXT",
+      "attribute_name": null,
+      "post_processing": null
+    },
+    "pagination_blueprint": null
+  },
+  "detail_page_processing": {},
+  "document_page_processing": null
+}

@@ -1,0 +1,118 @@
+{
+  "domain": "www.northdevon.gov.uk",
+  "plan_version": "3.0",
+  "last_updated": "2026-03-26T11:21:48.839423Z",
+  "instructions": [
+    {
+      "command": "GOTO_URL",
+      "params": {
+        "url": "https://planning.northdevon.gov.uk/"
+      },
+      "description": "Navigate to the search page.",
+      "frame_name": null
+    },
+    {
+      "command": "FILL_INPUT",
+      "params": {
+        "selector": "#QuickSearch",
+        "value": "{{REFERENCE_ID}}"
+      },
+      "description": "Fill the reference number into the main search input field located in the center of the page.",
+      "frame_name": null
+    },
+    {
+      "command": "CLICK_ELEMENT",
+      "params": {
+        "selector": "#submitBtn"
+      },
+      "description": "Click the explicit Search button to submit the form.",
+      "frame_name": null
+    },
+    {
+      "command": "WAIT_FOR_SELECTOR",
+      "params": {
+        "selector": ".results-list, table, h1:has-text('Results'), #results",
+        "state": "attached"
+      },
+      "description": "Wait for the results table or search outcome page to appear.",
+      "frame_name": null
+    },
+    {
+      "command": "WAIT_FOR_SELECTOR",
+      "params": {
+        "selector": "#MainDetails"
+      },
+      "description": "Wait for Application Details modal/view to appear.",
+      "frame_name": null
+    },
+    {
+      "command": "WAIT_FOR_SELECTOR",
+      "params": {
+        "selector": "a[aria-label='Tab heading: Documents.']"
+      },
+      "description": "Wait for detail page.",
+      "frame_name": null
+    },
+    {
+      "command": "CLICK_ELEMENT",
+      "params": {
+        "selector": "a[aria-label='Tab heading: Documents.']"
+      },
+      "description": "Open Documents tab.",
+      "frame_name": null
+    },
+    {
+      "command": "WAIT_FOR_SELECTOR",
+      "params": {
+        "selector": "table.document-list tbody tr.row_link"
+      },
+      "description": "Wait for documents table.",
+      "frame_name": null
+    }
+  ],
+  "results_page_processing": {
+    "listing_container_selector": "#MainDetails",
+    "listing_link_blueprint": {
+      "selector": "body",
+      "extraction_method": "ATTRIBUTE",
+      "attribute_name": "id",
+      "post_processing": null
+    },
+    "listing_address_blueprint": {
+      "selector": "body",
+      "extraction_method": "TEXT",
+      "attribute_name": null,
+      "post_processing": null
+    },
+    "pagination_blueprint": null
+  },
+  "detail_page_processing": {},
+  "document_page_processing": {
+    "document_tab_selector": null,
+    "document_container_selector": "table.document-list tbody tr.row_link",
+    "document_link_blueprint": {
+      "selector": "a.singledownloadlink",
+      "extraction_method": "ATTRIBUTE",
+      "attribute_name": "data-disabled-link",
+      "post_processing": null
+    },
+    "document_date_blueprint": {
+      "selector": "td:nth-child(3)",
+      "extraction_method": "TEXT",
+      "attribute_name": null,
+      "post_processing": null
+    },
+    "document_type_blueprint": {
+      "selector": "td:nth-child(4)",
+      "extraction_method": "TEXT",
+      "attribute_name": null,
+      "post_processing": null
+    },
+    "pagination_blueprint": null,
+    "batch_processing": {
+      "checkbox_selector": "input[name='selectedDoc']",
+      "select_all_selector": "input.selectAll",
+      "batch_action_button_selector": "input#PlanningDownloadBtn"
+    }
+  }
+}

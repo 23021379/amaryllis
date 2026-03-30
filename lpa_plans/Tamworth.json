@@ -1,0 +1,80 @@
+{
+  "domain": "www.tamworth.gov.uk",
+  "plan_version": "3.0",
+  "last_updated": "2026-03-27T19:35:45.126609Z",
+  "instructions": [
+    {
+      "command": "GOTO_URL",
+      "params": {
+        "url": "https://planning.tamworth.gov.uk/northgate/planningexplorer/generalsearch.aspx"
+      },
+      "description": "Navigate to the search page.",
+      "frame_name": null
+    },
+    {
+      "command": "FILL_INPUT",
+      "params": {
+        "selector": "input#txtApplicationNumber",
+        "value": "{{REFERENCE_ID}}"
+      },
+      "description": "Fill the Application Number input field with the target reference ID.",
+      "frame_name": null
+    },
+    {
+      "command": "CLICK_ELEMENT",
+      "params": {
+        "selector": "input#csbtnSearch"
+      },
+      "description": "Submit the search by clicking the 'Search' button.",
+      "frame_name": null
+    },
+    {
+      "command": "WAIT_FOR_NAVIGATION",
+      "params": {},
+      "description": "Wait for navigation to the search results page.",
+      "frame_name": null
+    },
+    {
+      "command": "WAIT_FOR_SELECTOR",
+      "params": {
+        "selector": "h1:has-text('Application Details'), h1:has-text('Search Results'), #searchresults"
+      },
+      "description": "Wait for the search results or application summary to load on the page.",
+      "frame_name": null
+    },
+    {
+      "command": "WAIT_FOR_SELECTOR",
+      "params": {
+        "selector": "table.display_table > tbody > tr.Row1 >> td[title=\"View Application Details\"] > a"
+      },
+      "description": "Wait for search results.",
+      "frame_name": null
+    },
+    {
+      "command": "CLICK_ELEMENT",
+      "params": {
+        "selector": "table.display_table > tbody > tr.Row1 >> td[title=\"View Application Details\"] > a"
+      },
+      "description": "Click the search result to view details.",
+      "frame_name": null
+    }
+  ],
+  "results_page_processing": {
+    "listing_container_selector": "table.display_table > tbody > tr.Row1",
+    "listing_link_blueprint": {
+      "selector": "td[title=\"View Application Details\"] > a",
+      "extraction_method": "ATTRIBUTE",
+      "attribute_name": "href",
+      "post_processing": null
+    },
+    "listing_address_blueprint": {
+      "selector": "td[title=\"View Application Details\"] > a",
+      "extraction_method": "TEXT",
+      "attribute_name": null,
+      "post_processing": null
+    },
+    "pagination_blueprint": null
+  },
+  "detail_page_processing": {},
+  "document_page_processing": null
+}

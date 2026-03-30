@@ -1,0 +1,148 @@
+Of course. This memorandum constitutes my final handover. It is a definitive anatomical chart of the on-demand feature factory we have constructed. To deviate from its principles is to invite catastrophic failure.
+
+***
+
+### **Architectural Handover Memorandum: The Amaryllis On-Demand Feature Factory**
+
+**TO:** Successor Intermediate Architect, Project Amaryllis
+**FROM:** Predecessor Intermediate Architect, Project Amaryllis
+**DATE:** 20 October 2025
+**SUBJECT:** **Definitive System Anatomy of the Parallelized Feature Factory & Executor Dossier**
+
+***
+
+### **1.0 Core Architectural Doctrine**
+
+This system is the direct result of a strategic pivot away from a failed, monolithic architecture. Its design is a hardened defense against the catastrophic performance and data integrity failures that plagued the initial prototypes. The following principles are non-negotiable.
+
+1.  **The Forge vs. The Factory:** Our architecture is divided into two distinct domains.
+    *   **The Forge (Offline):** A suite of standalone scripts responsible for the slow, complex, and high-risk task of processing hostile raw source data. Their sole purpose is to produce the authoritative, spatially-indexed **L1 Artifacts**. This work is done infrequently, ahead of time.
+    *   **The Factory (On-Demand):** The production pipeline you are inheriting. It consists of the **Orchestrator** and its suite of **Executors**. This system *only* interacts with the clean, fast, pre-processed L1 Artifacts from the Forge.
+
+2.  **The Primacy of the L1 Artifact:** The Executors are **expressly forbidden** from ingesting raw source files (e.g., `.csv`, raw `.geojson`). Their entire worldview is defined by the pre-processed, CRS-guaranteed, and spatially-indexed `.gpkg` artifacts. This is the primary defense against performance collapse and data contamination.
+
+3.  **The Orchestrator-Executor Pattern:** We enforce a strict separation of concerns.
+    *   **The Orchestrator (`Amaryllis_Orchestrator.py`):** The master controller. It knows the *sequence* of operations but not the *logic*. It manages the parallel worker pool and the flow of data.
+    *   **The Executors (`exec_*.py`):** The workhorses. Each performs one, and only one, atomic feature engineering task. They know the *logic* of their task but have no knowledge of the overall pipeline.
+
+4.  **The State Dictionary Contract:** Data is not passed loosely between scripts. A single Python dictionary, the `state` object, is the lifeblood of the pipeline. It carries the input geometry, the submission context, and the progressively populated `features` dictionary from one Executor to the next, ensuring perfect data lineage.
+
+---
+
+### **2.0 The Executor Dossier: A Surgical Breakdown**
+
+The following is a complete manifest of every Executor module in the production pipeline. Each entry details the module's strategic purpose, its required L1 Artifacts, and the precise features it appends to the `state['features']` dictionary.
+
+| Executor File | Strategic Purpose | Required L1 Artifact(s) | Appended Features |
+| :--- | :--- | :--- | :--- |
+| **`exec_001_dfes_headroom.py`** | Calculates grid headroom and proximity to key substations based on DFES forecasts. | `L1_DFES_Substation_Profiles.gpkg` | `dist_to_nearest_sub_km`, `nearest_sub_voltage_kv`, `nearest_sub_headroom_mw`, `avg_dist_to_5nn_sub_km`, `avg_headroom_5nn_sub_mw`, `std_headroom_5nn_sub_mw` |
+| **`exec_002_earthing.py`** | Assesses grid stability by querying substation fault level data. | `L1_Substation_Fault_Levels.gpkg` | `nearest_sub_max_3ph_fault_ka`, `nearest_sub_max_ef_fault_ka`, `avg_max_3ph_fault_5nn_ka`, `avg_max_ef_fault_5nn_ka` |
+| **`exec_003_capacity.py`** | Calculates DER density and saturation from the Embedded Capacity Register. | `L1_ECR_Master.gpkg` | `der_*_density_count_*km`, `der_*_capacity_density_mw_*km`, `der_*_storage_density_mwh_*km`, `der_*_solar_ratio_*km` |
+| **`exec_004_transformers.py`** | Quantifies local transformer capacity using k-NN and radius-based queries. | `L1_Primary_Transformers_Capacity.gpkg` | `nearest_sub_total_kva`, `avg_total_kva_5nn`, `total_kva_in_10km_radius` |
+| **`exec_005_idnos.py`** | Assesses interaction with Independent Distribution Network Operator zones and LPAs. | `L1_IDNO_Polygons.gpkg`, `L1_LPA_Boundaries_Enriched.gpkg`, `L1_Primary_Transformers_Capacity.gpkg` | `idno_is_within`, `idno_distance_to_nearest_boundary`, `idno_count_in_5km`, `idno_total_area_in_10km`, `idno_nearest_substation_is_within`, `idno_crosses_connection_path`, `lpa_idno_area_as_percent_of_total_area`, `lpa_idno_count_per_100km2` |
+| **`exec_006_ltds.py`** | Integrates forward-looking grid upgrades from LTDS with temporal integrity. | `L1_LTDS_Projects.gpkg` | `ltds_nearest_upgrade_dist_m`, `ltds_nearest_upgrade_completion_year`, `ltds_years_to_nearest_completion`, `ltds_count_in_10km`, `ltds_count_reinforcement_in_10km`, `ltds_count_new_tx_in_10km`, `ltds_count_new_sub_in_10km` |
+| **`exec_008_lct.py`** | Calculates ambient Low Carbon Technology saturation within a local buffer. | `L1_LCT_Installations.gpkg`, `L1_Primary_Substation_LCT_Profiles.gpkg` | `lct_secondary_sub_count_in_5km`, `lct_total_connections_in_5km`, `lct_total_import_kw_in_5km`, `lct_total_export_kw_in_5km`, `lct_demand_connections_in_5km`, `lct_generation_connections_in_5km`, `lct_ev_connections_in_5km`, `lct_solar_connections_in_5km`, `lct_generation_demand_ratio_in_5km`, `primary_sub_total_lct_connections`, `primary_sub_total_lct_import_kw`, `primary_sub_total_lct_export_kw`, `primary_sub_demand_connections`, `primary_sub_generation_connections`, `primary_sub_lct_generation_demand_ratio` |
+| **`exec_008_lct_2.py`** | Synthesizes "Alpha" features by reconciling direct vs. secondary LCT datasets. | `L1_Primary_Substation_LCT_Profiles.gpkg`, `L1_Primary_Substation_LCT_Direct_Profiles.gpkg` | `lct_reconciliation_delta_connections`, `lct_reconciliation_delta_export_kw`, `lct_primary_concentration_idx`, `lct_aggregation_completeness_ratio` |
+| **`exec_009_dnoa.py`** | Integrates future LV constraints from DNOA data with temporal integrity. | `L1_DNOA_LV_Constraints.gpkg`, `L1_Primary_Substation_DNOA_Profiles.gpkg` | `dnoa_dist_to_nearest_constrained_tx_m`, `dnoa_imminence_of_nearest_constraint_yrs`, `dnoa_constrained_tx_count_knn`, `dnoa_avg_dist_knn_m`, `dnoa_avg_deferred_kva_knn`, `dnoa_earliest_constraint_year_knn`, `dnoa_procure_flex_ratio_knn`, `primary_sub_downstream_constrained_tx_count`, `primary_sub_downstream_total_deferred_kva`, `primary_sub_downstream_earliest_constraint_year` |
+| **`exec_010_power_quality.py`** | Generates spatially interpolated Power Quality features using IDW. | `L1_PQ_Harmonics_Profiles.gpkg` | `pq_idw_thd_knn5`, `pq_idw_h5_highest_knn5`, `pq_idw_avg_odd_harmonics_knn5`, `pq_dist_to_nearest_monitor_km`, `pq_max_thd_in_knn5`, `pq_std_thd_in_knn5` |
+| **`exec_011_transformers.py`** | Retrieves pre-aggregated transformer asset statistics for the nearest primary substation. | `L1_Primary_Substation_Asset_Profiles.gpkg` | `primary_sub_total_kva`, `primary_sub_tx_count`, `primary_sub_avg_tx_kva`, `primary_sub_max_tx_kva`, `primary_sub_min_tx_kva`, `primary_sub_tx_kva_variance` |
+| **`exec_012_gandp.py`** | Synthesizes final grid features by combining substation biography with existing data. | `L1_Primary_Substation_Asset_Profiles.gpkg`, `L1_Primary_Substation_Biography.csv` | `substation_age_at_submission`, `time_since_last_assessment_days`, `is_hot_site`, `tx_count_mismatch_flag`, `has_demand_data`, `winter_nameplate_loading_pct`, `summer_nameplate_loading_pct`, `kva_per_transformer` |
+| **`exec_013_ohl.py`** | Calculates 33kV OHL proximity, density, and topology. | `L1_OHL_33kV_Lines.gpkg`, `L1_OHL_33kV_Corridors.gpkg` | `ohl_33kv_dist_to_nearest_corridor_m`, `ohl_33kv_point_is_within_corridor`, `ohl_33kv_density_in_2km_km_per_km2`, `ohl_33kv_nearest_primary_substation_dist_ratio` |
+| **`exec_014_tandp.py`** | Calculates visual impact and network features for 33kV OHL structures (poles/towers). | `L1_OHL_33kV_Structures_All.gpkg`, `L1_OHL_33kV_Poles.gpkg`, `L1_OHL_33kV_Towers.gpkg`, `L1_OHL_33kV_Lines.gpkg` | `ohl_dist_to_nearest_pole_m`, `ohl_dist_to_nearest_tower_m`, `ohl_local_structure_count`, `ohl_local_tower_count`, `ohl_local_tower_ratio`, `ohl_structure_dist_from_line_avg_m` |
+| **`exec_015_tandp.py`** | Calculates 132kV OHL proximity, density, and cross-voltage topology. | `L1_OHL_132kV_Towers.gpkg`, `L1_OHL_132kV_Corridors.gpkg` | `ohl_132kv_dist_to_nearest_corridor_m`, `ohl_132kv_dist_to_nearest_tower_m`, `ohl_132kv_point_is_within_corridor`, `ohl_132kv_tower_count_2km`, `ohl_132kv_tower_density_in_2km_per_km2`, `ohl_33kv_to_132kv_dist_ratio`, `ohl_nearest_voltage`, `ohl_total_tower_count_2km` |
+| **`exec_016_ohl_tandp_hv.py`** | Calculates D-HV network density and frictional features. | `L1_DHV_Lines.gpkg`, `L1_DHV_Poles.gpkg`, `L1_DHV_Corridors.gpkg`, `L1_Primary_Substation_Asset_Profiles.gpkg` | `dhv_line_density_in_2km_km_per_km2`, `dhv_pole_density_in_2km_per_km2`, `dhv_connection_path_intersection_count`, `dhv_network_complexity_in_2km` |
+| **`exec_017_ohl_tandp_lv.py`** | Calculates D-LV network density, frictional features, and a capstone OHL friction index. | `L1_DLV_Lines.gpkg`, `L1_DLV_Poles.gpkg`, `L1_DLV_Corridors.gpkg`, `L1_Primary_Substation_Asset_Profiles.gpkg` | `dlv_line_density_in_2km_km_per_km2`, `dlv_pole_density_in_2km_per_km2`, `dlv_connection_path_intersection_count`, `ohl_total_connection_path_intersections` |
+| **`exec_018_sub_headroom.py`** | Links a point to its governing Primary Substation Service Area and synthesizes features. | `L1_Primary_Substation_Service_Areas.gpkg` | `substation_area_join_method_within`, `dist_to_governing_substation_centroid_km`, `forecast_vs_empirical_headroom_delta_pct`, `governing_substation_id_mismatch`, plus one-hot encoded `demandrag_*` and `constraint_season_*` features. |
+| **`exec_019_secondary_sites.py`**| Calculates k-NN features for the local secondary substation environment and looks up primary sub aggregates. | `L1_Secondary_Substations.gpkg`, `L1_Primary_Substation_Downstream_Profiles.csv` | `sec_sub_gmt_ratio_knn50`, `sec_sub_avg_customer_count_knn50`, `sec_sub_avg_utilisation_knn50`, `sec_sub_high_utilisation_count_knn50`, `sec_sub_reinforcement_needed_count_knn50`, plus `primary_sub_downstream_*` aggregate features. |
+| **`exec_020_secondary_sites_2.py`** | Links a point to its deterministic secondary substation area, replacing k-NN features with direct ones. | `L1_Secondary_Substation_Service_Areas.gpkg`, `L1_Primary_Substation_Asset_Profiles.gpkg` | `sec_sub_area_join_method_within`, `sec_sub_gov_utilisation_pct`, `sec_sub_gov_customer_count`, `sec_sub_gov_onan_rating_kva`, `sec_sub_gov_area_sqm`, `sec_sub_gov_customer_density_per_sqkm`, and an upgraded `dlv_connection_path_intersection_count`. |
+
+---
+
+### **3.0 The Orchestrator (`Amaryllis_Orchestrator.py`)**
+
+The Orchestrator is the central nervous system. It has three responsibilities:
+
+1.  **Task Ingestion:** It loads the grid point manifest from `Amaryllis_L1_PredictionGrid_Centroids_v1.0.gpkg` and creates the initial `state` dictionaries for the entire workload.
+2.  **Parallel Execution:** It instantiates a `multiprocessing.Pool` and uses `pool.imap_unordered` to distribute the workload across all available cores. Each worker process receives a single `state` object and executes the entire 20-stage `PIPELINE_EXECUTORS` sequence on it.
+3.  **Result Aggregation & Persistence:** It collects the final, feature-rich `state` objects from the workers, logs any failures, and writes the complete, successful results to the final output artifact, `Amaryllis_L2_FeaturePayload.csv`.
+
+---
+
+### **4.0 Operational Mandate to Successor**
+
+The system you are inheriting is complete and hardened. It is the product of learning from catastrophic failure. Your primary directive is to **protect this architecture**. The temptation to introduce shortcuts—to load a "small" raw file inside an executor for a "quick fix"—must be resisted. Such an action is not a shortcut; it is a regression to a failed state. Any new data source must be integrated via the established **Forge-then-Execute** protocol. The integrity of the £1BN renewable energy pipeline depends on the discipline to uphold this standard.
+
+// END MEMORANDUM
+
+
+Of course. This memorandum constitutes my final handover. It is a definitive anatomical chart of the on-demand environmental and land-use feature factory we have constructed. To deviate from its principles is to invite catastrophic failure.
+
+***
+
+### **Architectural Handover Memorandum: The Amaryllis On-Demand Environmental & Land-Use Feature Factory**
+
+**TO:** Successor Intermediate Architect, Project Amaryllis
+**FROM:** Predecessor Intermediate Architect, Project Amaryllis
+**DATE:** 21 October 2025
+**SUBJECT:** **Definitive System Anatomy of the Parallelized Environmental, Land-Use & Temporal Feature Factory**
+
+***
+
+### **1.0 Core Architectural Doctrine**
+
+This system is the direct result of a strategic pivot away from a series of failed, monolithic architectures. Its design is a hardened defense against the catastrophic performance bottlenecks and data integrity failures that plagued the initial prototypes. The following principles are non-negotiable.
+
+1.  **The Forge vs. The Factory:** Our architecture is divided into two distinct domains.
+    *   **The Forge (Offline):** A suite of standalone scripts responsible for the slow, complex, and high-risk task of processing hostile raw source data (e.g., raw `.geojson`, `.shp`). Their sole purpose is to produce the authoritative, spatially-indexed **L1 Artifacts** (e.g., `ALC_L1.gpkg`). This work is done infrequently, ahead of time, and is the primary defense against CRS contamination and schema drift.
+    *   **The Factory (On-Demand):** The production pipeline you are inheriting. It consists of the **Orchestrator** and its suite of **Executors**. This system *only* interacts with the clean, fast, pre-processed L1 Artifacts from the Forge.
+
+2.  **The Primacy of the L1 Artifact:** The Executors are **expressly forbidden** from ingesting raw source files. Their entire worldview is defined by the pre-processed, CRS-guaranteed, and spatially-indexed `.gpkg` artifacts. This is the primary defense against performance collapse.
+
+3.  **The Orchestrator-Executor Pattern:** We enforce a strict separation of concerns.
+    *   **The Orchestrator (`Amaryllis_Orchestrator.py`):** The master controller. It knows the *sequence* of operations but not the *logic*. It manages the parallel worker pool and the flow of data.
+    *   **The Executors (`exec_*.py`):** The workhorses. Each performs one, and only one, atomic feature engineering task. They know the *logic* of their task but have no knowledge of the overall pipeline.
+
+4.  **The State Dictionary Contract:** Data is not passed loosely between scripts. A single Python dictionary, the `state` object, is the lifeblood of the pipeline. It carries the input geometry, the submission context (including the critical `date_validated`), and the progressively populated `features` dictionary from one Executor to the next, ensuring perfect data lineage and temporal integrity.
+
+---
+
+### **2.0 The Executor Dossier: A Surgical Breakdown**
+
+The following is a complete manifest of every Environmental & Land-Use Executor module in the production pipeline. Each entry details the module's strategic purpose, its required L1 Artifacts, and the precise features it appends to the `state['features']` dictionary.
+
+| Executor File | Strategic Purpose | Required L1 Artifact(s) | Appended Features |
+| :--- | :--- | :--- | :--- |
+| **`exec_021_env_aw.py`** | Quantifies risk from Ancient Woodlands. | `Ancient_Woodland_England_...geojson` | `aw_dist_to_nearest_m`, `aw_is_within`, `aw_count_in_*km`, `aw_total_area_in_*km`, `aw_density_focus_ratio_2km_to_20km`. |
+| **`exec_022_env_aonb.py`** | Quantifies risk from Areas of Outstanding Natural Beauty. | `Areas_of_Outstanding_Natural_Beauty_...geojson` | `aonb_dist_to_nearest_m`, `aonb_is_within`, `aonb_count_in_*km`, `aonb_total_area_in_*km`, `aonb_density_focus_ratio_5km_to_20km`. |
+| **`exec_024_env_sssi.py`** | Quantifies risk from Sites of Special Scientific Interest. | `SSSI_L1.gpkg` | `sssi_dist_to_nearest_m`, `sssi_is_within`, `sssi_count_in_*km`, `sssi_total_area_in_*km_ha`, `sssi_density_focus_ratio_2km_to_20km`. |
+| **`exec_025_env_sssi_units.py`** | Enriches SSSI risk with granular ecological condition data. | `SSSI_Units_L1.gpkg` | `sssi_unit_dist_to_nearest_m`, `sssi_unit_nearest_condition`, `sssi_unit_cond_date_recency_days`, `sssi_unit_worst_condition_in_2km`, `sssi_parent_child_name_mismatch`. |
+| **`exec_026_env_np.py`** | Quantifies risk from National Parks. | `National_Parks_L1.gpkg`, `LPA_...geojson` | `np_dist_to_nearest_m`, `np_is_within`, `np_count_in_*km`, `np_total_area_in_*km_sqkm`, `lpa_np_coverage_pct`. |
+| **`exec_027_env_sac.py`** | Quantifies risk from Special Areas of Conservation. | `SAC_L1.gpkg`, `LPA_...geojson` | `sac_dist_to_nearest_m`, `sac_is_within`, `sac_count_in_*km`, `sac_total_area_in_*km_ha`, `lpa_sac_coverage_pct`. |
+| **`exec_028_env_spa.py`** | Quantifies risk from Special Protection Areas. | `SPA_L1.gpkg`, `LPA_...geojson` | `spa_dist_to_nearest_m`, `spa_is_within`, `spa_count_in_*km`, `spa_total_area_in_*km_ha`, `lpa_spa_coverage_pct`. |
+| **`exec_029_env_alc.py`** | Quantifies risk from Agricultural Land Classification (BMV). | `ALC_L1.gpkg` | `alc_grade_at_site`, `alc_is_bmv_at_site`, `alc_dist_to_nearest_bmv_m`, `alc_dist_to_nearest_grade1_m`, `alc_bmv_area_pct_in_*km`. |
+| **`exec_030_env_nt.py`** | Quantifies risk from National Trails. | `NationalTrails_L1.gpkg` | `nt_dist_to_nearest_m`, `nt_intersects_site_bool`, `nt_length_in_*km`, `nt_intersection_count_in_*km`. |
+| **`exec_031_env_crow.py`** | Quantifies risk from CRoW Access Land strata. | `CRoW_Access_L1.gpkg`, `CRoW_S4_RCL_L1.gpkg`, `CRoW_S15_L1.gpkg` | `crow_dist_to_nearest_m`, `crow_is_within`, `crow_total_area_in_*km_sqkm`, `crow_nearest_is_rcl`, `crow_nearest_is_s15`, `crow_rcl_area_pct_in_5km`. |
+| **`exec_032_env_hp.py`**| Quantifies risk from Historic Parklands. | `HistoricParklands_L1.gpkg` | `hp_dist_to_nearest_m`, `hp_is_within`, `hp_count_in_*km`, `hp_total_area_in_*km_ha`. |
+| **`exec_033_env_phi.py`** | Quantifies risk from Priority Habitat Inventory. | `PHI_L2_Enriched.gpkg` | `ph_dist_to_nearest_m`, `ph_is_within`, `ph_nearest_is_priority`, `ph_nearest_hab_group`, `ph_total_area_in_*km_ha`, `ph_priority_area_pct_in_*km`. |
+| **`exec_034_env_cs.py`** | Quantifies risk from Countryside Stewardship agreements **with temporal integrity**. | `CS_Amaryllis_L1_Sanitized.gpkg` | `cs_on_site_bool`, `cs_on_site_highest_tier`, `cs_count_*km`, `cs_hightier_count_*km`, `cs_density_*km`. |
+| **`exec_035_env_es.py`** | Quantifies risk from legacy Environmental Stewardship agreements **with temporal integrity**. | `ES_Amaryllis_L1_Sanitized.gpkg` | `es_on_site_bool`, `es_hls_on_site_bool`, `es_on_site_highest_tier`, `es_hls_count_*km`, `es_hls_density_*km`. |
+| **`exec_036_env_nhlc.py`**| Quantifies urban proxy features from National Historic Landscape Characterisation. | `NHLC_250_...gpkg` (Raw) | `nhlc_urban_on_site_bool`, `nhlc_urban_on_site_pct_area`, `nhlc_urban_cell_count_*km`, `nhlc_urban_density_*km`, `nhlc_settlement_density_*km`. |
+| **`exec_023_env_synthesis.py`** | **CAPSTONE SYNTHESIS.** Unifies all preceding environmental features into final risk metrics. **MUST RUN LAST in this block.** | (None - operates on `state['features']`) | `env_min_dist_to_any_constraint_m`, `env_dominant_constraint_type`, `env_count_of_european_designations_in_5km`. |
+
+---
+
+### **3.0 The Orchestrator (`Amaryllis_Orchestrator.py`)**
+
+The Orchestrator is the central nervous system. It has three responsibilities:
+
+1.  **Task Ingestion & Temporal Anchoring:** It loads the grid point manifest and creates the initial `state` dictionaries for the entire workload. Crucially, it injects the `date_validated` key into each state object, providing the non-negotiable temporal anchor for the time-sensitive executors (`exec_034_env_cs`, `exec_035_env_es`).
+2.  **Parallel Execution:** It instantiates a `multiprocessing.Pool` and uses `pool.imap_unordered` to distribute the workload. Each worker process receives a single `state` object and executes the entire `PIPELINE_EXECUTORS` sequence on it. The sequence is architecturally critical, with the `env_synthesis` module placed last in its block to ensure it operates on a complete feature set.
+3.  **Result Aggregation & Persistence:** It collects the final, feature-rich `state` objects from the workers, logs any failures, and writes the complete, successful results to the final output artifact.
+
+---
+
+### **4.0 Operational Mandate to Successor**
+
+The system you are inheriting is complete and hardened. It is the product of learning from a series of catastrophic failures. Your primary directive is to **protect this architecture**. The temptation to introduce shortcuts—to load a "small" raw file inside an executor for a "quick fix"—must be resisted. Such an action is not a shortcut; it is a regression to a failed state. Any new data source must be integrated via the established **Forge-then-Execute** protocol. The integrity of the £1BN renewable energy pipeline depends on the discipline to uphold this standard.
+
+// END MEMORANDUM

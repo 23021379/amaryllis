@@ -1,0 +1,16 @@
+The model is not performing well. 
+I have tinkered with the architecture of the model, but this has led no where. This proves there is an issue with the data.
+Theoretically, the data is sound, there are very few nans, the actual features should correlate to the time to grant, etc.
+The model should be performing well, clearly there is an error somewhere.
+
+1. merge errors. 
+	Due to the lack of a single unique identifier, we cannot cguarantee that merges between files are 100% accurate.
+	Here is an example:
+		2_step_integrate_stewardship.py, 2_step_13_integrate_ESS.py
+		df_l41_temporal = pd.merge(df_l41, df_temporal_key, left_index=True, right_index=True, how='left')
+		This line of code performs a merge based on the integer index of two separate data artifacts. This architecture makes a fatal assumption: that the row order in L41 is, and 		always will be, perfectly identical to the row order in L26
+
+2. sjoin_nearest Ambiguity
+	sjoin_nearest is a powerful tool, but it is geometrically naive. It correctly finds the closest point of a polygon, but this may not represent the true planning relationship. A solar 	farm may be physically closer to the boundary of SSSI 'A' but functionally located within the impact zone of SSSI 'B'.
+	
+	Essentially, sjoin may be causing farms to be assigned the values of a different LPA to the one it is actually in, which is harmful!

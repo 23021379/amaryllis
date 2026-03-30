@@ -1,0 +1,117 @@
+{
+  "domain": "www.stirling.gov.uk",
+  "plan_version": "3.0",
+  "last_updated": "2026-03-27T18:57:56.707861Z",
+  "instructions": [
+    {
+      "command": "GOTO_URL",
+      "params": {
+        "url": "https://pabs.stirling.gov.uk/online-applications/search.do?action=simple&searchType=Application"
+      },
+      "description": "Navigate to the Simple Search page for Planning Applications.",
+      "frame_name": null
+    },
+    {
+      "command": "FILL_INPUT",
+      "params": {
+        "selector": "input#simpleSearchString",
+        "value": "{{REFERENCE_ID}}"
+      },
+      "description": "Fill the search input with the target reference ID, keyword, postcode or address line.",
+      "frame_name": null
+    },
+    {
+      "command": "CLICK_ELEMENT",
+      "params": {
+        "selector": "input[type=\"submit\"][value=\"Search\"]"
+      },
+      "description": "Submit the search by clicking the 'Search' button.",
+      "frame_name": null
+    },
+    {
+      "command": "WAIT_FOR_SELECTOR",
+      "params": {
+        "selector": "#searchresults, .search-results, h1:has-text('Summary'), h1:has-text('Application Details')"
+      },
+      "description": "Wait for the search results page or direct application details page to load.",
+      "frame_name": null
+    },
+    {
+      "command": "WAIT_FOR_SELECTOR",
+      "params": {
+        "selector": "table#simpleDetailsTable"
+      },
+      "description": "Wait for Application Details modal/view to appear.",
+      "frame_name": null
+    },
+    {
+      "command": "WAIT_FOR_SELECTOR",
+      "params": {
+        "selector": "a#tab_documents"
+      },
+      "description": "Wait for detail page.",
+      "frame_name": null
+    },
+    {
+      "command": "CLICK_ELEMENT",
+      "params": {
+        "selector": "a#tab_documents"
+      },
+      "description": "Open Documents tab.",
+      "frame_name": null
+    },
+    {
+      "command": "WAIT_FOR_SELECTOR",
+      "params": {
+        "selector": "table#Documents tbody tr:not(:first-child)"
+      },
+      "description": "Wait for documents table.",
+      "frame_name": null
+    }
+  ],
+  "results_page_processing": {
+    "listing_container_selector": "table#simpleDetailsTable",
+    "listing_link_blueprint": {
+      "selector": "body",
+      "extraction_method": "ATTRIBUTE",
+      "attribute_name": "id",
+      "post_processing": null
+    },
+    "listing_address_blueprint": {
+      "selector": "body",
+      "extraction_method": "TEXT",
+      "attribute_name": null,
+      "post_processing": null
+    },
+    "pagination_blueprint": null
+  },
+  "detail_page_processing": {},
+  "document_page_processing": {
+    "document_tab_selector": null,
+    "document_container_selector": "table#Documents tbody tr:not(:first-child)",
+    "document_link_blueprint": {
+      "selector": "td:nth-child(6) a",
+      "extraction_method": "ATTRIBUTE",
+      "attribute_name": "href",
+      "post_processing": null
+    },
+    "document_date_blueprint": {
+      "selector": "td:nth-child(2)",
+      "extraction_method": "TEXT",
+      "attribute_name": null,
+      "post_processing": null
+    },
+    "document_type_blueprint": {
+      "selector": "td:nth-child(3)",
+      "extraction_method": "TEXT",
+      "attribute_name": null,
+      "post_processing": null
+    },
+    "pagination_blueprint": null,
+    "batch_processing": {
+      "checkbox_selector": "input.bulkCheck",
+      "select_all_selector": null,
+      "batch_action_button_selector": "button#downloadFiles"
+    }
+  }
+}

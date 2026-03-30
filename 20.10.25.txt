@@ -1,0 +1,88 @@
+ground mounted solar installations in UKPN account for ~1% of the total dataset; there are 250 rows, 450 features.
+
+
+Reintegrating other technology types:
+
+"""
+"technology_type": {
+        "Advanced Conversion Technologies": 0,
+        "Air Source Heat Pumps": 1,
+        "Anaerobic Digestion": 2,
+        "Battery": 3,
+        "Biomass (Dedicated)": 4,
+        "Biomass (co-firing)": 5,
+        "Biomass (dedicated)": 6,
+        "Compressed Air Energy Storage": 7,
+        "EfW Incineration": 8,
+        "Flywheels": 9,
+        "Fuel Cell (Hydrogen)": 10,
+        "Geothermal": 11,
+        "Hot Dry Rocks (HDR)": 12,
+        "Hydrogen": 13,
+        "Landfill Gas": 14,
+        "Large Hydro": 15,
+        "Liquid Air Energy Storage": 16,
+        "Pumped Storage Hydroelectricity": 17,
+        "Sewage Sludge Digestion": 18,
+        "Shoreline Wave": 19,
+        "Small Hydro": 20,
+        "Solar Photovoltaics": 21,
+        "Tidal Lagoon": 22,
+        "Tidal Stream": 23,
+        "Unknown": 24,
+        "Wind Offshore": 25,
+        "Wind Onshore": 26
+    },
+
+"""
+
+Anything that was developed on land, and was likely developed privately can still provide some signal - it helps us understand the LPA's sentiment towards a private firms development of a LCT. Will have to be flagged as non-solar.
+
+
+
+
+Reintegration of non-ground mounting types:
+"""
+"mounting_type_for_solar": {
+        "Floating": 0,
+        "Ground": 1,
+        "Ground & Roof": 2,
+        "Roof": 3,
+        "missing": 4
+    },
+"""
+
+As long as type 2 or 3 is above a certain production threshold (eg: >1MW), it can still help us understand the LPA's sentiment towards a solar installation development.
+
+
+
+Reintegration of non-UKPN developments:
+
+developments inside UKPN account for 22% of total developments. 
+	We need to convert all grid data of non-UKPN to NaNs, then impute. 
+	We need a bridge between natural data and grid data - nation-wide grid data, nation-wide urban data, etc.
+	Given a set of coordinates distance from all protected areas, infrastructure types, other developments, urban areas, etc, we should 	be able to (fairly accurately) determine what its distance to different grid features would be if it was actually inside UKPN. 
+	Will need to be flagged as non-UKPn
+
+
+
+Justification for development:
+	If the development can be justified, planning speed should reduce.
+	For example, if expected output is really high, job creation, etc, then LPA would be more fond.
+
+
+---
+
+
+Update:
+Imputation wont work. There are only 250 solar farms in UKPN; if we were to try and impute other solar farm's data, it would be inaccurate!
+Even if we use non-solar developments as well (as training data for the imputer), it would still likely be very inaccurate.
+
+I need to process other DNO data! National grid is the best - has the most solar farms, and data is extensive. SSEN also needs processing.
+Processing UKPN, SSEN, NG will result in >50% of solar farm data. We can then impute the rest safely.
+SSEN and NG will need to be processed so that the same features are produced as from UKPN! This is fine, as they share similar data - substation locations, etc.
+
+The env data is national, so these the env scripts can just be used.
+I think aggregating everything into one file (everything from the NG folder) would speed things up. This way, I just need one script that finds how many POIs (poles, transformers, whatever) are within each radii. We can then calculate densities, percentages, etc. 
+This way I do not need to process every file individually, I just process one massive file. 
+THe NG folder is quite sharded; instead of all poles being in one file, there are 200 different files for poles (idk why). If their structures are coherent, this will be quite easy. If they aren't, it will be annoying.

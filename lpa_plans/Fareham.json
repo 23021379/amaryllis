@@ -1,0 +1,129 @@
+{
+  "domain": "www.fareham.gov.uk",
+  "plan_version": "3.0",
+  "last_updated": "2026-03-24T15:25:36.554961Z",
+  "instructions": [
+    {
+      "command": "GOTO_URL",
+      "params": {
+        "url": "https://www.fareham.gov.uk/casetrackerplanning/"
+      },
+      "description": "Navigate to the search page.",
+      "frame_name": null
+    },
+    {
+      "command": "CLICK_ELEMENT",
+      "params": {
+        "selector": "a#lnkAcceptNonEssentialCookies"
+      },
+      "description": "Dismiss the cookie consent banner by clicking 'Accept non-essential cookies'.",
+      "frame_name": null
+    },
+    {
+      "command": "FILL_INPUT",
+      "params": {
+        "selector": "#BodyPlaceHolder_uxTextSearchKeywords",
+        "value": "{{REFERENCE_ID}}"
+      },
+      "description": "Fill the search input field with the planning application reference ID.",
+      "frame_name": null
+    },
+    {
+      "command": "CLICK_ELEMENT",
+      "params": {
+        "selector": "#BodyPlaceHolder_uxButtonSearch"
+      },
+      "description": "Click the 'Search' button to submit the application search.",
+      "frame_name": null
+    },
+    {
+      "command": "WAIT_FOR_SELECTOR",
+      "params": {
+        "selector": "div.searchResultsContainer:not(:empty), h1:has-text('Application Details'), h1:has-text('Planning Application Summary')"
+      },
+      "description": "Wait for the search results container to be populated or for the application details page to load.",
+      "frame_name": null
+    },
+    {
+      "command": "WAIT_FOR_SELECTOR",
+      "params": {
+        "selector": "div.searchResultsTable >> div.searchResultsHeadRow > div.searchResultsCell:nth-child(1) > a"
+      },
+      "description": "Wait for search results.",
+      "frame_name": null
+    },
+    {
+      "command": "CLICK_ELEMENT",
+      "params": {
+        "selector": "div.searchResultsTable >> div.searchResultsHeadRow > div.searchResultsCell:nth-child(1) > a"
+      },
+      "description": "Click the search result to view details.",
+      "frame_name": null
+    },
+    {
+      "command": "WAIT_FOR_SELECTOR",
+      "params": {
+        "selector": "input#BodyPlaceHolder_uxChangeView_Documents"
+      },
+      "description": "Wait for detail page.",
+      "frame_name": null
+    },
+    {
+      "command": "CLICK_ELEMENT",
+      "params": {
+        "selector": "input#BodyPlaceHolder_uxChangeView_Documents"
+      },
+      "description": "Open Documents tab.",
+      "frame_name": null
+    },
+    {
+      "command": "WAIT_FOR_SELECTOR",
+      "params": {
+        "selector": "div.docGridTable > div.docGridRow:not(:first-child)"
+      },
+      "description": "Wait for documents table.",
+      "frame_name": null
+    }
+  ],
+  "results_page_processing": {
+    "listing_container_selector": "div.searchResultsTable",
+    "listing_link_blueprint": {
+      "selector": "div.searchResultsHeadRow > div.searchResultsCell:nth-child(1) > a",
+      "extraction_method": "ATTRIBUTE",
+      "attribute_name": "href",
+      "post_processing": null
+    },
+    "listing_address_blueprint": {
+      "selector": "div.searchResultsHeadRow > div.searchResultsCell:nth-child(1) > a",
+      "extraction_method": "TEXT",
+      "attribute_name": null,
+      "post_processing": null
+    },
+    "pagination_blueprint": null
+  },
+  "detail_page_processing": {},
+  "document_page_processing": {
+    "document_tab_selector": null,
+    "document_container_selector": "div.docGridTable > div.docGridRow:not(:first-child)",
+    "document_link_blueprint": {
+      "selector": "div.docGridCells.docGridCell_3 a",
+      "extraction_method": "ATTRIBUTE",
+      "attribute_name": "href",
+      "post_processing": null
+    },
+    "document_date_blueprint": {
+      "selector": "div.docGridCells.docGridCell_0",
+      "extraction_method": "TEXT",
+      "attribute_name": null,
+      "post_processing": null
+    },
+    "document_type_blueprint": {
+      "selector": "div.docGridCells.docGridCell_1",
+      "extraction_method": "TEXT",
+      "attribute_name": null,
+      "post_processing": null
+    },
+    "pagination_blueprint": null,
+    "batch_processing": null
+  }
+}

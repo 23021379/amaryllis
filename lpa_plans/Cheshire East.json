@@ -1,0 +1,75 @@
+{
+  "domain": "www.cheshireeast.gov.uk",
+  "plan_version": "3.0",
+  "last_updated": "2026-03-23T21:39:56.855531Z",
+  "instructions": [
+    {
+      "command": "GOTO_URL",
+      "params": {
+        "url": "https://pa.cheshireeast.gov.uk/planning/index.html?fa=search"
+      },
+      "description": "Navigate to the search page.",
+      "frame_name": null
+    },
+    {
+      "command": "FILL_INPUT",
+      "params": {
+        "selector": "#application_reference_number",
+        "value": "{{REFERENCE_ID}}"
+      },
+      "description": "Fill the 'Application Reference Number' input field with the provided reference ID.",
+      "frame_name": null
+    },
+    {
+      "command": "CLICK_ELEMENT",
+      "params": {
+        "selector": "button[type='submit']:has-text('Search')"
+      },
+      "description": "Click the 'Search' button to submit the application query.",
+      "frame_name": null
+    },
+    {
+      "command": "WAIT_FOR_SELECTOR",
+      "params": {
+        "selector": "table.dataTable, h1:has-text('Application Details'), h1:has-text('Summary')",
+        "timeout": 10000
+      },
+      "description": "Wait for the search results table or application details page to load after submission.",
+      "frame_name": null
+    },
+    {
+      "command": "WAIT_FOR_SELECTOR",
+      "params": {
+        "selector": "table#application_results_table > tbody > tr >> button.view_application"
+      },
+      "description": "Wait for search results.",
+      "frame_name": null
+    },
+    {
+      "command": "CLICK_ELEMENT",
+      "params": {
+        "selector": "table#application_results_table > tbody > tr >> button.view_application"
+      },
+      "description": "Click the search result to view details.",
+      "frame_name": null
+    }
+  ],
+  "results_page_processing": {
+    "listing_container_selector": "table#application_results_table > tbody > tr",
+    "listing_link_blueprint": {
+      "selector": "button.view_application",
+      "extraction_method": "ATTRIBUTE",
+      "attribute_name": "data-id",
+      "post_processing": null
+    },
+    "listing_address_blueprint": {
+      "selector": "td[data-label=\"Application Reference\"]",
+      "extraction_method": "TEXT",
+      "attribute_name": null,
+      "post_processing": null
+    },
+    "pagination_blueprint": null
+  },
+  "detail_page_processing": {},
+  "document_page_processing": null
+}

@@ -1,0 +1,411 @@
+base) PS C:\Users\brand\Desktop\renewables\scripts>  c:; cd 'c:\Users\brand\Desktop\renewables\scripts'; & 'c:\Users\brand\AppData\Local\Programs\Python\Python313\python.exe' 'c:\Users\brand\.vscode\extensions\ms-python.debugpy-2025.16.0-win32-x64\bundled\libs\debugpy\launcher' '62231' '--' 'c:\Users\brand\Desktop\renewables\scripts\3_step_3.22_test.py' 
+
+--- EXECUTING DIRECTIVE AD-AM-17: Remediation of the Log-Transform Catastrophe ---
+--- Phase 1: Data Ingestion & Sanitization ---
+Purged 8 metadata columns.
+Removed 209 features with 100% missing values.
+  - WARNING: 'lpa_name' missing. Attempting forensic reconstruction from OHE columns...
+  - CRITICAL WARNING: Could not reconstruct 'lpa_name'. Downstream queue metrics may fail.
+  - Applying Capacity Outlier Filter (> 75MW)...
+  - Removed 326 samples with capacity > 75MW.
+Phase 1 Complete. Sanitized feature matrix shape: (2848, 419)
+--- Engineering Input-Only LPA Congestion Metrics ---
+  - Pre-split Temporal, Congestion, BESS & Tower Engineering Complete.
+  - Pre-split Temporal, Congestion, BESS, Tower & Infra Crossing Engineering Complete.
+  - Pre-split Temporal, Congestion, BESS, Tower, Infra & Ecological Engineering Complete.
+  - Pre-split Temporal, Congestion, BESS, Tower, Infra, Eco & Demographic Engineering Complete.
+  - Pre-split Temporal, Congestion, BESS, Tower, Infra, Eco, Demo & Physical Footprint Engineering Complete.
+--- Engineering Stratified Ecological Drag Features ---
+  - Pre-split Temporal, Congestion, BESS, Tower, Infra, Eco, Demo, Physical, Shield & Eco-Drag Engineering Complete.   
+--- Engineering Input-Only Temporal Velocity ---
+--- Engineering National Grid Congestion Metrics ---
+  - Pre-split Temporal (Velocity) & National Queue Engineering Complete.
+
+--- Phase 0b: Identifying Unlearnable Samples via OOF Error Analysis (Threshold: >900 days) ---
+  - Processing fold 1/5...
+  - Processing fold 2/5...
+  - Processing fold 3/5...
+  - Processing fold 4/5...
+  - Processing fold 5/5...
+  - Analysis Complete. Identified 0 potentially unlearnable samples.
+  Data split complete: Train (1992), Validation (428), Test (428)
+  - Sorting Training Data by 'submission_date' for TimeSeriesSplit...
+
+--- Phase 0: Tuning & Forging Global Oracle (Train-Set Only) ---
+  - Injecting Specialist Features into Oracle Training Data...
+  - Enforcing temporal sort for TimeSeriesSplit...
+    Sorted by ['submission_year', 'submission_month']. First Year: 2012.0, Last Year: 2025.0
+  Tuning oracle on 1992 samples and 617 features over 5 trials...
+[I 2025-12-01 19:33:41,786] A new study created in memory with name: no-name-52a5fa7d-310e-4482-ad85-af00b2238dc8
+[I 2025-12-01 19:33:44,800] Trial 0 finished with value: 98.71095141380925 and parameters: {'n_estimators': 125, 'learning_rate': 0.0504355709397818, 'num_leaves': 8, 'max_depth': 5, 'min_child_samples': 73, 'reg_alpha': 3.3923692615986116, 'reg_lambda': 8.267727050209748, 'colsample_bytree': 0.6268768796594}. Best is trial 0 with value: 98.71095141380925.
+[I 2025-12-01 19:33:51,997] Trial 1 finished with value: 102.73856497020128 and parameters: {'n_estimators': 386, 'learning_rate': 0.08810489195579671, 'num_leaves': 19, 'max_depth': 4, 'min_child_samples': 37, 'reg_alpha': 8.980534300790936, 'reg_lambda': 5.164284853731746, 'colsample_bytree': 0.6326985943920456}. Best is trial 0 with value: 98.71095141380925.
+[I 2025-12-01 19:33:55,422] Trial 2 finished with value: 98.92687633347647 and parameters: {'n_estimators': 239, 'learning_rate': 0.015991552872226072, 'num_leaves': 22, 'max_depth': 3, 'min_child_samples': 77, 'reg_alpha': 7.679346875497217, 'reg_lambda': 8.618834948517335, 'colsample_bytree': 0.6030010722040844}. Best is trial 0 with value: 98.71095141380925.
+[I 2025-12-01 19:33:58,414] Trial 3 finished with value: 99.24454033159812 and parameters: {'n_estimators': 167, 'learning_rate': 0.04038566487926618, 'num_leaves': 25, 'max_depth': 3, 'min_child_samples': 45, 'reg_alpha': 7.232809343700261, 'reg_lambda': 3.119521064021867, 'colsample_bytree': 0.6871565494344738}. Best is trial 0 with value: 98.71095141380925.
+[I 2025-12-01 19:34:02,211] Trial 4 finished with value: 100.6303908812445 and parameters: {'n_estimators': 377, 'learning_rate': 0.07658232760548582, 'num_leaves': 28, 'max_depth': 2, 'min_child_samples': 83, 'reg_alpha': 4.123614929306183, 'reg_lambda': 9.21329526000046, 'colsample_bytree': 0.46797819125663037}. Best is trial 0 with value: 98.71095141380925.
+  Oracle tuning complete. Best RMSE: 98.7110
+  Training final oracle with best parameters...
+  Oracle trained.
+  Executing SHAP analysis on Oracle...
+  SHAP analysis complete.
+  Global Context Vector (GCV) defined with Top 20 features.
+  - Persisted Oracle model to C:\Users\brand\Desktop\renewables\data\artifacts\modeling_outputs\specialist_gm_solar_v3.5_refactored\oralce_v3.5.joblib
+  - Synchronizing Feature Space: Injecting Specialist Features into Main Dataframes...
+
+--- Phase 1b (AD-AM-33): Forging k-NN Anomaly Features ---
+  - Success Atlas defined with 1992 samples on 20 GCV features.
+  - k-NN Anomaly Engine (k=10), GCV Imputer, and GCV Scaler fitted on Success Atlas.
+  - Forging features for the training set...
+  - Forging features for the validation set...
+  - Forging features for the test set...
+--- k-NN Anomaly Feature Forging Complete ---
+  - Persisted k-NN imputer, scaler, and engine artifacts to C:\Users\brand\Desktop\renewables\data\artifacts\modeling_outputs\specialist_gm_solar_v3.5_refactored
+
+--- Phase 1c (AD-AM-43): Engineering k-NN Dependent SICs ---
+  - `SIC_LPA_PRECEDENT_UNCERTAINTY` forged and appended to all data partitions.
+
+--- Phase D (AD-AM-37): Forging 5 Project Regimes via Clustering ---
+  - Defining regimes based on 5 strategic features.
+  - K-Means clusterer fitted on training data.
+  - `project_regime_id` feature forged and appended.
+  - Persisted project regime scaler and model artifacts to C:\Users\brand\Desktop\renewables\data\artifacts\modeling_outputs\specialist_gm_solar_v3.5_refactored
+
+--- v3.5 Specialist Cohort Definitions Finalized ---
+  - COHORT_PUBLIC_AMENITY: 29 features
+  - COHORT_AGRI_ENVIRONMENTAL_SCHEMES: 48 features
+  - WARNING: Cohort 'COHORT_TOPOGRAPHY_AND_ACCESS' has no features present in the dataframe. Skipping.
+  - COHORT_LPA_ALL: 32 features
+  - COHORT_GRID_ALL: 145 features
+  - COHORT_ENV_ALL: 125 features
+  - COHORT_SOCIO_ECONOMIC_ALL: 39 features
+  - COHORT_NATIONAL_PROXY_ALL: 23 features
+  - COHORT_METADATA_AND_FLAGS: 6 features
+  - COHORT_CONSOLIDATED_SPECIALIST: 49 features
+
+--- Generating Oracle predictions for train, validation, and test sets ---
+  - Generating Out-of-Fold (OOF) predictions for Training Set (Leakage Prevention)...
+  - Generating Standard Inference predictions for Validation and Test Sets...
+
+--- Forging Specialist Heads for the Conclave of Experts ---
+
+--- AD-AM-42.1: Specialist Head Target Changed to 5-Class Classification ---
+0    0.027108
+1    0.183735
+2    0.634538
+3    0.077811
+4    0.076807
+Name: proportion, dtype: float64
+
+--- AD-AM-32: Weighted Error Focusing Active ---
+  Sample weights created for specialist training. Max weight: 36.89
+
+--- Phase A (v3.9): Tuning 'Anti-Oracle' Error Correction Heads ---
+
+  - Tuning Head: COHORT_PUBLIC_AMENITY (5 trials) on Weighted Oracle Error...
+[I 2025-12-01 19:34:09,130] A new study created in memory with name: no-name-55cdc40b-9aa4-45a9-9733-116e82cd57c4
+[I 2025-12-01 19:34:41,805] Trial 0 finished with value: 1.5501490154709414 and parameters: {'max_depth': 4, 'num_leaves': 18, 'colsample_bytree': 0.5115370170187604, 'learning_rate': 0.00687588623665028, 'n_estimators': 1587, 'min_child_samples': 28, 'reg_alpha': 2.0601821344137163, 'reg_lambda': 1.8980718556929395}. Best is trial 0 with value: 1.5501490154709414.
+[I 2025-12-01 19:35:00,464] Trial 1 finished with value: 1.6709779559062483 and parameters: {'max_depth': 8, 'num_leaves': 38, 'colsample_bytree': 0.7692211679654739, 'learning_rate': 0.04434747212815992, 'n_estimators': 654, 'min_child_samples': 36, 'reg_alpha': 0.8263062219527276, 'reg_lambda': 0.36280429772171313}. Best is trial 0 with value: 1.5501490154709414.
+[I 2025-12-01 19:35:51,369] Trial 2 finished with value: 1.6606993950158657 and parameters: {'max_depth': 7, 'num_leaves': 40, 'colsample_bytree': 0.7735494265071016, 'learning_rate': 0.01369619717621703, 'n_estimators': 1880, 'min_child_samples': 33, 'reg_alpha': 0.6013178340716067, 'reg_lambda': 0.11107037678355437}. Best is trial 0 with value: 1.5501490154709414.
+[I 2025-12-01 19:36:21,508] Trial 3 finished with value: 1.587245049926888 and parameters: {'max_depth': 4, 'num_leaves': 38, 'colsample_bytree': 0.5690711445702765, 'learning_rate': 0.0050089018581185064, 'n_estimators': 1512, 'min_child_samples': 34, 'reg_alpha': 0.3357617273975842, 'reg_lambda': 0.07097993736494851}. Best is trial 0 with value: 1.5501490154709414.
+[I 2025-12-01 19:37:09,371] Trial 4 finished with value: 1.4829801981334794 and parameters: {'max_depth': 7, 'num_leaves': 38, 'colsample_bytree': 0.5954074483536365, 'learning_rate': 0.005244541691658248, 'n_estimators': 1601, 'min_child_samples': 33, 'reg_alpha': 2.592677262551868, 'reg_lambda': 0.31079026163246115}. Best is trial 4 with value: 1.4829801981334794.
+    Best Oracle Error Log Loss for COHORT_PUBLIC_AMENITY: 1.4830
+
+  - Tuning Head: COHORT_AGRI_ENVIRONMENTAL_SCHEMES (5 trials) on Weighted Oracle Error...
+[I 2025-12-01 19:37:09,373] A new study created in memory with name: no-name-bb876e92-5365-4ccf-9098-17a106376f1c
+[I 2025-12-01 19:37:28,768] Trial 0 finished with value: 1.54534700227964 and parameters: {'max_depth': 8, 'num_leaves': 15, 'colsample_bytree': 0.5850092620836143, 'learning_rate': 0.025651481284779315, 'n_estimators': 1110, 'min_child_samples': 33, 'reg_alpha': 9.534298457836515, 'reg_lambda': 0.8017278490622303}. Best is trial 0 with value: 1.54534700227964.
+[I 2025-12-01 19:37:44,203] Trial 1 finished with value: 1.6169260218130372 and parameters: {'max_depth': 5, 'num_leaves': 16, 'colsample_bytree': 0.7987019691413504, 'learning_rate': 0.04179412850051012, 'n_estimators': 734, 'min_child_samples': 21, 'reg_alpha': 2.3331615294371986, 'reg_lambda': 0.02066306752010448}. Best is trial 0 with value: 1.54534700227964.
+[I 2025-12-01 19:38:33,073] Trial 2 finished with value: 1.5740350107672716 and parameters: {'max_depth': 7, 'num_leaves': 36, 'colsample_bytree': 0.5048840281284867, 'learning_rate': 0.009551249579294437, 'n_estimators': 1927, 'min_child_samples': 45, 'reg_alpha': 0.41035945229212556, 'reg_lambda': 0.07663210820905055}. Best is trial 0 with value: 1.54534700227964.
+[I 2025-12-01 19:39:25,306] Trial 3 finished with value: 1.5988517249253107 and parameters: {'max_depth': 6, 'num_leaves': 31, 'colsample_bytree': 0.7601730370866021, 'learning_rate': 0.00779646243497545, 'n_estimators': 1793, 'min_child_samples': 23, 'reg_alpha': 0.23479478006244492, 'reg_lambda': 2.095418514713104}. Best is trial 0 with value: 1.54534700227964.
+[I 2025-12-01 19:40:09,259] Trial 4 finished with value: 1.5868130366717426 and parameters: {'max_depth': 7, 'num_leaves': 40, 'colsample_bytree': 0.5586772401503166, 'learning_rate': 0.014954289141706413, 'n_estimators': 1743, 'min_child_samples': 38, 'reg_alpha': 2.226979395322913, 'reg_lambda': 2.054010617546184}. Best is trial 0 with value: 1.54534700227964.
+    Best Oracle Error Log Loss for COHORT_AGRI_ENVIRONMENTAL_SCHEMES: 1.5453
+
+  - Tuning Head: COHORT_LPA_ALL (5 trials) on Weighted Oracle Error...
+[I 2025-12-01 19:40:09,261] A new study created in memory with name: no-name-eaf3f97d-0881-42c5-bb57-f3ab71514bfa
+[I 2025-12-01 19:40:18,789] Trial 0 finished with value: 1.2530542568367795 and parameters: {'max_depth': 4, 'num_leaves': 37, 'colsample_bytree': 0.7285054299079226, 'learning_rate': 0.03892190282883999, 'n_estimators': 565, 'min_child_samples': 48, 'reg_alpha': 4.899862324956881, 'reg_lambda': 1.1374845536174214}. Best is trial 0 with value: 1.2530542568367795.
+[I 2025-12-01 19:40:38,457] Trial 1 finished with value: 1.2042952078920461 and parameters: {'max_depth': 5, 'num_leaves': 30, 'colsample_bytree': 0.6022840965948264, 'learning_rate': 0.009497303803909868, 'n_estimators': 977, 'min_child_samples': 38, 'reg_alpha': 8.729820268616642, 'reg_lambda': 0.2501216401806178}. Best is trial 1 with value: 1.2042952078920461.
+[I 2025-12-01 19:41:07,125] Trial 2 finished with value: 1.4832834017980345 and parameters: {'max_depth': 4, 'num_leaves': 28, 'colsample_bytree': 0.6101317496869172, 'learning_rate': 0.024690290153905003, 'n_estimators': 1828, 'min_child_samples': 38, 'reg_alpha': 0.4731683616786163, 'reg_lambda': 2.701395663451651}. Best is trial 1 with value: 1.2042952078920461.
+[I 2025-12-01 19:41:28,836] Trial 3 finished with value: 1.2351113561217535 and parameters: {'max_depth': 6, 'num_leaves': 34, 'colsample_bytree': 0.5704181719294691, 'learning_rate': 0.026477805564198147, 'n_estimators': 1371, 'min_child_samples': 48, 'reg_alpha': 5.59171266307039, 'reg_lambda': 1.9377124948711504}. Best is trial 1 with value: 1.2042952078920461.
+[I 2025-12-01 19:42:00,306] Trial 4 finished with value: 1.4990357467623363 and parameters: {'max_depth': 6, 'num_leaves': 27, 'colsample_bytree': 0.5000412251985971, 'learning_rate': 0.028881421651383552, 'n_estimators': 1566, 'min_child_samples': 48, 'reg_alpha': 0.2614633346984912, 'reg_lambda': 3.6792443693975674}. Best is trial 1 with value: 1.2042952078920461.
+    Best Oracle Error Log Loss for COHORT_LPA_ALL: 1.2043
+
+  - Tuning Head: COHORT_GRID_ALL (5 trials) on Weighted Oracle Error...
+[I 2025-12-01 19:42:00,309] A new study created in memory with name: no-name-11f38147-dba3-41df-97e1-389c61860f6c
+[I 2025-12-01 19:43:05,915] Trial 0 finished with value: 1.1451049079510969 and parameters: {'max_depth': 12, 'num_leaves': 125, 'colsample_bytree': 0.5788493306625782, 'learning_rate': 0.009666677269079578, 'n_estimators': 1833, 'min_child_samples': 29, 'reg_alpha': 6.5338825698899115, 'reg_lambda': 0.0424622976969264}. Best is trial 0 with value: 1.1451049079510969.
+[I 2025-12-01 19:43:26,416] Trial 1 finished with value: 1.1574175627636805 and parameters: {'max_depth': 12, 'num_leaves': 73, 'colsample_bytree': 0.5471414148397513, 'learning_rate': 0.042285076078781875, 'n_estimators': 1135, 'min_child_samples': 27, 'reg_alpha': 4.535614554463658, 'reg_lambda': 0.5592284503298497}. Best is trial 0 with value: 1.1451049079510969.
+[I 2025-12-01 19:44:05,143] Trial 2 finished with value: 1.1321533617767996 and parameters: {'max_depth': 14, 'num_leaves': 67, 'colsample_bytree': 0.5800973113046247, 'learning_rate': 0.007531126560966379, 'n_estimators': 616, 'min_child_samples': 37, 'reg_alpha': 0.7140833210917693, 'reg_lambda': 1.860982516299849}. Best is trial 2 with value: 1.1321533617767996.
+[I 2025-12-01 19:45:08,885] Trial 3 finished with value: 1.133149179339113 and parameters: {'max_depth': 12, 'num_leaves': 50, 'colsample_bytree': 0.4893042982974536, 'learning_rate': 0.0059546056632611335, 'n_estimators': 1272, 'min_child_samples': 37, 'reg_alpha': 6.370826951131308, 'reg_lambda': 2.422884701135042}. Best is trial 2 with value: 1.1321533617767996.
+[I 2025-12-01 19:45:29,907] Trial 4 finished with value: 1.2142869403022618 and parameters: {'max_depth': 11, 'num_leaves': 96, 'colsample_bytree': 0.3833919437437198, 'learning_rate': 0.04015085468581859, 'n_estimators': 876, 'min_child_samples': 28, 'reg_alpha': 2.3303827431628696, 'reg_lambda': 0.1379200602009277}. Best is trial 2 with value: 1.1321533617767996.
+    Best Oracle Error Log Loss for COHORT_GRID_ALL: 1.1322
+
+  - Tuning Head: COHORT_ENV_ALL (5 trials) on Weighted Oracle Error...
+[I 2025-12-01 19:45:29,909] A new study created in memory with name: no-name-030e61b8-473d-400a-b44f-157706e9e1b0
+[I 2025-12-01 19:45:53,727] Trial 0 finished with value: 1.340629109386252 and parameters: {'max_depth': 7, 'num_leaves': 47, 'colsample_bytree': 0.4684764643867764, 'learning_rate': 0.031922190916947625, 'n_estimators': 888, 'min_child_samples': 32, 'reg_alpha': 9.704221718492786, 'reg_lambda': 1.5987241742496763}. Best is trial 0 with value: 1.340629109386252.
+[I 2025-12-01 19:46:53,864] Trial 1 finished with value: 1.570707149362033 and parameters: {'max_depth': 7, 'num_leaves': 36, 'colsample_bytree': 0.4107749227282641, 'learning_rate': 0.024262233795019895, 'n_estimators': 1838, 'min_child_samples': 29, 'reg_alpha': 1.0573329091107055, 'reg_lambda': 0.5575174904752365}. Best is trial 0 with value: 1.340629109386252.
+[I 2025-12-01 19:47:16,989] Trial 2 finished with value: 1.584115262177446 and parameters: {'max_depth': 7, 'num_leaves': 109, 'colsample_bytree': 0.4483214342345295, 'learning_rate': 0.04224089034169075, 'n_estimators': 569, 'min_child_samples': 46, 'reg_alpha': 0.31006516772388704, 'reg_lambda': 1.1000690881900905}. Best is trial 0 with value: 1.340629109386252.
+[I 2025-12-01 19:48:10,414] Trial 3 finished with value: 1.911970502046131 and parameters: {'max_depth': 12, 'num_leaves': 79, 'colsample_bytree': 0.3724477172841165, 'learning_rate': 0.03894018544390222, 'n_estimators': 1238, 'min_child_samples': 31, 'reg_alpha': 0.1446691699385532, 'reg_lambda': 0.29604368499089284}. Best is trial 0 with value: 1.340629109386252.
+[I 2025-12-01 19:49:21,401] Trial 4 finished with value: 1.324131955309596 and parameters: {'max_depth': 13, 'num_leaves': 78, 'colsample_bytree': 0.3502546263652548, 'learning_rate': 0.011190286942316803, 'n_estimators': 1855, 'min_child_samples': 27, 'reg_alpha': 5.804016728285809, 'reg_lambda': 0.8888732672359969}. Best is trial 4 with value: 1.324131955309596.
+    Best Oracle Error Log Loss for COHORT_ENV_ALL: 1.3241
+
+  - Tuning Head: COHORT_SOCIO_ECONOMIC_ALL (5 trials) on Weighted Oracle Error...
+[I 2025-12-01 19:49:21,403] A new study created in memory with name: no-name-37e1bc30-d407-4685-9fca-fb32d3e39146
+[I 2025-12-01 19:50:07,418] Trial 0 finished with value: 1.4038188527908628 and parameters: {'max_depth': 7, 'num_leaves': 16, 'colsample_bytree': 0.7179194549223729, 'learning_rate': 0.005685812153900233, 'n_estimators': 1956, 'min_child_samples': 38, 'reg_alpha': 8.0742810731668, 'reg_lambda': 1.2989421843206461}. Best is trial 0 with value: 1.4038188527908628.
+[I 2025-12-01 19:50:51,611] Trial 1 finished with value: 1.4470825745526734 and parameters: {'max_depth': 8, 'num_leaves': 34, 'colsample_bytree': 0.7364132856363783, 'learning_rate': 0.009131173689953143, 'n_estimators': 1733, 'min_child_samples': 46, 'reg_alpha': 2.643899547711336, 'reg_lambda': 0.5723346640159243}. Best is trial 0 with value: 1.4038188527908628.
+[I 2025-12-01 19:51:06,381] Trial 2 finished with value: 1.6604383198094013 and parameters: {'max_depth': 6, 'num_leaves': 40, 'colsample_bytree': 0.5620123762331721, 'learning_rate': 0.041748929206086256, 'n_estimators': 624, 'min_child_samples': 28, 'reg_alpha': 0.6401477452506785, 'reg_lambda': 0.15008461998101247}. Best is trial 0 with value: 1.4038188527908628.
+[I 2025-12-01 19:51:22,567] Trial 3 finished with value: 1.5439313226086537 and parameters: {'max_depth': 7, 'num_leaves': 16, 'colsample_bytree': 0.667044468271884, 'learning_rate': 0.03734352330410675, 'n_estimators': 743, 'min_child_samples': 46, 'reg_alpha': 1.7079328066979478, 'reg_lambda': 1.351813636191522}. Best is trial 0 with value: 1.4038188527908628.
+[I 2025-12-01 19:51:58,272] Trial 4 finished with value: 1.4439188499776479 and parameters: {'max_depth': 7, 'num_leaves': 25, 'colsample_bytree': 0.5737745679731847, 'learning_rate': 0.007715182067092919, 'n_estimators': 1596, 'min_child_samples': 45, 'reg_alpha': 1.059064202349476, 'reg_lambda': 0.010488802616351704}. Best is trial 0 with value: 1.4038188527908628.
+    Best Oracle Error Log Loss for COHORT_SOCIO_ECONOMIC_ALL: 1.4038
+
+  - Tuning Head: COHORT_NATIONAL_PROXY_ALL (5 trials) on Weighted Oracle Error...
+[I 2025-12-01 19:51:58,274] A new study created in memory with name: no-name-4505c421-db22-499b-9652-b9f87beb84f1
+[I 2025-12-01 19:52:25,292] Trial 0 finished with value: 1.3913856017540063 and parameters: {'max_depth': 5, 'num_leaves': 15, 'colsample_bytree': 0.7811987110121554, 'learning_rate': 0.009862767561602976, 'n_estimators': 1269, 'min_child_samples': 46, 'reg_alpha': 0.39169066836919186, 'reg_lambda': 4.490417359167432}. Best is trial 0 with value: 1.3913856017540063.
+[I 2025-12-01 19:52:45,608] Trial 1 finished with value: 1.5284233528904427 and parameters: {'max_depth': 4, 'num_leaves': 33, 'colsample_bytree': 0.6436817647260675, 'learning_rate': 0.028152130104729847, 'n_estimators': 1144, 'min_child_samples': 48, 'reg_alpha': 0.5802123693570437, 'reg_lambda': 0.010586192579938926}. Best is trial 0 with value: 1.3913856017540063.
+[I 2025-12-01 19:53:07,750] Trial 2 finished with value: 1.7100387693389845 and parameters: {'max_depth': 8, 'num_leaves': 18, 'colsample_bytree': 0.7239831407441746, 'learning_rate': 0.03753551981904461, 'n_estimators': 779, 'min_child_samples': 24, 'reg_alpha': 0.3659877632582243, 'reg_lambda': 0.06572950079241487}. Best is trial 0 with value: 1.3913856017540063.
+[I 2025-12-01 19:53:30,475] Trial 3 finished with value: 1.4089913233082512 and parameters: {'max_depth': 4, 'num_leaves': 36, 'colsample_bytree': 0.5075595018700453, 'learning_rate': 0.028946334326001355, 'n_estimators': 1398, 'min_child_samples': 44, 'reg_alpha': 4.932254237648302, 'reg_lambda': 0.9561623695113746}. Best is trial 0 with value: 1.3913856017540063.
+[I 2025-12-01 19:54:02,293] Trial 4 finished with value: 1.3074190398565035 and parameters: {'max_depth': 8, 'num_leaves': 24, 'colsample_bytree': 0.5476495156166691, 'learning_rate': 0.01468186484519157, 'n_estimators': 1192, 'min_child_samples': 25, 'reg_alpha': 8.535243811942559, 'reg_lambda': 3.3047017109113925}. Best is trial 4 with value: 1.3074190398565035.
+    Best Oracle Error Log Loss for COHORT_NATIONAL_PROXY_ALL: 1.3074
+
+  - Tuning Head: COHORT_METADATA_AND_FLAGS (5 trials) on Weighted Oracle Error...
+[I 2025-12-01 19:54:02,295] A new study created in memory with name: no-name-f08a9436-e6c7-4ba2-b00a-7b1f2191486e
+[I 2025-12-01 19:54:07,107] Trial 0 finished with value: 1.6953649358553022 and parameters: {'max_depth': 2, 'num_leaves': 15, 'colsample_bytree': 0.9860345811025497, 'learning_rate': 0.007840824402777532, 'n_estimators': 512, 'min_child_samples': 20, 'reg_alpha': 1.6180960973521443, 'reg_lambda': 0.7849311458098471}. Best is trial 0 with value: 1.6953649358553022.
+[I 2025-12-01 19:54:19,352] Trial 1 finished with value: 1.7502469800915292 and parameters: {'max_depth': 4, 'num_leaves': 6, 'colsample_bytree': 0.9777974603506465, 'learning_rate': 0.034697218375178765, 'n_estimators': 1000, 'min_child_samples': 35, 'reg_alpha': 0.26074959584681356, 'reg_lambda': 0.20956219849061763}. Best is trial 0 with value: 1.6953649358553022.
+[I 2025-12-01 19:54:31,653] Trial 2 finished with value: 1.6430433341806734 and parameters: {'max_depth': 5, 'num_leaves': 9, 'colsample_bytree': 0.9170786777014291, 'learning_rate': 0.03976893826423094, 'n_estimators': 1429, 'min_child_samples': 23, 'reg_alpha': 8.292600037421964, 'reg_lambda': 0.8540843054231878}. Best is trial 2 with value: 1.6430433341806734.
+[I 2025-12-01 19:54:36,994] Trial 3 finished with value: 1.6951083493189263 and parameters: {'max_depth': 2, 'num_leaves': 13, 'colsample_bytree': 0.8936436417947602, 'learning_rate': 0.00704240471854592, 'n_estimators': 593, 'min_child_samples': 35, 'reg_alpha': 4.231385469681304, 'reg_lambda': 2.062058647879016}. Best is trial 2 with value: 1.6430433341806734.
+[I 2025-12-01 19:54:54,855] Trial 4 finished with value: 1.6873174615363276 and parameters: {'max_depth': 3, 'num_leaves': 7, 'colsample_bytree': 0.8027377479614398, 'learning_rate': 0.010275177331628036, 'n_estimators': 1590, 'min_child_samples': 38, 'reg_alpha': 1.6588844792111894, 'reg_lambda': 1.0617925480576553}. Best is trial 2 with value: 1.6430433341806734.
+    Best Oracle Error Log Loss for COHORT_METADATA_AND_FLAGS: 1.6430
+
+  - Tuning Head: COHORT_CONSOLIDATED_SPECIALIST (5 trials) on Weighted Oracle Error...
+[I 2025-12-01 19:54:54,857] A new study created in memory with name: no-name-abb47855-e384-44f1-9691-ef2de9f2d749
+[I 2025-12-01 19:55:07,019] Trial 0 finished with value: 1.1317740252882496 and parameters: {'max_depth': 6, 'num_leaves': 35, 'colsample_bytree': 0.7109504364819428, 'learning_rate': 0.03269911368393259, 'n_estimators': 518, 'min_child_samples': 36, 'reg_alpha': 8.603518010615085, 'reg_lambda': 0.041952734260281475}. Best is trial 0 with value: 1.1317740252882496.
+[I 2025-12-01 19:55:31,095] Trial 1 finished with value: 1.2628827636546773 and parameters: {'max_depth': 6, 'num_leaves': 22, 'colsample_bytree': 0.7472599730277593, 'learning_rate': 0.023434296615636313, 'n_estimators': 776, 'min_child_samples': 28, 'reg_alpha': 1.2845973201848762, 'reg_lambda': 1.3902167873720832}. Best is trial 0 with value: 1.1317740252882496.
+[I 2025-12-01 19:55:57,727] Trial 2 finished with value: 1.1763857518297915 and parameters: {'max_depth': 7, 'num_leaves': 34, 'colsample_bytree': 0.6610214803317636, 'learning_rate': 0.010316337425720476, 'n_estimators': 967, 'min_child_samples': 50, 'reg_alpha': 0.18529667694379096, 'reg_lambda': 0.14114752179572135}. Best is trial 0 with value: 1.1317740252882496.
+[I 2025-12-01 19:56:29,166] Trial 3 finished with value: 1.2739136201725372 and parameters: {'max_depth': 6, 'num_leaves': 18, 'colsample_bytree': 0.5081020589832235, 'learning_rate': 0.026646180880415694, 'n_estimators': 1247, 'min_child_samples': 35, 'reg_alpha': 1.5229970229144392, 'reg_lambda': 3.610853638961651}. Best is trial 0 with value: 1.1317740252882496.
+[I 2025-12-01 19:57:02,449] Trial 4 finished with value: 1.2409528641858185 and parameters: {'max_depth': 5, 'num_leaves': 27, 'colsample_bytree': 0.5590597853305649, 'learning_rate': 0.017514166537619724, 'n_estimators': 1335, 'min_child_samples': 23, 'reg_alpha': 1.8394650729435933, 'reg_lambda': 0.8190845049760368}. Best is trial 0 with value: 1.1317740252882496.
+    Best Oracle Error Log Loss for COHORT_CONSOLIDATED_SPECIALIST: 1.1318
+
+Phase A Complete. All heads individually tuned on weighted error target.
+
+--- Phase E (v3.9): Forging & Analyzing 9 'Anti-Oracle' Heads ---
+  - Training head classifier: COHORT_PUBLIC_AMENITY on 29 specialist features
+    - Analyzing head for top 10 specialist features...
+  - Training head classifier: COHORT_AGRI_ENVIRONMENTAL_SCHEMES on 48 specialist features
+    - Analyzing head for top 10 specialist features...
+  - Training head classifier: COHORT_LPA_ALL on 32 specialist features
+    - Analyzing head for top 10 specialist features...
+  - Training head classifier: COHORT_GRID_ALL on 145 specialist features
+    - Analyzing head for top 10 specialist features...
+  - Training head classifier: COHORT_ENV_ALL on 125 specialist features
+    - Analyzing head for top 10 specialist features...
+  - Training head classifier: COHORT_SOCIO_ECONOMIC_ALL on 39 specialist features
+    - Analyzing head for top 10 specialist features...
+  - Training head classifier: COHORT_NATIONAL_PROXY_ALL on 23 specialist features
+    - Analyzing head for top 10 specialist features...
+  - Training head classifier: COHORT_METADATA_AND_FLAGS on 6 specialist features
+    - Analyzing head for top 10 specialist features...
+  - Training head classifier: COHORT_CONSOLIDATED_SPECIALIST on 49 specialist features
+    - Analyzing head for top 10 specialist features...
+
+  Residual Correction heads and top-feature intelligence persisted to C:\Users\brand\Desktop\renewables\data\artifacts\modeling_outputs\specialist_gm_solar_v3.5_refactored\heads_v3.5_final_gm_solar
+
+--- Generating head probabilities for all data splits ---
+  - Forging feature matrix for Ridge Arbiter...
+  - Forging feature matrix for Ridge Arbiter...
+  - Forging feature matrix for Ridge Arbiter...
+
+--- Phase G: Tuning & Training Final LightGBM Arbiter ---
+[I 2025-12-01 19:58:19,651] A new study created in memory with name: no-name-b46fe9cf-323e-4d8f-b14a-201e28f12ff5
+[I 2025-12-01 19:58:21,048] Trial 0 finished with value: 97.55523375720954 and parameters: {'n_estimators': 4517, 'learning_rate': 0.0012176229283872258, 'max_depth': 3, 'num_leaves': 17, 'colsample_bytree': 0.4973400490010529, 'subsample': 0.8140770124801551, 'reg_alpha': 1.4547418271402541, 'reg_lambda': 4.03921343080657}. Best is trial 0 with value: 97.55523375720954.
+[I 2025-12-01 19:58:22,187] Trial 1 finished with value: 97.928378864833 and parameters: {'n_estimators': 3439, 'learning_rate': 0.018508025198608693, 'max_depth': 3, 'num_leaves': 61, 'colsample_bytree': 0.5513292295995337, 'subsample': 0.8433117311307663, 'reg_alpha': 8.692449282311099, 'reg_lambda': 2.070884385335409}. Best is trial 0 with value: 97.55523375720954.
+[I 2025-12-01 19:58:24,324] Trial 2 finished with value: 97.52811913884028 and parameters: {'n_estimators': 4404, 'learning_rate': 0.0018961358972315618, 'max_depth': 6, 'num_leaves': 30, 'colsample_bytree': 0.4670681849625477, 'subsample': 0.8627785667065155, 'reg_alpha': 2.088570119498335, 'reg_lambda': 8.508873069058742}. Best is trial 2 with value: 97.52811913884028.
+[I 2025-12-01 19:58:27,593] Trial 3 finished with value: 97.46261548728238 and parameters: {'n_estimators': 4964, 'learning_rate': 0.007950942662715062, 'max_depth': 7, 'num_leaves': 53, 'colsample_bytree': 0.5900593638628397, 'subsample': 0.8360798737335413, 'reg_alpha': 2.2584290986829494, 'reg_lambda': 5.614451350309501}. Best is trial 3 with value: 97.46261548728238.
+[I 2025-12-01 19:58:30,059] Trial 4 finished with value: 97.49584382031061 and parameters: {'n_estimators': 4986, 'learning_rate': 0.0029444713917215594, 'max_depth': 7, 'num_leaves': 28, 'colsample_bytree': 0.5358303923675004, 'subsample': 0.7884324846508006, 'reg_alpha': 2.9912586150844254, 'reg_lambda': 5.952099010025034}. Best is trial 3 with value: 97.46261548728238.
+  - Arbiter tuning complete. Best Validation RMSE: 97.4626
+  - Retraining final Arbiter on combined train+validation data...
+  - Final LightGBM Arbiter trained.
+
+========================================================
+EXECUTING SOLAR SPECIALIST CASCADE (Techno-Type 21 Only)
+========================================================
+
+--- Phase H: Forging Solar Bridge (Feature Compression with Signal Protection) ---
+  - Training Probe Model to identify Top Solar Signals on 1650 samples...
+  - Protected Features (Raw Pass-Through): ['mounting_type_for_solar', 'technology_type', 'installed_capacity_mwelec', 'SIC_POLICY_REGIME_ID', 'lpa_major_commercial_approval_rate', 'winter_nameplate_loading_pct', 'lpa_workload_trend', 'SIC_GRID_QUEUE_FRICTION', 'SIC_LPA_POLITICAL_VOLATILITY']
+  - Top 30 Features (Raw Pass-Through)
+  - Compressing 584 features into 20 PCA components...
+  - Solar Bridge Forged. Output Shape: (1650, 59)
+  - Injecting Consolidated Specialist Features (All Directives) into Solar Bridge...
+  - Solar Bridge Artifacts (PCA, Scaler, Features) persisted to C:\Users\brand\Desktop\renewables\data\artifacts\modeling_outputs\specialist_gm_solar_v3.5_refactored
+Shape of X_train_solar_comp: (1650, 115)
+
+--- Phase I: Training Solar Residual Specialist ---
+  - Solar Residual Specialist Trained.
+
+--- Phase J: Training Robust Stratified Capacity Residual Models ---
+  - Stratum Micro_0_1: 797 samples.
+  - Stratum Small_1_5: 287 samples.
+  - Stratum Mid_5_10: 275 samples.
+  - Stratum Mid_10_15: 75 samples.
+  - Stratum Mid_15_20: 42 samples.
+  - Stratum Large_20_30: 61 samples.
+  - Stratum Large_30_40: 28 samples.
+  - Stratum Large_40_50: 82 samples.
+  - Stratum Major_50_100: 3 samples.
+    WARNING: Insufficient data for Major_50_100. Skipping.
+  - Stratum Major_100_Plus: 0 samples.
+    WARNING: Insufficient data for Major_100_Plus. Skipping.
+  - Solar Stratified Models & Bins persisted to C:\Users\brand\Desktop\renewables\data\artifacts\modeling_outputs\specialist_gm_solar_v3.5_refactored\solar_stratified_models_v3.5.joblib
+
+==========================================================
+EXECUTING GROUND MOUNT SPECIALIST CASCADE (Mount Type 1)
+==========================================================
+  - Injecting V16 Consolidated Specialist Features into GM Training Data...
+  - Injecting V16 Consolidated Specialist Features into GM Test Data...
+  - Isolated 874 GM Training Samples
+  - Constructing Feature Matrix for GM Specialist (Base + V16 FIs)...
+    - Final GM Specialist Feature Matrix Shape: (874, 116)
+--- Calculating Data Maturity Weights (Anti-Recency Bias) ---
+  - Reference Date for weighting: 2025-07-21
+  - Weight Distribution: Mean=0.97, Min=0.10
+  - Training GM Specialist on 116 features with Maturity Weights...
+
+--- Phase K: Training Stratified Ground Mount Specialist ---
+  - GM Stratum Micro_0_1: 98 samples.
+  - GM Stratum Small_1_5: 218 samples.
+  - GM Stratum Mid_5_10: 266 samples.
+  - GM Stratum Mid_10_15: 75 samples.
+  - GM Stratum Mid_15_20: 42 samples.
+  - GM Stratum Large_20_30: 61 samples.
+  - GM Stratum Large_30_40: 28 samples.
+  - GM Stratum Large_40_50: 82 samples.
+  - GM Stratum Major_50_100: 3 samples.
+    WARNING: Insufficient data for Major_50_100. Skipping.
+  - GM Stratum Major_100_Plus: 0 samples.
+    WARNING: Insufficient data for Major_100_Plus. Skipping.
+  - Stratified Ground Mount Specialist Trained.
+
+--- Phase L: Training Ground Mount Scale Corrector ---
+  - Scale Corrector trained on 5 continuous features.
+  - GM Scale Corrector persisted to C:\Users\brand\Desktop\renewables\data\artifacts\modeling_outputs\specialist_gm_solar_v3.5_refactored\gm_stratified_models_v3.5.joblib
+
+--- Synthesizing Final Ground Mount Solar Predictions ---
+  - Final Prediction Vector Shape: (181,)
+
+--- DEBUG: Exporting Feature Matrices to C:\Users\brand\Desktop\renewables\data\artifacts\modeling_outputs\specialist_gm_solar_v3.5_refactored\debug_exports ---
+  - Saving X_train_gm_final ((874, 116))...
+    [WARNING] NaNs detected in X_train_gm_final:
+mounting_type_for_solar                           1
+technology_type                                   1
+installed_capacity_mwelec                         1
+SIC_POLICY_REGIME_ID                              1
+lpa_major_commercial_approval_rate                1
+winter_nameplate_loading_pct                      1
+lpa_workload_trend                                1
+SIC_GRID_QUEUE_FRICTION                           1
+SIC_LPA_POLITICAL_VOLATILITY                      1
+SIC_LPA_PRECEDENT_UNCERTAINTY                     1
+knn_duration_mean_gcv                             1
+knn_duration_variance_gcv                         1
+SIC_GRID_QUEUE_PRESSURE_PROXY                     1
+SIC_GM_GRID_GAP_IMPEDANCE_RISK_IND                1
+SIC_LPA_QUEUE_RELATIVE_SCALE                      1
+SIC_GM_AMPERAGE_STRESS_INDEX_IND                  1
+SIC_GRID_PHYSICS_STIFFNESS_RISK_IND               1
+knn_count_solar                                   1
+SIC_ECO_SCALE_SENSITIVITY                         1
+ohl_33kv_nearest_primary_substation_dist_ratio    1
+days_to_next_general_election                     1
+submission_day                                    1
+SIC_ENV_ECOLOGICAL_FRAGMENTATION_RISK             1
+dnoa_imminence_of_nearest_constraint_yrs          1
+SIC_NAT_QUEUE_MOMENTUM_MW                         1
+sic_greenbelt_pressure_cooker                     1
+SIC_SYNTH_GRID_REALITY_GAP                        1
+SIC_SHIELDED_CAPACITY                             1
+ltds_years_to_nearest_completion                  1
+unutilised_capacity_pct                           1
+SIC_LPA_ROLLING_VOLUME_180D                       1
+SIC_GRID_STABILITY_VULNERABILITY                  1
+SIC_LPA_INFRASTRUCTURE_AVERSION                   1
+ltds_count_reinforcement_in_10km                  1
+SIC_GRID_TOPOLOGY_CONNECTION_DELTA                1
+lpa_grant_refuse_speed_ratio                      1
+SIC_VARIANCE_DAMPENER_SCORE                       1
+SIC_GRID_OPS_REVERSE_POWER_RISK                   1
+SIC_IMPACT_HIGH_VOLTAGE_CHARACTER                 1
+PCA_0                                             1
+PCA_1                                             1
+PCA_2                                             1
+PCA_3                                             1
+PCA_4                                             1
+PCA_5                                             1
+PCA_6                                             1
+PCA_7                                             1
+PCA_8                                             1
+PCA_9                                             1
+PCA_10                                            1
+PCA_11                                            1
+PCA_12                                            1
+PCA_13                                            1
+PCA_14                                            1
+PCA_15                                            1
+PCA_16                                            1
+PCA_17                                            1
+PCA_18                                            1
+PCA_19                                            1
+SIC_GM_SATURATION_EXP_SMALL                       8
+dtype: int64
+  - Saving X_train_solar_comp ((1650, 115))...
+--- DEBUG: Export Complete ---
+
+
+--- Phase M: Training Terminal Calibrator (The Truth-Teller) ---
+  - Terminal Calibrator Trained.
+  - Terminal Calibrator persisted to C:\Users\brand\Desktop\renewables\data\artifacts\modeling_outputs\specialist_gm_solar_v3.5_refactored\terminal_calibrator_v3.5.joblib
+--- v4.8 GROUND MOUNT SPECIALIST Final Performance ---
+  RMSE (Days): 105.4815
+  MAE (Days):  81.5504
+  R-squared:   0.1291
+  Test N:      181
+
+
+--- REMEDIATION COMPLETE. Initial performance dossier saved to C:\Users\brand\Desktop\renewables\data\artifacts\modeling_outputs\specialist_gm_solar_v3.5_refactored\Amaryllis_v3.5_Diagnostic_Dossier.md
+
+
+--- EXECUTING DIRECTIVE AD-AM-18: The Diagnostic Gauntlet ---
+
+--- Diagnostic Phase 3: Systematic Bias Investigation ---
+  Residuals plot saved to C:\Users\brand\Desktop\renewables\data\artifacts\modeling_outputs\specialist_gm_solar_v3.5_refactored\residuals_vs_predicted_v3.3.png
+
+--- Diagnostic Phase 4: Feature Engineering Hypothesis Report ---
+
+--- Diagnostic Phase 5: All-Heads Granular SHAP Analysis ---
+  - Analyzing head: COHORT_AGRI_ENVIRONMENTAL_SCHEMES
+  - Analyzing head: COHORT_CONSOLIDATED_SPECIALIST
+  - Analyzing head: COHORT_ENV_ALL
+  - Analyzing head: COHORT_GRID_ALL
+  - Analyzing head: COHORT_LPA_ALL
+  - Analyzing head: COHORT_METADATA_AND_FLAGS
+  - Analyzing head: COHORT_NATIONAL_PROXY_ALL
+  - Analyzing head: COHORT_PUBLIC_AMENITY
+  - Analyzing head: COHORT_SOCIO_ECONOMIC_ALL
+
+
+--- EXECUTING DIRECTIVE AD-AM-31: The Forensic Diagnostic Gauntlet ---
+
+--- Diagnostic Phase 7: Expert Correlation Analysis ---
+  - Generated expert correlation heatmap: C:\Users\brand\Desktop\renewables\data\artifacts\modeling_outputs\specialist_gm_solar_v3.5_refactored\expert_correlation_heatmap.png
+
+--- Diagnostic Phase 8: Performance Stratification Report ---
+
+  -- Performance by Project Scale (installed_capacity_mwelec) --
+scale_quartile
+0     83.859153
+1     90.158868
+2    114.889122
+3    128.301281
+
+  -- Performance by LPA Toughness (lpa_major_commercial_approval_rate) --
+lpa_quartile
+0    126.271766
+1     89.177403
+2    105.090283
+3     96.330430
+(base) PS C:\Users\brand\Desktop\renewables\scripts> 

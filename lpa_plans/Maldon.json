@@ -1,0 +1,117 @@
+{
+  "domain": "www.maldon.gov.uk",
+  "plan_version": "3.0",
+  "last_updated": "2026-03-25T19:48:13.750226Z",
+  "instructions": [
+    {
+      "command": "GOTO_URL",
+      "params": {
+        "url": "https://publicaccess.maldon.gov.uk/online-applications/"
+      },
+      "description": "Navigate to the search page.",
+      "frame_name": null
+    },
+    {
+      "command": "FILL_INPUT",
+      "params": {
+        "selector": "#simpleSearchString",
+        "value": "{{REFERENCE_ID}}"
+      },
+      "description": "Fill the search input with the target reference ID.",
+      "frame_name": null
+    },
+    {
+      "command": "CLICK_ELEMENT",
+      "params": {
+        "selector": "input.button.primary.recaptcha-submit"
+      },
+      "description": "Submit the search by clicking the Search button.",
+      "frame_name": null
+    },
+    {
+      "command": "WAIT_FOR_SELECTOR",
+      "params": {
+        "selector": "#searchresults, .search-results, h1:has-text('Summary'), #applicationDetails"
+      },
+      "description": "Wait for the search results or application details to load.",
+      "frame_name": null
+    },
+    {
+      "command": "WAIT_FOR_SELECTOR",
+      "params": {
+        "selector": "table#simpleDetailsTable tbody tr"
+      },
+      "description": "Wait for Application Details modal/view to appear.",
+      "frame_name": null
+    },
+    {
+      "command": "WAIT_FOR_SELECTOR",
+      "params": {
+        "selector": "a#tab_externalDocuments"
+      },
+      "description": "Wait for detail page.",
+      "frame_name": null
+    },
+    {
+      "command": "CLICK_ELEMENT",
+      "params": {
+        "selector": "a#tab_externalDocuments"
+      },
+      "description": "Open Documents tab.",
+      "frame_name": null
+    },
+    {
+      "command": "WAIT_FOR_SELECTOR",
+      "params": {
+        "selector": "table#documents > tbody > tr"
+      },
+      "description": "Wait for documents table.",
+      "frame_name": null
+    }
+  ],
+  "results_page_processing": {
+    "listing_container_selector": "table#simpleDetailsTable tbody tr",
+    "listing_link_blueprint": {
+      "selector": "body",
+      "extraction_method": "ATTRIBUTE",
+      "attribute_name": "id",
+      "post_processing": null
+    },
+    "listing_address_blueprint": {
+      "selector": "th[scope='row']:contains('Address') + td",
+      "extraction_method": "TEXT",
+      "attribute_name": null,
+      "post_processing": null
+    },
+    "pagination_blueprint": null
+  },
+  "detail_page_processing": {},
+  "document_page_processing": {
+    "document_tab_selector": null,
+    "document_container_selector": "table#documents > tbody > tr",
+    "document_link_blueprint": {
+      "selector": "td:nth-child(5) > a[href$='.pdf']",
+      "extraction_method": "ATTRIBUTE",
+      "attribute_name": "href",
+      "post_processing": null
+    },
+    "document_date_blueprint": {
+      "selector": "td:nth-child(4)",
+      "extraction_method": "TEXT",
+      "attribute_name": null,
+      "post_processing": null
+    },
+    "document_type_blueprint": {
+      "selector": "td:nth-child(2)",
+      "extraction_method": "TEXT",
+      "attribute_name": null,
+      "post_processing": null
+    },
+    "pagination_blueprint": null,
+    "batch_processing": {
+      "checkbox_selector": "td.select-col input[type='checkbox']",
+      "select_all_selector": "thead input.select-all",
+      "batch_action_button_selector": "input#btnDownload"
+    }
+  }
+}

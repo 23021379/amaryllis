@@ -1,0 +1,164 @@
+{
+    "COHORT_PUBLIC_AMENITY": [
+        "nt_dist_to_nearest_m",
+        "nt_intersection_count_in_2km",
+        "nt_length_in_2km",
+        "nt_intersection_count_in_5km",
+        "nt_intersection_count_in_10km",
+        "nt_intersection_count_in_20km",
+        "nt_length_in_5km",
+        "nt_length_in_10km",
+        "nt_length_in_20km",
+        "nt_intersects_site_bool"
+    ],
+    "COHORT_AGRI_ENVIRONMENTAL_SCHEMES": [
+        "cs_on_site_bool",
+        "cs_on_site_pct_area",
+        "cs_on_site_total_value",
+        "cs_count_2km",
+        "cs_density_2km",
+        "cs_density_5km",
+        "cs_density_10km",
+        "cs_density_20km",
+        "cs_total_area_ha_20km",
+        "cs_avg_value_20km"
+    ],
+    "COHORT_TOPOGRAPHY_AND_ACCESS": [
+        "major_road_length_1km",
+        "major_road_length_2km",
+        "major_road_length_5km",
+        "major_road_length_10km"
+    ],
+    "COHORT_CORE_ATTRIBUTES": [
+        "installed_capacity_mwelec",
+        "solar_site_area_sqm",
+        "chp_enabled",
+        "mounting_type_for_solar"
+    ],
+    "COHORT_TEMPORAL_CONTEXT": [
+        "TFI_Grid_Saturation_Penalty",
+        "TFI_Grid_Proximity_Value",
+        "TFI_Grid_Headroom_Decay",
+        "TFI_AONB_Time_Penalty",
+        "TFI_BMV_Land_Conflict",
+        "TFI_Agri_Scheme_Friction",
+        "TFI_Ancient_Woodland_Veto",
+        "TFI_LPA_Permissiveness_Decay",
+        "TFI_Legacy_Precedent_Decay",
+        "TFI_LPA_Workload_Impact"
+    ],
+    "COHORT_LPA_ALL": [
+        "total_applications_received",
+        "total_applications_withdrawn",
+        "total_enforcement_actions",
+        "lpa_withdrawal_rate",
+        "lpa_avg_yearly_workload",
+        "lpa_total_experience",
+        "lpa_workload_trend",
+        "lpa_major_decision_compliance_rate",
+        "lpa_avg_decision_days",
+        "lpa_decision_speed_variance"
+    ],
+    "COHORT_GRID_ALL": [
+        "dist_to_nearest_substation_km",
+        "nearest_substation_voltage_kv",
+        "nearest_substation_headroom_mw",
+        "avg_dist_to_5nn_substations_km",
+        "avg_headroom_5nn_substations_mw",
+        "std_headroom_5nn_substations_mw",
+        "nearest_sub_max_3ph_fault_ka",
+        "nearest_sub_max_ef_fault_ka",
+        "avg_max_3ph_fault_5nn_ka",
+        "avg_max_ef_fault_5nn_ka"
+    ],
+    "COHORT_ENV_ALL": [
+        "sssi_dist_to_nearest_m",
+        "sssi_is_within",
+        "sssi_count_in_2km",
+        "sssi_total_area_in_5km_ha",
+        "sssi_density_focus_ratio_2km_to_20km",
+        "sssi_unit_dist_to_nearest_m",
+        "sssi_unit_worst_condition_in_2km",
+        "np_dist_to_nearest_m",
+        "np_is_within",
+        "np_count_in_2km"
+    ],
+    "COHORT_SOCIO_ECONOMIC_ALL": [
+        "site_lsoa_ruc_rural_score",
+        "site_lsoa_ruc_Larger_rural_Further_from_a_major_town_or_city",
+        "site_lsoa_ruc_Larger_rural_Nearer_to_a_major_town_or_city",
+        "site_lsoa_ruc_Smaller_rural_Further_from_a_major_town_or_city",
+        "site_lsoa_ruc_Smaller_rural_Nearer_to_a_major_town_or_city",
+        "site_lsoa_ruc_Urban_Further_from_a_major_town_or_city",
+        "site_lsoa_ruc_Urban_Nearer_to_a_major_town_or_city",
+        "site_lsoa_oac_Digital_Seniors",
+        "site_lsoa_oac_Passive_and_Uncommitted_Users",
+        "site_lsoa_oac_Settled_Offline_Communities"
+    ],
+    "COHORT_NATIONAL_PROXY_ALL": [
+        "pct_area_urban_fabric_1km",
+        "pct_area_agricultural_1km",
+        "pct_area_industrial_commercial_1km",
+        "railway_length_1km",
+        "pct_area_protected_natural_1km",
+        "pct_area_urban_fabric_2km",
+        "pct_area_agricultural_2km",
+        "pct_area_industrial_commercial_2km",
+        "railway_length_2km",
+        "pct_area_protected_natural_2km"
+    ],
+    "COHORT_METADATA_AND_FLAGS": [
+        "technology_type",
+        "dno_source_nged",
+        "dno_source_ukpn",
+        "constraint_season_Summer",
+        "constraint_season_Winter",
+        "demandrag_Green_Over_5_headroom_",
+        "demandrag_Red_More_than_5_overloaded_",
+        "demandrag_Yellow_Between_5_overloaded_and_5_headroom_",
+        "aw_nearest_status_ASNW",
+        "aw_nearest_status_PAWS"
+    ],
+    "SIC_GRID_POLICY": [
+        "SIC_GRID_POLICY_FRICTION",
+        "winter_nameplate_loading_pct",
+        "nearest_sub_max_3ph_fault_ka",
+        "pq_idw_thd_knn5",
+        "ltds_years_to_nearest_completion",
+        "dnoa_dist_to_nearest_constrained_tx_m",
+        "unutilised_capacity_pct",
+        "lpa_major_commercial_approval_rate",
+        "lpa_major_decision_compliance_rate",
+        "lpa_workload_trend"
+    ],
+    "SIC_NIMBY": [
+        "SIC_NIMBY_AMPLIFIER",
+        "SIC_VISUAL_INTRUSION_ON_AMENITY",
+        "SIC_CUMULATIVE_LANDSCAPE_STRESS",
+        "SIC_AFFLUENT_GREEN_OBJECTION",
+        "sic_affluent_nimby_risk",
+        "nhlc_settlement_density_2km",
+        "nhlc_settlement_density_5km",
+        "site_lsoa_oac_Settled_Offline_Communities",
+        "aonb_is_within",
+        "nt_dist_to_nearest_m"
+    ],
+    "SIC_BROWNFIELD": [
+        "SIC_BROWNFIELD_BONUS",
+        "installed_capacity_mwelec",
+        "pct_area_industrial_commercial_2km",
+        "nhlc_urban_on_site_bool"
+    ],
+    "SIC_CUMULATIVE_IMPACT": [
+        "SIC_CUMULATIVE_IMPACT_PRESSURE",
+        "solar_site_area_sqm",
+        "cs_density_5km",
+        "env_count_of_constraints_in_2km"
+    ],
+    "SIC_ECO_TENSION": [
+        "SIC_ECONOMIC_VS_ECOLOGICAL_TENSION",
+        "installed_capacity_mwelec",
+        "alc_is_bmv_at_site",
+        "aw_dist_to_nearest_m"
+    ]
+}

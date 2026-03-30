@@ -1,0 +1,35 @@
+Explicit capacity FIs. 
+Multiplying each feature by its capacity is an easy way to ensure the model learns explicitly how capacity affects TTA.
+
+
+There are few gm solar farms near/in urban areas, and so the model hasn't learned that you cant really build them there.
+
+
+There are some ideas missing:
+	explicit NSIP knowledge. when the lpa features were made, 'The Planning Inspectorate - National Infrastructure' wouild have been ignored as it is not a real lpa. This means the model doesn't know that major solar farms go through this process, which is typically longer/more thorough than normal lpas.  
+
+	temporal behaviour. Each sample only contains data for preceding farms, but not future ones. However, the actual date and its affect on the duration is not explicitly modelled. I want to train a tcn or lstm, using each year+month as the temporal base, and the rest of each samples data as its data, then we can forecast future farms and learn how month/year affect duration.
+
+	LPA congestion. There are things like lpa withdrawal rate, but there is no 'current lpa applications'. If the lpa already has one or more energy farm  application, then the newest one may get put on the backburner, get less attention, etc until the other is finished. 
+	We need the model to know if there are any other submissions to the lpa, and how long ago they were submitted, their size, etc. This way the model can predict how long that farm will take, and how that affects this one.
+
+	We need more explicit modelling for distance to brownfield and other engrgy farms. There is a clear trend that shows that proximity to brownfields/incumbent farms reduces variance and duration!
+
+	The actual size of the farm (in sqm (on the log scale)) and power density are actually predictors for duration too.
+
+
+	Local demographics have quite a large impact on duration. 'e-veterans', 'settled offline communities', etc are opposed to the building of energy farms, and so duration is higher when more are present.
+
+	
+	Certain environmental factors slow down the application process more than others. Priority habitats are the worst offenders, and their variance is really high too! It would be good to go back and produce more features for Priority habitats, like their size or what kind they are, etc.
+	SAC and AncientWoodland also increase duration more than others. 
+
+	Infrastructure crossings also have an impact, but minor. This measures how having to build poles over roads increases duration. This would be modelled using the distance to substation, number of poles, number of infrastructure crossings. 
+
+	Strangely, there is a relationship with the 132kv tower density and duration - the more towers there are (low visual pristine), the longer the duration is?!
+
+	
+	Interestingly both battery applications, and solar farms have high variance. This could mean that when a solar farm is also bulding a BESS, the duration varies quite a bit, rather than when either is alone. This can be modelled by seeing if there is a battery application within 2km. If there is, how long ago was the submission submitted? 
+	
+	
+	

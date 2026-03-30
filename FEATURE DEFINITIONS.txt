@@ -1,0 +1,1908 @@
+{
+  "feature_dictionary_version": "2.6",
+  "dataset": "REPD_Amaryllis_L26",
+  "description": "The definitive, model-ready dataset for Project Amaryllis, version L26. This artifact contains the solar-centric planning application cohort, enriched with a complete, multi-layered synthesis of LPA behavioral data, dynamic spatial precedents, and a comprehensive, multi-resolution model of the UK Power Networks physical grid infrastructure, from the 132kV backbone down to the individual LV service area.",
+  "features": {
+    "__CORE_ATTRIBUTES__": {
+      "technology_type": {
+        "description": "Integer code for the energy generation technology. Constant value for 'Solar Photovoltaics'.",
+        "source_directive": "002",
+        "data_type": "Categorical Integer",
+        "unit": "N/A",
+        "interpretation_notes": "Confirms each row is a solar farm application.",
+        "null_handling": "No nulls."
+      },
+      "installed_capacity_mwelec": {
+        "description": "The proposed electrical generation capacity of the solar farm.",
+        "source_directive": "001",
+        "data_type": "Float",
+        "unit": "Megawatts electrical (MWelec)",
+        "interpretation_notes": "Primary driver of project scale and impact.",
+        "null_handling": "Imputed with -1."
+      },
+      "easting_x": {
+        "description": "The X-coordinate of the project site in the British National Grid projection (EPSG:27700).",
+        "source_directive": "001",
+        "data_type": "Float",
+        "unit": "Meters",
+        "interpretation_notes": "Foundational for all geospatial analysis.",
+        "null_handling": "No nulls; records with null coordinates dropped at ingestion."
+      },
+      "northing_x": {
+        "description": "The Y-coordinate of the project site in the British National Grid projection (EPSG:27700).",
+        "source_directive": "001",
+        "data_type": "Float",
+        "unit": "Meters",
+        "interpretation_notes": "Foundational for all geospatial analysis.",
+        "null_handling": "No nulls; records with null coordinates dropped at ingestion."
+      },
+      "solar_site_area_sqm": {
+        "description": "The physical land area of the proposed solar farm.",
+        "source_directive": "001",
+        "data_type": "Float",
+        "unit": "Square Meters (sqm)",
+        "interpretation_notes": "Proxy for visual and land-use impact.",
+        "null_handling": "Imputed with -1."
+      }
+    },
+    "__TARGET_VARIABLES__": {
+      "permission_granted": {
+        "description": "The primary classification target. Binary flag indicating if the planning application was successful (1) or not (0).",
+        "source_directive": "002",
+        "data_type": "Binary Integer",
+        "unit": "N/A",
+        "interpretation_notes": "The ground truth for the classification model.",
+        "null_handling": "N/A."
+      },
+      "planning_duration_days": {
+        "description": "The primary regression target. The number of days from application submission to the final positive decision.",
+        "source_directive": "002",
+        "data_type": "Float",
+        "unit": "Days",
+        "interpretation_notes": "The ground truth for the regression model.",
+        "null_handling": "Value is -1 for all applications where 'permission_granted' is 0."
+      }
+    },
+    "__TEMPORAL_FEATURES__": {
+      "submission_year": {
+        "description": "The year the planning application was submitted.",
+        "source_directive": "002",
+        "data_type": "Integer",
+        "unit": "Year",
+        "interpretation_notes": "Captures long-term trends and is the primary key for all point-in-time logic.",
+        "null_handling": "No nulls."
+      },
+      "submission_month_sin": {
+        "description": "The sine component of the cyclically encoded submission month.",
+        "source_directive": "002",
+        "data_type": "Float",
+        "unit": "N/A",
+        "interpretation_notes": "Allows the model to understand the cyclical nature of seasons.",
+        "null_handling": "No nulls."
+      },
+      "submission_month_cos": {
+        "description": "The cosine component of the cyclically encoded submission month.",
+        "source_directive": "002",
+        "data_type": "Float",
+        "unit": "N/A",
+        "interpretation_notes": "Allows the model to understand the cyclical nature of seasons.",
+        "null_handling": "No nulls."
+      }
+    },
+    "__LPA_BEHAVIORAL_PROFILE__": {
+      "lpa_avg_yearly_workload": {
+        "description": "The average number of planning applications the responsible Local Planning Authority (LPA) processes per year.",
+        "source_directive": "004",
+        "data_type": "Float",
+        "unit": "Applications per Year",
+        "interpretation_notes": "Proxy for the size, experience, and potential resource strain of the LPA.",
+        "null_handling": "Imputed with -1."
+      },
+      "lpa_total_experience": {
+        "description": "The absolute total number of applications the LPA has processed in the historical dataset.",
+        "source_directive": "004",
+        "data_type": "Float",
+        "unit": "Total Applications",
+        "interpretation_notes": "A raw measure of an LPA's institutional experience.",
+        "null_handling": "Imputed with -1."
+      },
+      "lpa_workload_trend": {
+        "description": "The slope of a linear regression of the LPA's yearly workload over time.",
+        "source_directive": "004",
+        "data_type": "Float",
+        "unit": "Applications per Year^2",
+        "interpretation_notes": "A powerful proxy for operational pressure. A positive trend suggests increasing resource strain.",
+        "null_handling": "Imputed with -1."
+      },
+      "lpa_major_commercial_approval_rate": {
+        "description": "The historical approval rate of the LPA specifically for major non-residential developments.",
+        "source_directive": "005",
+        "data_type": "Float",
+        "unit": "Ratio (0 to 1)",
+        "interpretation_notes": "A powerful predictor measuring the LPA's disposition towards economic and infrastructure projects.",
+        "null_handling": "Imputed with -1."
+      },
+      "lpa_grant_refuse_speed_ratio": {
+        "description": "The ratio of the average decision time for granted applications to the average time for refused applications.",
+        "source_directive": "004",
+        "data_type": "Float",
+        "unit": "Ratio",
+        "interpretation_notes": "A proxy for contention. A value > 1 suggests that successful applications are hard-fought.",
+        "null_handling": "Imputed with -1."
+      },
+      "lpa_p90_decision_days": {
+        "description": "The 90th percentile of planning decision durations for the LPA.",
+        "source_directive": "004",
+        "data_type": "Float",
+        "unit": "Days",
+        "interpretation_notes": "Measures the plausible 'worst-case' timeline risk. A strong predictor for 'planning_duration_days'.",
+        "null_handling": "Imputed with -1."
+      }
+    },
+    "__DYNAMIC_SPATIAL_PRECEDENTS__": {
+      "knn_avg_distance_km": {
+        "description": "The average distance to the k-nearest temporally valid precedent applications.",
+        "source_directive": "007",
+        "data_type": "Float",
+        "unit": "Kilometers (km)",
+        "interpretation_notes": "Measures the density of historical development in the area.",
+        "null_handling": "Imputed with -1."
+      },
+      "knn_inverse_dist_weighted_approval": {
+        "description": "The approval rate of the k-nearest precedents, weighted by the inverse of distance.",
+        "source_directive": "007",
+        "data_type": "Float",
+        "unit": "Weighted Ratio (0 to 1)",
+        "interpretation_notes": "A sophisticated measure of the local planning climate, assuming closer precedents are more influential.",
+        "null_handling": "Imputed with -1."
+      },
+      "knn_dist_to_nearest_solar_km": {
+        "description": "The distance to the nearest temporally valid SOLAR farm precedent.",
+        "source_directive": "007",
+        "data_type": "Float",
+        "unit": "Kilometers (km)",
+        "interpretation_notes": "Measures proximity of 'like-for-like' development, a key factor in cumulative impact arguments.",
+        "null_handling": "Imputed with 999 if no prior solar farms are found."
+      },
+      "knn_dist_to_nearest_refusal_km": {
+        "description": "The distance to the nearest temporally valid REFUSED application.",
+        "source_directive": "007",
+        "data_type": "Float",
+        "unit": "Kilometers (km)",
+        "interpretation_notes": "A powerful risk signal of local opposition or technical constraints.",
+        "null_handling": "Imputed with 999 if no prior refusals are found."
+      }
+    },
+    "__GRID_CAPACITY_STABILITY__": {
+      "dist_to_nearest_substation_km": {
+        "description": "The direct distance from the solar site to the nearest substation.",
+        "source_directive": "008",
+        "data_type": "Float",
+        "unit": "Kilometers (km)",
+        "interpretation_notes": "A primary driver of grid connection cost. Superseded in logic by containment model (Directive 026) but retained as a feature.",
+        "null_handling": "No nulls."
+      },
+      "nearest_substation_headroom_mw": {
+        "description": "The temporally-aware forecast for grid headroom (available generation capacity) at the single nearest substation.",
+        "source_directive": "008",
+        "data_type": "Float",
+        "unit": "Megawatts (MW)",
+        "interpretation_notes": "A critical technical feature. A negative value indicates grid constraint. The value is selected from the first available forecast year *after* the application's submission date.",
+        "null_handling": "Imputed with -1."
+      },
+      "avg_headroom_5nn_substations_mw": {
+        "description": "The average temporally-aware forecast headroom across the 5 nearest substations.",
+        "source_directive": "008",
+        "data_type": "Float",
+        "unit": "Megawatts (MW)",
+        "interpretation_notes": "Models the overall capacity of the local grid cluster, indicating network robustness.",
+        "null_handling": "Imputed with -1."
+      },
+      "nearest_sub_max_3ph_fault_ka": {
+        "description": "The maximum three-phase fault level at the nearest substation.",
+        "source_directive": "009",
+        "data_type": "Float",
+        "unit": "Kiloamperes (kA)",
+        "interpretation_notes": "A proxy for network strength and stability. Higher values indicate a stronger network, better able to absorb new generation.",
+        "null_handling": "Imputed with -1."
+      },
+      "avg_max_3ph_fault_5nn_ka": {
+        "description": "The average maximum three-phase fault level across the 5 nearest substations.",
+        "source_directive": "009",
+        "data_type": "Float",
+        "unit": "Kiloamperes (kA)",
+        "interpretation_notes": "A more robust measure of the local grid's overall stability.",
+        "null_handling": "Imputed with -1."
+      }
+    },
+    "__GRID_DER_DENSITY_SENTIMENT__": {
+      "der_sub1mw_density_count_5km": {
+        "description": "The count of registered Distributed Energy Resources (DER) under 1MW within a 5km radius.",
+        "source_directive": "011",
+        "data_type": "Integer",
+        "unit": "Count",
+        "interpretation_notes": "Proxy for residential and small commercial renewable/LCT adoption.",
+        "null_handling": "Value is 0 if none are found."
+      },
+      "der_sub1mw_solar_ratio_5km": {
+        "description": "The proportion of sub-1MW DER capacity within 5km that is from solar installations.",
+        "source_directive": "011",
+        "data_type": "Float",
+        "unit": "Ratio (0 to 1)",
+        "interpretation_notes": "A powerful proxy for local community acceptance and pro-solar sentiment.",
+        "null_handling": "Value is 0 if none are found."
+      },
+      "der_over1mw_density_count_5km": {
+        "description": "The count of registered DER over 1MW within a 5km radius.",
+        "source_directive": "011",
+        "data_type": "Integer",
+        "unit": "Count",
+        "interpretation_notes": "Measures the density of existing large-scale generation, indicating potential grid saturation and cumulative impact concerns.",
+        "null_handling": "Value is 0 if none are found."
+      }
+    },
+    "__GRID_IDNO_PRECEDENT__": {
+      "idno_is_within": {
+        "description": "A binary flag indicating if the solar site's centroid falls within an Independent Distribution Network Operator (IDNO) area.",
+        "source_directive": "013",
+        "data_type": "Binary Integer",
+        "unit": "N/A",
+        "interpretation_notes": "Indicates the site is within a major private development, which has complex planning and grid connection implications.",
+        "null_handling": "No nulls."
+      },
+      "idno_distance_to_nearest_boundary": {
+        "description": "The shortest distance from the site's boundary to the boundary of the nearest IDNO area.",
+        "source_directive": "013",
+        "data_type": "Float",
+        "unit": "Meters",
+        "interpretation_notes": "Measures proximity to major private developments. Value is 0 if 'idno_is_within' is true.",
+        "null_handling": "No nulls."
+      },
+      "idno_crosses_connection_path": {
+        "description": "A binary flag indicating if the straight-line path from the site to its target substation intersects an IDNO boundary.",
+        "source_directive": "013",
+        "data_type": "Binary Integer",
+        "unit": "N/A",
+        "interpretation_notes": "A powerful proxy for wayleave and connection path complexity.",
+        "null_handling": "No nulls."
+      },
+      "lpa_idno_area_as_percent_of_total_area": {
+        "description": "For the governing LPA, the percentage of its total administrative area covered by IDNO polygons.",
+        "source_directive": "013",
+        "data_type": "Float",
+        "unit": "Ratio (0 to 1)",
+        "interpretation_notes": "A quantitative measure of the LPA's historical tolerance for major private development.",
+        "null_handling": "Value is 0 if none are found."
+      }
+    },
+    "__GRID_FORWARD_LOOKING_LTDS__": {
+      "ltds_nearest_upgrade_dist_m": {
+        "description": "Distance to the nearest planned grid upgrade, based on the temporally-valid Long Term Development Statement (LTDS) at the time of application.",
+        "source_directive": "014",
+        "data_type": "Float",
+        "unit": "Meters",
+        "interpretation_notes": "Measures proximity to future grid reinforcement.",
+        "null_handling": "Imputed with a high sentinel value (e.g., 999999) if no relevant upgrades are found."
+      },
+      "ltds_years_to_nearest_completion": {
+        "description": "The number of years between the application's submission year and the 'ExpectedCompletionYear' of the nearest temporally-valid grid upgrade.",
+        "source_directive": "014",
+        "data_type": "Float",
+        "unit": "Years",
+        "interpretation_notes": "Models the imminence of grid reinforcement. A small positive value is a strong positive signal. A negative value indicates the upgrade should already be complete.",
+        "null_handling": "Imputed with a high sentinel value (e.g., 99)."
+      },
+      "ltds_count_new_sub_in_10km": {
+        "description": "The count of planned NEW substations within 10km, based on the temporally-valid LTDS.",
+        "source_directive": "014",
+        "data_type": "Integer",
+        "unit": "Count",
+        "interpretation_notes": "A very strong signal of major strategic investment and future capacity in the local area.",
+        "null_handling": "Value is 0 if none are found."
+      }
+    },
+    "__GRID_LCT_SATURATION_SENTIMENT__": {
+      "lct_secondary_sub_count_in_5km": {
+        "description": "The number of unique secondary substations with reported Low Carbon Technology (LCT) connections within a 5km radius.",
+        "source_directive": "015",
+        "data_type": "Integer",
+        "unit": "Count",
+        "interpretation_notes": "Measures the density of LCT hotspots.",
+        "null_handling": "Value is 0 if none are found."
+      },
+      "lct_generation_demand_ratio_in_5km": {
+        "description": "Within a 5km radius, the ratio of LCT connections categorized as 'Generation' (e.g., solar) to those categorized as 'Demand' (e.g., EV chargers).",
+        "source_directive": "015",
+        "data_type": "Float",
+        "unit": "Ratio",
+        "interpretation_notes": "The alpha feature from Directive 015. It disentangles the competing signals of LCTs. A high value (>1) suggests strong local pro-renewable sentiment. A low value (<1) suggests high grid strain from demand technologies.",
+        "null_handling": "Calculated with a `+1` in the denominator to prevent division-by-zero errors."
+      },
+      "primary_sub_total_lct_connections": {
+        "description": "The total number of LCT connections downstream of the target primary substation, aggregated from the secondary substation data.",
+        "source_directive": "015",
+        "data_type": "Integer",
+        "unit": "Count",
+        "interpretation_notes": "Measures the total LCT load on the primary substation our solar farm intends to connect to.",
+        "null_handling": "Value is 0 if none are found."
+      }
+    "__GRID_LCT_SYNTHESIS__": {
+      "primary_direct_total_connections": {
+        "description": "The total number of LCT connections at the target primary substation, taken directly from the primary-aggregated dataset.",
+        "source_directive": "016",
+        "data_type": "Integer",
+        "unit": "Count",
+        "interpretation_notes": "Provides the most direct, authoritative count of LCTs for the primary substation. Used for cross-validation and synthesis.",
+        "null_handling": "Imputed with 0 if no data is available for the substation."
+      },
+      "primary_direct_gen_dem_ratio": {
+        "description": "The ratio of 'Generation' to 'Demand' LCT connections, calculated from the direct primary-aggregated dataset.",
+        "source_directive": "016",
+        "data_type": "Float",
+        "unit": "Ratio",
+        "interpretation_notes": "Directly measures the character of the LCT load on the primary substation.",
+        "null_handling": "Calculated with a `+1` in the denominator."
+      },
+      "lct_reconciliation_delta_connections": {
+        "description": "The synthetic feature calculating the difference between the direct LCT count ('primary_direct_total_connections') and our aggregated count from secondary data ('primary_sub_total_lct_connections').",
+        "source_directive": "016",
+        "data_type": "Integer",
+        "unit": "Count",
+        "interpretation_notes": "The alpha feature from Directive 016. A large positive value indicates a high volume of 'hidden' LCTs in small, unreported clusters (1-4 connections), a powerful signal of widespread 'grassroots' adoption and positive community sentiment.",
+        "null_handling": "Value is 0 if either source is missing data."
+      },
+      "lct_primary_concentration_idx": {
+        "description": "The synthetic feature calculating the ratio of the max LCT connections at any single secondary sub to the total connections for the parent primary sub.",
+        "source_directive": "016",
+        "data_type": "Float",
+        "unit": "Ratio (0 to 1)",
+        "interpretation_notes": "Measures LCT load concentration. A high value (near 1.0) indicates the load is from a few intense 'hotspots' (e.g., an EV charging hub), implying localized grid strain. A low value indicates a broad, diffuse load.",
+        "null_handling": "Value is 0 if no data is available."
+      },
+      "lct_aggregation_completeness_ratio": {
+        "description": "The synthetic feature calculating the ratio of our aggregated secondary sub LCT count to the authoritative primary sub LCT count.",
+        "source_directive": "016",
+        "data_type": "Float",
+        "unit": "Ratio (0 to 1)",
+        "interpretation_notes": "A data quality and confidence metric. A value near 1.0 indicates our granular secondary data captured almost all LCTs. A low value indicates most LCTs were 'hidden' in small clusters.",
+        "null_handling": "Value is 0 if no data is available."
+      }
+    },
+    "__GRID_LV_CONSTRAINTS_DNOA__": {
+      "dnoa_dist_to_nearest_constrained_tx_m": {
+        "description": "The distance to the nearest low-voltage transformer identified as a future constraint in the temporally-valid DNOA report.",
+        "source_directive": "017",
+        "data_type": "Float",
+        "unit": "Meters",
+        "interpretation_notes": "Measures proximity to known 'last mile' network problems.",
+        "null_handling": "Imputed with a high sentinel value."
+      },
+      "dnoa_imminence_of_nearest_constraint_yrs": {
+        "description": "The number of years from the application's submission date to the predicted constraint year of the nearest constrained LV transformer.",
+        "source_directive": "017",
+        "data_type": "Float",
+        "unit": "Years",
+        "interpretation_notes": "Models the urgency of the nearby LV network issue.",
+        "null_handling": "Imputed with a high sentinel value."
+      },
+      "dnoa_avg_deferred_kva_knn": {
+        "description": "The average 'Deferred Transformer size (kVA)' for the k-nearest constrained LV transformers.",
+        "source_directive": "017",
+        "data_type": "Float",
+        "unit": "Kilovolt-Amperes (kVA)",
+        "interpretation_notes": "A proxy for the severity and scale of the network overloading issues in the local area. High values indicate systemic problems.",
+        "null_handling": "Imputed with 0."
+      },
+      "primary_sub_downstream_constrained_tx_count": {
+        "description": "The total count of constrained LV transformers downstream of the site's governing primary substation.",
+        "source_directive": "017",
+        "data_type": "Integer",
+        "unit": "Count",
+        "interpretation_notes": "Aggregates the granular 'last mile' risk up to the primary connection point, indicating if the entire area it serves is under stress.",
+        "null_handling": "Value is 0 if none are found."
+      }
+    },
+    "__GRID_POWER_QUALITY__": {
+      "pq_idw_thd_knn5": {
+        "description": "The Inverse Distance Weighted (IDW) average of the Total Harmonic Distortion (THD) from the 5 nearest power quality monitors.",
+        "source_directive": "018",
+        "data_type": "Float",
+        "unit": "Percentage (%)",
+        "interpretation_notes": "A spatially interpolated measure of pre-existing network instability or 'electrical noise'. A high value is a strong negative predictor, as DNOs are reluctant to connect new generation to an already unstable network.",
+        "null_handling": "Imputed with a neutral value (e.g., median) if no monitors are found within a reasonable search radius."
+      },
+      "pq_idw_h5_highest_knn5": {
+        "description": "The IDW average of the 5th order harmonic from the 5 nearest monitors.",
+        "source_directive": "018",
+        "data_type": "Float",
+        "unit": "Percentage (%)",
+        "interpretation_notes": "The 5th harmonic is particularly problematic for electrical equipment. This feature provides a specific measure of a harmful type of power quality issue.",
+        "null_handling": "Imputed with 0."
+      },
+      "pq_dist_to_nearest_monitor_km": {
+        "description": "The distance to the single nearest power quality monitoring site.",
+        "source_directive": "018",
+        "data_type": "Float",
+        "unit": "Kilometers (km)",
+        "interpretation_notes": "Provides a confidence metric for the IDW features. A large distance indicates the PQ features are based on a wider, less certain interpolation.",
+        "null_handling": "Imputed with a high sentinel value."
+      }
+    },
+    "__GRID_PHYSICAL_ASSETS_PRIMARY__": {
+      "primary_sub_total_kva": {
+        "description": "The total nameplate transformation capacity of the governing primary substation, aggregated from all individual transformers at the site.",
+        "source_directive": "019",
+        "data_type": "Float",
+        "unit": "Kilovolt-Amperes (kVA)",
+        "interpretation_notes": "The definitive 'hard limit' of the substation's physical capacity.",
+        "null_handling": "Imputed with 0."
+      },
+      "primary_sub_tx_count": {
+        "description": "The number of unique transformers at the governing primary substation.",
+        "source_directive": "019",
+        "data_type": "Integer",
+        "unit": "Count",
+        "interpretation_notes": "A proxy for the site's redundancy and operational flexibility. A count > 1 (N-1 redundancy) is a positive signal.",
+        "null_handling": "Imputed with 0."
+      },
+      "kva_per_mwelec_ratio": {
+        "description": "The synthetic feature calculating the ratio of the substation's total capacity to the proposed capacity of the solar farm.",
+        "source_directive": "019",
+        "data_type": "Float",
+        "unit": "Ratio (kVA/MW)",
+        "interpretation_notes": "Normalizes the substation's capacity by the project's demand, providing a direct measure of the connection's relative impact.",
+        "null_handling": "Imputed with 0."
+      },
+      "substation_age_at_submission": {
+        "description": "The age of the governing primary substation in years, calculated at the point in time of the application's submission.",
+        "source_directive": "020",
+        "data_type": "Float",
+        "unit": "Years",
+        "interpretation_notes": "A powerful proxy for asset condition and DNO investment risk. Older assets may have less capacity for new connections.",
+        "null_handling": "Imputed with -1."
+      },
+      "is_hot_site": {
+        "description": "A binary flag indicating if the substation has a 'HOT' site classification, suggesting high load or strategic importance.",
+        "source_directive": "020",
+        "data_type": "Binary Integer",
+        "unit": "N/A",
+        "interpretation_notes": "Directly incorporates the DNO's own assessment of the site's operational status.",
+        "null_handling": "Imputed with 0."
+      },
+      "tx_count_mismatch_flag": {
+        "description": "A binary data quality flag, indicating if the transformer count from two different sources do not match.",
+        "source_directive": "020",
+        "data_type": "Binary Integer",
+        "unit": "N/A",
+        "interpretation_notes": "Allows the model to learn from potential data inconsistencies.",
+        "null_handling": "Value is 0."
+      },
+      "winter_nameplate_loading_pct": {
+        "description": "The synthetic feature calculating the ratio of the observed maximum winter demand to the total nameplate capacity of the substation.",
+        "source_directive": "020",
+        "data_type": "Float",
+        "unit": "Ratio (0 to 1)",
+        "interpretation_notes": "The alpha feature from Directive 020. This is the ultimate measure of real-world grid stress against the asset's absolute physical limit. A value approaching 1.0 is a severe constraint signal.",
+        "null_handling": "Imputed with 0, used in conjunction with 'has_demand_data' flag."
+      }
+    },
+    "__GRID_OHL_TOPOLOGY_EHV__": {
+      "ohl_33kv_dist_to_nearest_corridor_m": {
+        "description": "The shortest distance from the solar site to the buffered wayleave corridor of the nearest 33kV overhead line.",
+        "source_directive": "021",
+        "data_type": "Float",
+        "unit": "Meters",
+        "interpretation_notes": "A primary proxy for 33kV connection cost.",
+        "null_handling": "Imputed with a high sentinel value."
+      },
+      "ohl_33kv_sterilized_area_pct": {
+        "description": "The percentage of the solar site's total area that is overlapped (sterilized) by a 33kV OHL wayleave corridor.",
+        "source_directive": "021",
+        "data_type": "Float",
+        "unit": "Ratio (0 to 1)",
+        "interpretation_notes": "Directly quantifies the land loss and economic impact of an OHL crossing the site.",
+        "null_handling": "Value is 0."
+      },
+      "ohl_local_tower_ratio": {
+        "description": "In the local vicinity of the site, the ratio of high-impact steel towers to the total number of 33kV support structures (poles + towers).",
+        "source_directive": "022",
+        "data_type": "Float",
+        "unit": "Ratio (0 to 1)",
+        "interpretation_notes": "The alpha feature from Directive 022. Quantifies the visual character of the local 33kV network. A value near 1.0 indicates a major steel tower line with high visual impact; a value near 0 indicates a minor wooden pole line.",
+        "null_handling": "Value is 0."
+      },
+      "ohl_132kv_dist_to_nearest_corridor_m": {
+        "description": "The shortest distance from the solar site to the buffered wayleave corridor of the nearest 132kV overhead line.",
+        "source_directive": "023",
+        "data_type": "Float",
+        "unit": "Meters",
+        "interpretation_notes": "Proxy for the cost of a high-capacity, sub-transmission level connection.",
+        "null_handling": "Imputed with a high sentinel value."
+      },
+      "ohl_33kv_to_132kv_dist_ratio": {
+        "description": "The synthetic feature calculating the ratio of the distance to the nearest 33kV line versus the nearest 132kV line.",
+        "source_directive": "023",
+        "data_type": "Float",
+        "unit": "Ratio",
+        "interpretation_notes": "Models the strategic connection choice. A value << 1 suggests a 33kV connection is the only viable option. A value >> 1 suggests a 132kV connection may be more logical.",
+        "null_handling": "Imputed with 1."
+      }
+    },
+    "__GRID_OHL_TOPOLOGY_DHV_DLV__": {
+      "dhv_line_density_in_2km_km_per_km2": {
+        "description": "The density of Distribution High-Voltage (primarily 11kV) overhead lines in the local 2km area.",
+        "source_directive": "024",
+        "data_type": "Float",
+        "unit": "km / km^2",
+        "interpretation_notes": "A primary proxy for the 'grid clutter' or 'wiredness' of the rural landscape.",
+        "null_handling": "Value is 0."
+      },
+      "dhv_connection_path_intersection_count": {
+        "description": "The number of times the straight-line connection path (site to primary sub) intersects a DHV (11kV) wayleave corridor.",
+        "source_directive": "024",
+        "data_type": "Integer",
+        "unit": "Count",
+        "interpretation_notes": "A direct proxy for the engineering complexity and cost of routing the primary connection cable through the existing low-level grid.",
+        "null_handling": "Value is 0."
+      },
+      "dlv_line_density_in_2km_km_per_km2": {
+        "description": "The density of Distribution Low-Voltage (LV) overhead lines in the local 2km area.",
+        "source_directive": "025",
+        "data_type": "Float",
+        "unit": "km / km^2",
+        "interpretation_notes": "The ultimate proxy for human settlement density. A very high value indicates the site is near a residential or commercial area.",
+        "null_handling": "Value is 0."
+      },
+      "ohl_total_connection_path_intersections": {
+        "description": "The capstone synthetic feature summing the connection path intersections across both DHV and DLV networks.",
+        "source_directive": "025",
+        "data_type": "Integer",
+        "unit": "Count",
+        "interpretation_notes": "A single, unified measure of the total 'frictional' complexity of building a new grid connection.",
+        "null_handling": "Value is 0."
+      },
+      "ohl_total_sterilized_area_pct": {
+        "description": "The capstone synthetic feature summing the percentage of the site area sterilized by all classes of OHL (132kV, 33kV, DHV, DLV).",
+        "source_directive": "025",
+        "data_type": "Float",
+        "unit": "Ratio (0 to 1)",
+        "interpretation_notes": "A single, unified measure of the total direct land loss and physical encumbrance on a site from all overhead infrastructure.",
+        "null_handling": "Value is 0."
+      }
+    },
+    "__GRID_DETERMINISTIC_TOPOLOGY__": {
+      "firm_capacity_winter_mw": {
+        "description": "The empirical, DNO-reported firm capacity for the governing primary substation service area during winter.",
+        "source_directive": "026",
+        "data_type": "Float",
+        "unit": "Megawatts (MW)",
+        "interpretation_notes": "Ground-truth operational data that provides a real-world check against modeled headroom.",
+        "null_handling": "Imputed with 0."
+      },
+      "unutilised_capacity_pct": {
+        "description": "The empirical, DNO-reported unutilised capacity for the governing primary substation service area.",
+        "source_directive": "026",
+        "data_type": "Float",
+        "unit": "Ratio (0 to 1)",
+        "interpretation_notes": "A direct measure of available headroom based on operational data.",
+        "null_handling": "Imputed with 0."
+      },
+      "demandrag_Green (Over 5% headroom)": {
+        "description": "A binary flag indicating if the governing substation service area is in the 'Green' demand category.",
+        "source_directive": "026",
+        "data_type": "Binary Integer",
+        "unit": "N/A",
+        "interpretation_notes": "Directly incorporates the DNO's own RAG status for the area.",
+        "null_handling": "Value is 0."
+      },
+      "substation_area_join_method": {
+        "description": "A metadata flag indicating the method used to link the solar site to a primary substation service area.",
+        "source_directive": "026",
+        "data_type": "Categorical String",
+        "unit": "N/A",
+        "interpretation_notes": "Value is 'within' for a deterministic join or 'nearest' for a fallback join. Allows the model to learn if there's a difference between sites inside and outside defined areas.",
+        "null_handling": "No nulls."
+      },
+      "forecast_vs_empirical_headroom_delta_pct": {
+        "description": "The synthetic feature calculating the percentage point difference between the empirical unutilised capacity and the forecast headroom.",
+        "source_directive": "026",
+        "data_type": "Float",
+        "unit": "Percentage Points",
+        "interpretation_notes": "Models the delta between the DNO's forecast and the operational reality. A large delta may indicate a rapidly changing load profile.",
+        "null_handling": "Imputed with 0."
+      },
+      "sec_sub_gov_utilisation_pct": {
+        "description": "The empirical utilisation percentage of the single secondary substation service area that the solar site falls within.",
+        "source_directive": "028",
+        "data_type": "Float",
+        "unit": "Ratio (0 to 1)",
+        "interpretation_notes": "The most granular, deterministic measure of 'last mile' grid stress.",
+        "null_handling": "Imputed with 0."
+      },
+      "sec_sub_gov_customer_density_per_sqkm": {
+        "description": "The customer density of the governing secondary substation service area.",
+        "source_directive": "028",
+        "data_type": "Float",
+        "unit": "Customers / km^2",
+        "interpretation_notes": "The alpha feature from Directive 028. A powerful, normalized proxy for urban vs. rural character, derived from the physical service area polygon.",
+        "null_handling": "Imputed with 0."
+      },
+      "sec_sub_area_join_method": {
+        "description": "A metadata flag indicating the method used to link the solar site to a secondary substation service area ('within' or 'nearest').",
+        "source_directive": "028",
+        "data_type": "Categorical String",
+        "unit": "N/A",
+        "interpretation_notes": "Provides crucial metadata about the certainty of the 'last mile' linkage.",
+        "null_handling": "No nulls."
+      },
+      "__CORE_ATTRIBUTES_EXTENDED__": {
+      "chp_enabled": {
+        "description": "A binary flag from the source REPD data indicating if the project includes a Combined Heat and Power (CHP) component.",
+        "source_directive": "001",
+        "data_type": "Binary Integer",
+        "unit": "N/A",
+        "interpretation_notes": "Almost always 0 for solar projects. A value of 1 may indicate an unusual or miscategorized project type.",
+        "null_handling": "Imputed with 0."
+      },
+      "mounting_type_for_solar": {
+        "description": "Categorical feature indicating the mounting system for the solar panels (e.g., Ground-mounted, Rooftop).",
+        "source_directive": "001",
+        "data_type": "Categorical Integer",
+        "unit": "N/A",
+        "interpretation_notes": "Should be predominantly 'Ground-mounted' for this utility-scale cohort.",
+        "null_handling": "Imputed with a sentinel value for 'Unknown'."
+      },
+      "development_status_short": {
+        "description": "The final operational status of the project (e.g., Operational, Under Construction, Abandoned).",
+        "source_directive": "002",
+        "data_type": "Categorical Integer",
+        "unit": "N/A",
+        "interpretation_notes": "This feature is post-decision and must NOT be used for training the model to predict 'permission_granted'. It serves as a label for post-hoc analysis.",
+        "null_handling": "Imputed with a sentinel value."
+      },
+      "solar_farm_id": {
+        "description": "A unique identifier assigned to each solar farm application for tracking purposes within the Amaryllis project.",
+        "source_directive": "001",
+        "data_type": "String/Integer",
+        "unit": "N/A",
+        "interpretation_notes": "Primary key for joining and debugging. Not a predictive feature.",
+        "null_handling": "No nulls."
+      }
+    },
+    "__TEMPORAL_FEATURES_EXTENDED__": {
+      "submission_day": {
+        "description": "The day of the month the planning application was submitted.",
+        "source_directive": "002",
+        "data_type": "Integer",
+        "unit": "Day",
+        "interpretation_notes": "Provides finer-grained temporal information, though 'submission_month' is typically a stronger signal.",
+        "null_handling": "No nulls."
+      },
+      "application_granted_year": {
+        "description": "The year a positive planning decision was issued.",
+        "source_directive": "002",
+        "data_type": "Integer",
+        "unit": "Year",
+        "interpretation_notes": "Used to calculate the 'planning_duration_days' target. Not a predictive feature.",
+        "null_handling": "Null/sentinel for refused applications."
+      }
+    },
+    "__LPA_BEHAVIORAL_PROFILE_EXTENDED__": {
+      "total_applications_received": {
+        "description": "The total number of applications of any type received by the LPA over the entire historical dataset.",
+        "source_directive": "004",
+        "data_type": "Integer",
+        "unit": "Count",
+        "interpretation_notes": "Raw measure of LPA's historical workload.",
+        "null_handling": "Imputed with 0."
+      },
+      "lpa_major_decision_compliance_rate": {
+        "description": "The percentage of 'major' development decisions made by the LPA within the statutory timeframe (typically 13 weeks).",
+        "source_directive": "005",
+        "data_type": "Float",
+        "unit": "Ratio (0 to 1)",
+        "interpretation_notes": "A direct measure of the LPA's operational efficiency and adherence to targets. A low value is a strong predictor of longer durations.",
+        "null_handling": "Imputed with -1."
+      },
+      "lpa_avg_decision_days": {
+        "description": "The average number of days the LPA takes to issue a decision across all application types.",
+        "source_directive": "004",
+        "data_type": "Float",
+        "unit": "Days",
+        "interpretation_notes": "A general measure of LPA speed, though less specific than 'lpa_p90_decision_days'.",
+        "null_handling": "Imputed with -1."
+      }
+    },
+    "__GRID_DER_DENSITY_SENTIMENT_EXTENDED__": {
+      "der_sub1mw_capacity_density_mw_2km": {
+        "description": "The total capacity (MW) of registered DER under 1MW within a 2km radius.",
+        "source_directive": "011",
+        "data_type": "Float",
+        "unit": "Megawatts (MW)",
+        "interpretation_notes": "Measures the magnitude of small-scale generation/demand in the immediate vicinity.",
+        "null_handling": "Value is 0."
+      },
+      "der_over1mw_capacity_density_mw_5km": {
+        "description": "The total capacity (MW) of registered DER over 1MW within a 5km radius.",
+        "source_directive": "011",
+        "data_type": "Float",
+        "unit": "Megawatts (MW)",
+        "interpretation_notes": "Measures the magnitude of existing large-scale generation, indicating potential grid saturation.",
+        "null_handling": "Value is 0."
+      },
+       "der_total_capacity_density_mw_10km": {
+        "description": "The total combined capacity (MW) of all registered DER within a 10km radius.",
+        "source_directive": "011",
+        "data_type": "Float",
+        "unit": "Megawatts (MW)",
+        "interpretation_notes": "A holistic measure of the total distributed generation and demand load in the wider area.",
+        "null_handling": "Value is 0."
+      }
+    },
+    "__GRID_IDNO_PRECEDENT_EXTENDED__": {
+      "idno_nearest_substation_is_within": {
+        "description": "A binary flag indicating if the solar farm's target primary substation is located inside an IDNO area.",
+        "source_directive": "013",
+        "data_type": "Binary Integer",
+        "unit": "N/A",
+        "interpretation_notes": "A signal of significant potential connection complexity and cost.",
+        "null_handling": "Value is 0."
+      }
+    },
+    "__GRID_PHYSICAL_ASSETS_EXTENDED__": {
+      "primary_sub_downstream_sec_sub_count": {
+        "description": "The total number of secondary substations fed by the governing primary substation.",
+        "source_directive": "027",
+        "data_type": "Integer",
+        "unit": "Count",
+        "interpretation_notes": "Measures the scale of the low-voltage network managed by the primary asset.",
+        "null_handling": "Imputed with 0."
+      },
+      "primary_sub_downstream_total_customers": {
+        "description": "The total number of end customers served by all secondary substations downstream of the governing primary.",
+        "source_directive": "027",
+        "data_type": "Integer",
+        "unit": "Count",
+        "interpretation_notes": "A powerful proxy for the size and importance of the local distribution network.",
+        "null_handling": "Imputed with 0."
+      },
+      "primary_sub_downstream_gmt_ratio": {
+        "description": "The ratio of Ground-Mounted Transformers (GMT) to all secondary substations downstream of the primary.",
+        "source_directive": "027",
+        "data_type": "Float",
+        "unit": "Ratio (0 to 1)",
+        "interpretation_notes": "Aggregates the 'rural vs. suburban' character signal up to the primary substation level.",
+        "null_handling": "Imputed with 0."
+      }
+    },
+    "__GRID_OHL_TOPOLOGY_EXTENDED__": {
+       "ohl_33kv_density_in_2km_km_per_km2": {
+        "description": "The density of 33kV overhead lines in the local 2km area.",
+        "source_directive": "021",
+        "data_type": "Float",
+        "unit": "km / km^2",
+        "interpretation_notes": "Measures the existing 'grid clutter' from EHV distribution lines.",
+        "null_handling": "Value is 0."
+      },
+      "ohl_dist_to_nearest_tower_m": {
+        "description": "The shortest distance from the solar site to the nearest high-impact 33kV steel tower.",
+        "source_directive": "022",
+        "data_type": "Float",
+        "unit": "Meters",
+        "interpretation_notes": "A primary negative predictor for planning success due to visual amenity risk.",
+        "null_handling": "Imputed with a high sentinel value."
+      },
+      "ohl_132kv_tower_density_in_2km_per_km2": {
+        "description": "The density of 132kV steel towers in the local 2km area.",
+        "source_directive": "023",
+        "data_type": "Float",
+        "unit": "Towers / km^2",
+        "interpretation_notes": "A measure of the visual impact from the highest-voltage sub-transmission assets.",
+        "null_handling": "Value is 0."
+      },
+      "ohl_nearest_voltage": {
+        "description": "A categorical feature indicating whether the nearest EHV/sub-transmission line is a 33kV or 132kV asset.",
+        "source_directive": "023",
+        "data_type": "Categorical String",
+        "unit": "N/A",
+        "interpretation_notes": "A strategic feature that summarizes the dominant overhead line type in the immediate vicinity.",
+        "null_handling": "Imputed with 'Unknown'."
+      },
+      "dhv_network_complexity_in_2km": {
+        "description": "The synthetic topological feature measuring the structural complexity of the local DHV (11kV) network.",
+        "source_directive": "024",
+        "data_type": "Float",
+        "unit": "Ratio (segments/km)",
+        "interpretation_notes": "A high value signifies a complex, highly-branched 'web' typical of rural areas. A low value signifies a simpler, linear 'corridor' typical of industrial/transport routes.",
+        "null_handling": "Imputed with 0."
+      }
+    },
+    "__GRID_DETERMINISTIC_TOPOLOGY_EXTENDED__": {
+      "grid_supply_point_floc": {
+        "description": "The functional location identifier for the Grid Supply Point (GSP) that the governing primary substation is connected to.",
+        "source_directive": "026",
+        "data_type": "String",
+        "unit": "N/A",
+        "interpretation_notes": "Identifies the highest-tier connection point in the transmission network.",
+        "null_handling": "Imputed with 'Unknown'."
+      },
+      "demandrag_Red (More than 5% overloaded)": {
+        "description": "A binary flag indicating if the governing substation service area is in the 'Red' demand category, signifying it is already overloaded.",
+        "source_directive": "026",
+        "data_type": "Binary Integer",
+        "unit": "N/A",
+        "interpretation_notes": "A severe negative signal for connection feasibility.",
+        "null_handling": "Value is 0."
+      },
+      "constraint_season_Winter": {
+        "description": "A binary flag indicating if the governing primary substation service area's primary constraint occurs in Winter.",
+        "source_directive": "026",
+        "data_type": "Binary Integer",
+        "unit": "N/A",
+        "interpretation_notes": "Important context for solar, as its generation profile is summer-peaked, which may be complementary to a winter constraint.",
+        "null_handling": "Value is 0."
+      },
+      "dist_to_governing_substation_centroid_km": {
+        "description": "The distance from the solar site to the centroid of the primary substation service area it falls within.",
+        "source_directive": "026",
+        "data_type": "Float",
+        "unit": "Kilometers (km)",
+        "interpretation_notes": "Measures how central or peripheral a site is within its designated electrical area.",
+        "null_handling": "Imputed with 0."
+      },
+      "sec_sub_gov_onan_rating_kva": {
+        "description": "The nameplate capacity (kVA) of the single secondary substation whose service area the solar site falls within.",
+        "source_directive": "028",
+        "data_type": "Float",
+        "unit": "Kilovolt-Amperes (kVA)",
+        "interpretation_notes": "The physical capacity of the 'last mile' transformer.",
+        "null_handling": "Imputed with 0."
+      },
+      "dlv_connection_path_intersection_count": {
+        "description": "The number of times the straight-line connection path (site to primary sub) intersects a DLV service area polygon.",
+        "source_directive": "028",
+        "data_type": "Integer",
+        "unit": "Count",
+        "interpretation_notes": "The upgraded, more accurate measure of connection friction, based on crossing defined electrical neighborhoods rather than simple buffered lines.",
+        "null_handling": "Value is 0."
+      },
+      "__CORE_ATTRIBUTES_EXTENDED__": {
+      "chp_enabled": {
+        "description": "A binary flag from the source REPD data indicating if the project includes a Combined Heat and Power (CHP) component.",
+        "source_directive": "001",
+        "data_type": "Binary Integer",
+        "unit": "N/A",
+        "interpretation_notes": "Almost always 0 for solar projects. A value of 1 may indicate an unusual or miscategorized project type.",
+        "null_handling": "Imputed with 0."
+      },
+      "mounting_type_for_solar": {
+        "description": "Categorical feature indicating the mounting system for the solar panels (e.g., Ground-mounted, Rooftop).",
+        "source_directive": "001",
+        "data_type": "Categorical Integer",
+        "unit": "N/A",
+        "interpretation_notes": "Should be predominantly 'Ground-mounted' for this utility-scale cohort.",
+        "null_handling": "Imputed with a sentinel value for 'Unknown'."
+      },
+      "development_status_short": {
+        "description": "The final operational status of the project (e.g., Operational, Under Construction, Abandoned).",
+        "source_directive": "002",
+        "data_type": "Categorical Integer",
+        "unit": "N/A",
+        "interpretation_notes": "This feature is post-decision and must NOT be used for training the model to predict 'permission_granted'. It serves as a label for post-hoc analysis.",
+        "null_handling": "Imputed with a sentinel value."
+      },
+      "solar_farm_id": {
+        "description": "A unique identifier assigned to each solar farm application for tracking purposes within the Amaryllis project.",
+        "source_directive": "001",
+        "data_type": "String/Integer",
+        "unit": "N/A",
+        "interpretation_notes": "Primary key for joining and debugging. Not a predictive feature.",
+        "null_handling": "No nulls."
+      }
+    },
+    "__TEMPORAL_FEATURES_EXTENDED__": {
+      "submission_day": {
+        "description": "The day of the month the planning application was submitted.",
+        "source_directive": "002",
+        "data_type": "Integer",
+        "unit": "Day",
+        "interpretation_notes": "Provides finer-grained temporal information, though 'submission_month' is typically a stronger signal.",
+        "null_handling": "No nulls."
+      },
+      "submission_month": {
+        "description": "The integer month the planning application was submitted (1-12).",
+        "source_directive": "002",
+        "data_type": "Integer",
+        "unit": "Month",
+        "interpretation_notes": "Retained for interpretability; the cyclical 'sin' and 'cos' features are superior for modeling.",
+        "null_handling": "No nulls."
+      },
+      "submission_date": {
+        "description": "The full submission date of the planning application.",
+        "source_directive": "002",
+        "data_type": "Date",
+        "unit": "N/A",
+        "interpretation_notes": "The primary date key for all point-in-time joins.",
+        "null_handling": "No nulls."
+      },
+      "application_granted_year": {
+        "description": "The year a positive planning decision was issued.",
+        "source_directive": "002",
+        "data_type": "Integer",
+        "unit": "Year",
+        "interpretation_notes": "Used to calculate the 'planning_duration_days' target. Not a predictive feature.",
+        "null_handling": "Null/sentinel for refused applications."
+      },
+      "application_granted_month": {
+        "description": "The month a positive planning decision was issued.",
+        "source_directive": "002",
+        "data_type": "Integer",
+        "unit": "Month",
+        "interpretation_notes": "Informational; not a predictive feature.",
+        "null_handling": "Null/sentinel for refused applications."
+      },
+      "application_granted_day": {
+        "description": "The day a positive planning decision was issued.",
+        "source_directive": "002",
+        "data_type": "Integer",
+        "unit": "Day",
+        "interpretation_notes": "Informational; not a predictive feature.",
+        "null_handling": "Null/sentinel for refused applications."
+      }
+    },
+    "__LPA_BEHAVIORAL_PROFILE_EXTENDED__": {
+      "total_applications_received": {
+        "description": "The total number of applications of any type received by the LPA over the entire historical dataset.",
+        "source_directive": "004",
+        "data_type": "Integer",
+        "unit": "Count",
+        "interpretation_notes": "Raw measure of LPA's historical workload.",
+        "null_handling": "Imputed with 0."
+      },
+      "total_applications_withdrawn": {
+        "description": "The total number of applications withdrawn before a decision was made for this LPA.",
+        "source_directive": "004",
+        "data_type": "Integer",
+        "unit": "Count",
+        "interpretation_notes": "Raw count used to calculate 'lpa_withdrawal_rate'.",
+        "null_handling": "Imputed with 0."
+      },
+      "total_enforcement_actions": {
+        "description": "The total number of enforcement actions issued by the LPA.",
+        "source_directive": "004",
+        "data_type": "Integer",
+        "unit": "Count",
+        "interpretation_notes": "A proxy for an LPA's strictness and pro-activeness in enforcing planning law.",
+        "null_handling": "Imputed with 0."
+      },
+      "lpa_withdrawal_rate": {
+        "description": "The historical rate at which planning applications are withdrawn before a decision is made for this LPA.",
+        "source_directive": "004",
+        "data_type": "Float",
+        "unit": "Ratio (0 to 1)",
+        "interpretation_notes": "A high withdrawal rate can be a powerful signal of a difficult and costly planning environment, where developers abandon unviable projects early.",
+        "null_handling": "Imputed with -1."
+      },
+      "lpa_major_decision_compliance_rate": {
+        "description": "The percentage of 'major' development decisions made by the LPA within the statutory timeframe (typically 13 weeks).",
+        "source_directive": "005",
+        "data_type": "Float",
+        "unit": "Ratio (0 to 1)",
+        "interpretation_notes": "A direct measure of the LPA's operational efficiency and adherence to targets. A low value is a strong predictor of longer durations.",
+        "null_handling": "Imputed with -1."
+      },
+      "lpa_approval_rate_cps2": {
+        "description": "The historical approval rate of the LPA for all applications, derived from the CPS2 dataset.",
+        "source_directive": "005",
+        "data_type": "Float",
+        "unit": "Ratio (0 to 1)",
+        "interpretation_notes": "A general measure of LPA leniency, though less specific than 'lpa_major_commercial_approval_rate'.",
+        "null_handling": "Imputed with -1."
+      },
+      "lpa_avg_decision_days": {
+        "description": "The average number of days the LPA takes to issue a decision across all application types.",
+        "source_directive": "004",
+        "data_type": "Float",
+        "unit": "Days",
+        "interpretation_notes": "A general measure of LPA speed.",
+        "null_handling": "Imputed with -1."
+      },
+      "lpa_decision_speed_variance": {
+        "description": "The statistical variance of the LPA's decision durations.",
+        "source_directive": "004",
+        "data_type": "Float",
+        "unit": "Days^2",
+        "interpretation_notes": "A proxy for the predictability of the LPA. High variance suggests inconsistent processes and timelines.",
+        "null_handling": "Imputed with -1."
+      },
+      "lpa_industrial_application_approval_rate_cps2": {
+        "description": "The historical approval rate of the LPA specifically for 'Industrial & Commercial' applications.",
+        "source_directive": "005",
+        "data_type": "Float",
+        "unit": "Ratio (0 to 1)",
+        "interpretation_notes": "A more refined version of 'lpa_major_commercial_approval_rate', providing a strong signal of the LPA's pro-development stance.",
+        "null_handling": "Imputed with -1."
+      },
+      "lpa_legacy_approval_rate": {
+        "description": "The historical approval rate of the LPA for renewable energy projects, based on the legacy REPD dataset.",
+        "source_directive": "007",
+        "data_type": "Float",
+        "unit": "Ratio (0 to 1)",
+        "interpretation_notes": "A direct, though potentially dated, measure of the LPA's disposition towards renewables.",
+        "null_handling": "Imputed with -1."
+      },
+      "lpa_legacy_application_count": {
+        "description": "The total number of renewable energy applications the LPA has handled in the legacy REPD dataset.",
+        "source_directive": "007",
+        "data_type": "Integer",
+        "unit": "Count",
+        "interpretation_notes": "Measures the LPA's specific experience with renewable energy projects.",
+        "null_handling": "Imputed with 0."
+      },
+      "lpa_legacy_avg_duration": {
+        "description": "The average decision duration for renewable energy applications for this LPA from the legacy REPD dataset.",
+        "source_directive": "007",
+        "data_type": "Float",
+        "unit": "Days",
+        "interpretation_notes": "A historical baseline for renewable project timelines.",
+        "null_handling": "Imputed with -1."
+      }
+    },
+    "__DYNAMIC_SPATIAL_PRECEDENTS_EXTENDED__": {
+      "nearby_legacy_count": {
+        "description": "The number of legacy renewable energy projects within a defined search radius of the application site.",
+        "source_directive": "007",
+        "data_type": "Integer",
+        "unit": "Count",
+        "interpretation_notes": "Measures the density of historical renewable development.",
+        "null_handling": "Value is 0."
+      },
+      "nearby_legacy_approval_rate": {
+        "description": "The approval rate of legacy renewable energy projects within a defined search radius.",
+        "source_directive": "007",
+        "data_type": "Float",
+        "unit": "Ratio (0 to 1)",
+        "interpretation_notes": "A proxy for the historical local planning climate for renewables.",
+        "null_handling": "Imputed with -1."
+      },
+      "distance_to_nearest_legacy_site_km": {
+        "description": "The distance to the single nearest legacy renewable energy project.",
+        "source_directive": "007",
+        "data_type": "Float",
+        "unit": "Kilometers (km)",
+        "interpretation_notes": "Measures proximity to the most direct precedent.",
+        "null_handling": "Imputed with 999."
+      },
+      "distance_to_nearest_legacy_success_km": {
+        "description": "The distance to the nearest APPROVED legacy renewable energy project.",
+        "source_directive": "007",
+        "data_type": "Float",
+        "unit": "Kilometers (km)",
+        "interpretation_notes": "A nearby success is a positive signal for viability.",
+        "null_handling": "Imputed with 999."
+      },
+      "distance_to_nearest_legacy_refusal_km": {
+        "description": "The distance to the nearest REFUSED legacy renewable energy project.",
+        "source_directive": "007",
+        "data_type": "Float",
+        "unit": "Kilometers (km)",
+        "interpretation_notes": "A nearby refusal is a strong negative signal of local constraints or opposition.",
+        "null_handling": "Imputed with 999."
+      },
+      "knn_std_distance_km": {
+        "description": "The standard deviation of the distances to the k-nearest temporally valid precedents.",
+        "source_directive": "007",
+        "data_type": "Float",
+        "unit": "Kilometers (km)",
+        "interpretation_notes": "Measures the dispersion of historical development. A low value indicates a tight cluster of precedents; a high value indicates they are scattered.",
+        "null_handling": "Imputed with -1."
+      },
+      "knn_dist_to_nearest_km": {
+        "description": "The direct distance to the single nearest temporally valid precedent application.",
+        "source_directive": "007",
+        "data_type": "Float",
+        "unit": "Kilometers (km)",
+        "interpretation_notes": "The most influential precedent is often the closest one.",
+        "null_handling": "Imputed with -1."
+      },
+      "knn_approval_rate": {
+        "description": "The simple approval rate of the k-nearest temporally valid precedents.",
+        "source_directive": "007",
+        "data_type": "Float",
+        "unit": "Ratio (0 to 1)",
+        "interpretation_notes": "A direct measure of the local planning climate.",
+        "null_handling": "Imputed with -1."
+      },
+      "knn_count_solar": {
+        "description": "The number of SOLAR farm precedents among the k-nearest neighbors.",
+        "source_directive": "007",
+        "data_type": "Integer",
+        "unit": "Count",
+        "interpretation_notes": "Measures the density of 'like-for-like' precedents.",
+        "null_handling": "Value is 0."
+      }
+    },
+    "__GRID_CAPACITY_STABILITY_EXTENDED__": {
+      "nearest_substation_voltage_kv": {
+        "description": "The voltage level of the single nearest substation.",
+        "source_directive": "008",
+        "data_type": "Float",
+        "unit": "Kilovolts (kV)",
+        "interpretation_notes": "Indicates the capacity and type of the nearest connection point.",
+        "null_handling": "Imputed with -1."
+      },
+      "avg_dist_to_5nn_substations_km": {
+        "description": "The average distance to the 5 nearest substations.",
+        "source_directive": "008",
+        "data_type": "Float",
+        "unit": "Kilometers (km)",
+        "interpretation_notes": "Measures the density of the primary substation network in the local area.",
+        "null_handling": "Imputed with -1."
+      },
+      "std_headroom_5nn_substations_mw": {
+        "description": "The standard deviation of the temporally-aware forecast headroom across the 5 nearest substations.",
+        "source_directive": "008",
+        "data_type": "Float",
+        "unit": "Megawatts (MW)",
+        "interpretation_notes": "Measures the homogeneity of grid capacity in the local cluster. A high value indicates a complex connection environment.",
+        "null_handling": "Imputed with -1."
+      },
+      "nearest_sub_max_ef_fault_ka": {
+        "description": "The maximum earth fault level at the nearest substation.",
+        "source_directive": "009",
+        "data_type": "Float",
+        "unit": "Kiloamperes (kA)",
+        "interpretation_notes": "A secondary measure of network strength, relevant for protection system design.",
+        "null_handling": "Imputed with -1."
+      },
+      "avg_max_ef_fault_5nn_ka": {
+        "description": "The average maximum earth fault level across the 5 nearest substations.",
+        "source_directive": "009",
+        "data_type": "Float",
+        "unit": "Kiloamperes (kA)",
+        "interpretation_notes": "A more robust measure of the local grid's stability under fault conditions.",
+        "null_handling": "Imputed with -1."
+      }
+    },
+    "__GRID_DER_DENSITY_SENTIMENT_EXTENDED__": {
+      "der_sub1mw_storage_density_mwh_2km": {
+        "description": "The total energy capacity (MWh) of registered energy storage DER under 1MW within a 2km radius.",
+        "source_directive": "011",
+        "data_type": "Float",
+        "unit": "Megawatt-hours (MWh)",
+        "interpretation_notes": "Measures the prevalence of small-scale battery storage, a signal of a technologically advanced local grid.",
+        "null_handling": "Value is 0."
+      },
+      "der_total_density_count_10km": {
+        "description": "The total combined count of all registered DER within a 10km radius.",
+        "source_directive": "011",
+        "data_type": "Integer",
+        "unit": "Count",
+        "interpretation_notes": "A holistic measure of the total distributed energy asset base in the wider area.",
+        "null_handling": "Value is 0."
+      }
+    },
+    "__GRID_PHYSICAL_ASSETS_LEGACY__": {
+      "nearest_substation_total_kva": {
+        "description": "The total nameplate capacity of the single nearest primary substation.",
+        "source_directive": "012",
+        "data_type": "Float",
+        "unit": "Kilovolt-Amperes (kVA)",
+        "interpretation_notes": "An early, proximity-based measure of physical capacity. Largely superseded by the more robust, aggregated and deterministic features in Directives 019 and 026.",
+        "null_handling": "Imputed with 0."
+      },
+      "avg_total_kva_5nn": {
+        "description": "The average nameplate capacity across the 5 nearest primary substations.",
+        "source_directive": "012",
+        "data_type": "Float",
+        "unit": "Kilovolt-Amperes (kVA)",
+        "interpretation_notes": "A legacy measure of the physical capacity of the local substation cluster.",
+        "null_handling": "Imputed with 0."
+      },
+      "total_kva_in_10km_radius": {
+        "description": "The sum of the nameplate capacities of all primary substations within a 10km radius.",
+        "source_directive": "012",
+        "data_type": "Float",
+        "unit": "Kilovolt-Amperes (kVA)",
+        "interpretation_notes": "A legacy measure of the total physical grid capacity in the wider area.",
+        "null_handling": "Imputed with 0."
+      }
+    },
+    "__GRID_IDNO_PRECEDENT_EXTENDED__": {
+      "idno_count_in_5km": {
+        "description": "The number of distinct IDNO areas whose boundaries intersect a 5km buffer around the application site.",
+        "source_directive": "013",
+        "data_type": "Integer",
+        "unit": "Count",
+        "interpretation_notes": "Measures the density of major private developments.",
+        "null_handling": "Value is 0."
+      },
+      "idno_total_area_in_10km": {
+        "description": "The total area of all IDNO polygons that intersect a 10km buffer around the site.",
+        "source_directive": "013",
+        "data_type": "Float",
+        "unit": "Square Meters (sqm)",
+        "interpretation_notes": "Proxy for the intensity of private development in the wider area.",
+        "null_handling": "Value is 0."
+      },
+      "lpa_idno_count_per_100km2": {
+        "description": "The number of IDNOs per 100 square kilometers within the governing LPA.",
+        "source_directive": "013",
+        "data_type": "Float",
+        "unit": "Count / 100 km^2",
+        "interpretation_notes": "Measures the density, rather than the scale, of major private developments historically permitted by the LPA.",
+        "null_handling": "Value is 0."
+      }
+    },
+    "__GRID_FORWARD_LOOKING_LTDS_EXTENDED__": {
+      "ltds_count_in_10km": {
+        "description": "Count of all planned upgrades of any type within 10km, based on the temporally-valid LTDS.",
+        "source_directive": "014",
+        "data_type": "Integer",
+        "unit": "Count",
+        "interpretation_notes": "General measure of planned grid investment in the area.",
+        "null_handling": "Value is 0."
+      },
+      "ltds_count_reinforcement_in_10km": {
+        "description": "Count of planned upgrades specifically identified as 'Reinforcement' within 10km, based on the temporally-valid LTDS.",
+        "source_directive": "014",
+        "data_type": "Integer",
+        "unit": "Count",
+        "interpretation_notes": "A more specific signal of the DNO's intent to increase network capacity.",
+        "null_handling": "Value is 0."
+      },
+      "ltds_count_new_tx_in_10km": {
+        "description": "Count of planned new transformer installations within 10km, based on the temporally-valid LTDS.",
+        "source_directive": "014",
+        "data_type": "Integer",
+        "unit": "Count",
+        "interpretation_notes": "A signal of planned capacity increases at substations.",
+        "null_handling": "Value is 0."
+      }
+    },
+    "__IDENTIFIERS_AND_METADATA__": {
+      "primary_functionallocation": {
+        "description": "The unique functional location identifier (FLOC) for the governing primary substation.",
+        "source_directive": "008",
+        "data_type": "String",
+        "unit": "N/A",
+        "interpretation_notes": "A critical key used for joining multiple grid datasets. Not a predictive feature itself.",
+        "null_handling": "Should not be null."
+      }
+    },
+    "__GRID_LCT_SATURATION_SENTIMENT_EXTENDED__": {
+      "lct_total_connections_in_5km": {
+        "description": "The total sum of LCT connections of all types at secondary substations within a 5km radius.",
+        "source_directive": "015",
+        "data_type": "Integer",
+        "unit": "Count",
+        "interpretation_notes": "A general measure of LCT adoption density.",
+        "null_handling": "Value is 0."
+      },
+      "lct_total_import_kw_in_5km": {
+        "description": "The total import capacity (kW) of all LCT connections at secondary substations within a 5km radius.",
+        "source_directive": "015",
+        "data_type": "Float",
+        "unit": "Kilowatts (kW)",
+        "interpretation_notes": "Measures the total demand load from LCTs in the local area.",
+        "null_handling": "Value is 0."
+      },
+      "lct_total_export_kw_in_5km": {
+        "description": "The total export capacity (kW) of all LCT connections at secondary substations within a 5km radius.",
+        "source_directive": "015",
+        "data_type": "Float",
+        "unit": "Kilowatts (kW)",
+        "interpretation_notes": "Measures the total generation from small-scale LCTs in the local area.",
+        "null_handling": "Value is 0."
+      },
+      "lct_demand_connections_in_5km": {
+        "description": "The sum of LCT connections categorized as 'Demand' within a 5km radius.",
+        "source_directive": "015",
+        "data_type": "Integer",
+        "unit": "Count",
+        "interpretation_notes": "The numerator for the generation/demand ratio, specifically measuring grid strain.",
+        "null_handling": "Value is 0."
+      },
+      "lct_generation_connections_in_5km": {
+        "description": "The sum of LCT connections categorized as 'Generation' within a 5km radius.",
+        "source_directive": "015",
+        "data_type": "Integer",
+        "unit": "Count",
+        "interpretation_notes": "The denominator for the generation/demand ratio, specifically measuring pro-renewable sentiment.",
+        "null_handling": "Value is 0."
+      },
+      "lct_ev_connections_in_5km": {
+        "description": "The sum of LCT connections specifically for 'EV Charging Points' within a 5km radius.",
+        "source_directive": "015",
+        "data_type": "Integer",
+        "unit": "Count",
+        "interpretation_notes": "A specific proxy for electrification of transport and a major source of demand load.",
+        "null_handling": "Value is 0."
+      },
+      "lct_solar_connections_in_5km": {
+        "description": "The sum of LCT connections specifically for 'Solar' within a 5km radius.",
+        "source_directive": "015",
+        "data_type": "Integer",
+        "unit": "Count",
+        "interpretation_notes": "The most direct measure of small-scale solar adoption and sentiment.",
+        "null_handling": "Value is 0."
+      },
+      "primary_sub_total_lct_import_kw": {
+        "description": "The total import capacity (kW) of all LCTs downstream of the target primary substation.",
+        "source_directive": "015",
+        "data_type": "Float",
+        "unit": "Kilowatts (kW)",
+        "interpretation_notes": "Aggregated measure of the total LCT demand load on the primary asset.",
+        "null_handling": "Value is 0."
+      },
+      "primary_sub_total_lct_export_kw": {
+        "description": "The total export capacity (kW) of all LCTs downstream of the target primary substation.",
+        "source_directive": "015",
+        "data_type": "Float",
+        "unit": "Kilowatts (kW)",
+        "interpretation_notes": "Aggregated measure of the total LCT generation that the primary asset must manage.",
+        "null_handling": "Value is 0."
+      },
+      "primary_sub_demand_connections": {
+        "description": "The count of 'Demand' LCTs downstream of the target primary substation.",
+        "source_directive": "015",
+        "data_type": "Integer",
+        "unit": "Count",
+        "interpretation_notes": "Aggregated measure of LCT-driven demand.",
+        "null_handling": "Value is 0."
+      },
+      "primary_sub_generation_connections": {
+        "description": "The count of 'Generation' LCTs downstream of the target primary substation.",
+        "source_directive": "015",
+        "data_type": "Integer",
+        "unit": "Count",
+        "interpretation_notes": "Aggregated measure of LCT-driven generation.",
+        "null_handling": "Value is 0."
+      },
+      "primary_sub_lct_generation_demand_ratio": {
+        "description": "The ratio of 'Generation' to 'Demand' LCT connections for the entire area served by the primary substation.",
+        "source_directive": "015",
+        "data_type": "Float",
+        "unit": "Ratio",
+        "interpretation_notes": "Measures the overall character of the LCT load managed by the primary asset.",
+        "null_handling": "Calculated with a `+1` in the denominator."
+      }
+    },
+    "__GRID_LCT_SYNTHESIS_EXTENDED__": {
+      "primary_direct_total_import_kw": {
+        "description": "The total import capacity (kW) of LCTs at the primary substation, from the direct-aggregated dataset.",
+        "source_directive": "016",
+        "data_type": "Float",
+        "unit": "Kilowatts (kW)",
+        "interpretation_notes": "Authoritative measure of LCT demand load.",
+        "null_handling": "Imputed with 0."
+      },
+      "primary_direct_total_export_kw": {
+        "description": "The total export capacity (kW) of LCTs at the primary substation, from the direct-aggregated dataset.",
+        "source_directive": "016",
+        "data_type": "Float",
+        "unit": "Kilowatts (kW)",
+        "interpretation_notes": "Authoritative measure of LCT generation.",
+        "null_handling": "Imputed with 0."
+      },
+      "primary_direct_demand_connections": {
+        "description": "The count of 'Demand' LCTs at the primary substation, from the direct-aggregated dataset.",
+        "source_directive": "016",
+        "data_type": "Integer",
+        "unit": "Count",
+        "interpretation_notes": "Authoritative count of demand connections.",
+        "null_handling": "Imputed with 0."
+      },
+      "primary_direct_generation_connections": {
+        "description": "The count of 'Generation' LCTs at the primary substation, from the direct-aggregated dataset.",
+        "source_directive": "016",
+        "data_type": "Integer",
+        "unit": "Count",
+        "interpretation_notes": "Authoritative count of generation connections.",
+        "null_handling": "Imputed with 0."
+      },
+      "primary_direct_solar_connections": {
+        "description": "The count of 'Solar' LCTs at the primary substation, from the direct-aggregated dataset.",
+        "source_directive": "016",
+        "data_type": "Integer",
+        "unit": "Count",
+        "interpretation_notes": "Authoritative count of small-scale solar.",
+        "null_handling": "Imputed with 0."
+      },
+      "lct_reconciliation_delta_export_kw": {
+        "description": "The synthetic feature calculating the difference in export capacity (kW) between the direct and aggregated LCT datasets.",
+        "source_directive": "016",
+        "data_type": "Float",
+        "unit": "Kilowatts (kW)",
+        "interpretation_notes": "Measures the volume of 'hidden' small-scale generation capacity.",
+        "null_handling": "Value is 0."
+      },
+      "max_secondary_connections_for_primary": {
+        "description": "An intermediate feature: the maximum LCT connections found at any single secondary substation downstream of this primary.",
+        "source_directive": "016",
+        "data_type": "Integer",
+        "unit": "Count",
+        "interpretation_notes": "Used to calculate the 'lct_primary_concentration_idx'. Identifies the single largest LCT hotspot.",
+        "null_handling": "Value is 0."
+      }
+    },
+    "__GRID_LV_CONSTRAINTS_DNOA_EXTENDED__": {
+      "dnoa_constrained_tx_count_knn": {
+        "description": "The number of constrained LV transformers found among the k-nearest neighbors (within the valid temporal window).",
+        "source_directive": "017",
+        "data_type": "Integer",
+        "unit": "Count",
+        "interpretation_notes": "Measures the density of known future problems in the immediate vicinity.",
+        "null_handling": "Value is 0."
+      },
+      "dnoa_avg_dist_knn_m": {
+        "description": "The average distance to the k-nearest constrained LV transformers.",
+        "source_directive": "017",
+        "data_type": "Float",
+        "unit": "Meters",
+        "interpretation_notes": "Measures the dispersion of known future problems.",
+        "null_handling": "Imputed with -1."
+      },
+      "dnoa_earliest_constraint_year_knn": {
+        "description": "The earliest 'Constraint year' among the k-nearest constrained LV transformers.",
+        "source_directive": "017",
+        "data_type": "Integer",
+        "unit": "Year",
+        "interpretation_notes": "Identifies the most imminent future constraint in the local area.",
+        "null_handling": "Imputed with a high sentinel value."
+      },
+      "dnoa_procure_flex_ratio_knn": {
+        "description": "The proportion of the k-nearest constrained LV transformers where the DNO's stated solution is to 'Procure more flex'.",
+        "source_directive": "017",
+        "data_type": "Float",
+        "unit": "Ratio (0 to 1)",
+        "interpretation_notes": "A proxy for the DNO's strategy in the area. A high value suggests an openness to non-wire alternatives, which could be favorable for some generator types.",
+        "null_handling": "Value is 0."
+      },
+      "primary_sub_downstream_total_deferred_kva": {
+        "description": "The sum of 'Deferred Transformer size (kVA)' for all constrained LV transformers downstream of the primary sub.",
+        "source_directive": "017",
+        "data_type": "Float",
+        "unit": "Kilovolt-Amperes (kVA)",
+        "interpretation_notes": "Aggregates the severity of all downstream LV constraints into a single metric of risk for the primary asset.",
+        "null_handling": "Value is 0."
+      },
+      "primary_sub_downstream_earliest_constraint_year": {
+        "description": "The earliest 'Constraint year' of any constrained LV transformer downstream of the primary sub.",
+        "source_directive": "017",
+        "data_type": "Integer",
+        "unit": "Year",
+        "interpretation_notes": "Identifies the most imminent downstream LV problem for the entire primary service area.",
+        "null_handling": "Imputed with a high sentinel value."
+      }
+    },
+    "__GRID_POWER_QUALITY_EXTENDED__": {
+      "pq_idw_avg_odd_harmonics_knn5": {
+        "description": "The IDW average of the 'Highest' value for all odd-order harmonics from the 5 nearest monitors.",
+        "source_directive": "018",
+        "data_type": "Float",
+        "unit": "Percentage (%)",
+        "interpretation_notes": "Odd harmonics are often the most problematic. This provides a general measure of harmful distortion.",
+        "null_handling": "Imputed with 0."
+      },
+      "pq_max_thd_in_knn5": {
+        "description": "The single worst-case (maximum) THD value among the 5 nearest monitors.",
+        "source_directive": "018",
+        "data_type": "Float",
+        "unit": "Percentage (%)",
+        "interpretation_notes": "Identifies the peak instability in the local area, which may be more influential than the average.",
+        "null_handling": "Imputed with 0."
+      },
+      "pq_std_thd_in_knn5": {
+        "description": "The standard deviation of THD values among the 5 nearest monitors.",
+        "source_directive": "018",
+        "data_type": "Float",
+        "unit": "Percentage (%)",
+        "interpretation_notes": "Measures the variance of power quality. High variance might indicate a single, localized problem source rather than systemic issues.",
+        "null_handling": "Imputed with 0."
+      }
+    },
+    "__GRID_PHYSICAL_ASSETS_PRIMARY_EXTENDED__": {
+      "primary_sub_avg_tx_kva": {
+        "description": "The average nameplate capacity of transformers at the governing primary substation.",
+        "source_directive": "019",
+        "data_type": "Float",
+        "unit": "Kilovolt-Amperes (kVA)",
+        "interpretation_notes": "Provides context for the site's composition.",
+        "null_handling": "Imputed with 0."
+      },
+      "primary_sub_max_tx_kva": {
+        "description": "The capacity of the largest single transformer at the governing primary substation.",
+        "source_directive": "019",
+        "data_type": "Float",
+        "unit": "Kilovolt-Amperes (kVA)",
+        "interpretation_notes": "Indicates the maximum single-unit capacity.",
+        "null_handling": "Imputed with 0."
+      },
+      "primary_sub_min_tx_kva": {
+        "description": "The capacity of the smallest single transformer at the governing primary substation.",
+        "source_directive": "019",
+        "data_type": "Float",
+        "unit": "Kilovolt-Amperes (kVA)",
+        "interpretation_notes": "Can indicate the presence of older, smaller assets.",
+        "null_handling": "Imputed with 0."
+      },
+      "primary_sub_tx_kva_variance": {
+        "description": "The variance of transformer capacities at the governing primary substation.",
+        "source_directive": "019",
+        "data_type": "Float",
+        "unit": "kVA^2",
+        "interpretation_notes": "A high variance indicates a mix of old/new or large/small assets.",
+        "null_handling": "Imputed with 0."
+      },
+      "sitevoltage": {
+        "description": "The operational voltage of the primary substation.",
+        "source_directive": "020",
+        "data_type": "Float",
+        "unit": "Kilovolts (kV)",
+        "interpretation_notes": "Confirms the voltage class of the asset.",
+        "null_handling": "Imputed with -1."
+      },
+      "powertransformercount": {
+        "description": "The transformer count for the primary substation from the master characteristics dataset.",
+        "source_directive": "020",
+        "data_type": "Integer",
+        "unit": "Count",
+        "interpretation_notes": "The authoritative count used for the mismatch flag.",
+        "null_handling": "Imputed with 0."
+      },
+      "datecommissioned": {
+        "description": "The date the primary substation was first commissioned.",
+        "source_directive": "020",
+        "data_type": "Date",
+        "unit": "N/A",
+        "interpretation_notes": "The raw date used to calculate 'substation_age_at_submission'.",
+        "null_handling": "Null if missing."
+      },
+      "assessmentdate": {
+        "description": "The date of the last major assessment of the primary substation.",
+        "source_directive": "020",
+        "data_type": "Date",
+        "unit": "N/A",
+        "interpretation_notes": "The raw date used to calculate 'time_since_last_assessment_days'.",
+        "null_handling": "Null if missing."
+      },
+      "transratingwinter": {
+        "description": "The operational rating of the primary substation's transformers in winter.",
+        "source_directive": "020",
+        "data_type": "Float",
+        "unit": "Megavolt-Amperes (MVA)",
+        "interpretation_notes": "The denominator for winter loading calculations.",
+        "null_handling": "Null if missing."
+      },
+      "transratingsummer": {
+        "description": "The operational rating of the primary substation's transformers in summer.",
+        "source_directive": "020",
+        "data_type": "Float",
+        "unit": "Megavolt-Amperes (MVA)",
+        "interpretation_notes": "The denominator for summer loading calculations.",
+        "null_handling": "Null if missing."
+      },
+      "maxdemandsummer": {
+        "description": "The observed maximum demand at the primary substation in summer.",
+        "source_directive": "020",
+        "data_type": "Float",
+        "unit": "Megawatts (MW)",
+        "interpretation_notes": "The numerator for summer loading calculations.",
+        "null_handling": "Null if missing."
+      },
+      "maxdemandwinter": {
+        "description": "The observed maximum demand at the primary substation in winter.",
+        "source_directive": "020",
+        "data_type": "Float",
+        "unit": "Megawatts (MW)",
+        "interpretation_notes": "The numerator for winter loading calculations.",
+        "null_handling": "Null if missing."
+      },
+      "resistance_ohm": {
+        "description": "The measured electrical resistance of the substation's grounding system.",
+        "source_directive": "020",
+        "data_type": "Float",
+        "unit": "Ohms",
+        "interpretation_notes": "A measure of asset health and safety.",
+        "null_handling": "Null if missing."
+      },
+      "reversepower_encoded": {
+        "description": "An encoded feature representing reverse power flow capabilities or issues at the substation.",
+        "source_directive": "020",
+        "data_type": "Integer",
+        "unit": "N/A",
+        "interpretation_notes": "Indicates the substation's experience with and tolerance for generation.",
+        "null_handling": "Imputed with a neutral value."
+      },
+      "time_since_last_assessment_days": {
+        "description": "The number of days between the application submission and the last major site assessment.",
+        "source_directive": "020",
+        "data_type": "Float",
+        "unit": "Days",
+        "interpretation_notes": "A large value may indicate that the DNO's data on the asset is old and potentially less reliable.",
+        "null_handling": "Imputed with -1."
+      },
+      "has_demand_data": {
+        "description": "A binary flag indicating if empirical demand data ('maxdemandwinter', etc.) was available for this substation.",
+        "source_directive": "020",
+        "data_type": "Binary Integer",
+        "unit": "N/A",
+        "interpretation_notes": "Crucial metadata. Allows the model to distinguish between a substation with zero loading and one with no data.",
+        "null_handling": "Value is 0 or 1."
+      },
+      "summer_nameplate_loading_pct": {
+        "description": "The synthetic feature calculating the ratio of the observed maximum summer demand to the total nameplate capacity.",
+        "source_directive": "020",
+        "data_type": "Float",
+        "unit": "Ratio (0 to 1)",
+        "interpretation_notes": "The ultimate measure of real-world summer grid stress against the asset's absolute physical limit.",
+        "null_handling": "Imputed with 0."
+      },
+      "kva_per_transformer": {
+        "description": "The total capacity of the substation divided by the authoritative number of transformers.",
+        "source_directive": "020",
+        "data_type": "Float",
+        "unit": "Kilovolt-Amperes (kVA)",
+        "interpretation_notes": "A refined measure of the average transformer size at the site.",
+        "null_handling": "Imputed with 0."
+      }
+    },
+    "__GRID_OHL_TOPOLOGY_EHV_EXTENDED__": {
+      "ohl_33kv_sterilized_area_sqm": {
+        "description": "The absolute area of the solar site that is overlapped (sterilized) by a 33kV OHL wayleave corridor.",
+        "source_directive": "021",
+        "data_type": "Float",
+        "unit": "Square Meters (sqm)",
+        "interpretation_notes": "The raw value used to calculate the more powerful percentage feature.",
+        "null_handling": "Value is 0."
+      },
+      "ohl_33kv_corridor_intersects_site": {
+        "description": "A binary flag indicating if a 33kV OHL wayleave corridor intersects the solar site.",
+        "source_directive": "021",
+        "data_type": "Binary Integer",
+        "unit": "N/A",
+        "interpretation_notes": "A simple but important flag for land encumbrance.",
+        "null_handling": "Value is 0 or 1."
+      },
+      "ohl_33kv_nearest_primary_substation_dist_ratio": {
+        "description": "The ratio of the distance to the nearest 33kV OHL versus the distance to the target primary substation.",
+        "source_directive": "021",
+        "data_type": "Float",
+        "unit": "Ratio",
+        "interpretation_notes": "A proxy for connection strategy. A value << 1 suggests a 'tee-in' to the OHL is much cheaper than a direct connection to the substation.",
+        "null_handling": "Imputed with 1."
+      },
+      "ohl_dist_to_nearest_pole_m": {
+        "description": "The shortest distance from the solar site to the nearest lower-impact 33kV wooden pole.",
+        "source_directive": "022",
+        "data_type": "Float",
+        "unit": "Meters",
+        "interpretation_notes": "Contextual feature for visual amenity analysis.",
+        "null_handling": "Imputed with a high sentinel value."
+      },
+      "ohl_local_structure_count": {
+        "description": "The total number of 33kV support structures (poles + towers) in the local vicinity.",
+        "source_directive": "022",
+        "data_type": "Integer",
+        "unit": "Count",
+        "interpretation_notes": "Measures the overall density of 33kV support infrastructure.",
+        "null_handling": "Value is 0."
+      },
+      "ohl_local_tower_count": {
+        "description": "The number of high-impact 33kV steel towers in the local vicinity.",
+        "source_directive": "022",
+        "data_type": "Integer",
+        "unit": "Count",
+        "interpretation_notes": "The numerator for the 'ohl_local_tower_ratio' feature.",
+        "null_handling": "Value is 0."
+      },
+      "ohl_structure_dist_from_line_avg_m": {
+        "description": "The average distance of the nearest support structures (points) from their corresponding OHL corridor (lines).",
+        "source_directive": "022",
+        "data_type": "Float",
+        "unit": "Meters",
+        "interpretation_notes": "A data quality reconciliation feature. A large value suggests a mismatch between the point and line datasets.",
+        "null_handling": "Imputed with 0."
+      },
+      "ohl_132kv_dist_to_nearest_tower_m": {
+        "description": "The shortest distance from the solar site to the nearest 132kV steel tower.",
+        "source_directive": "023",
+        "data_type": "Float",
+        "unit": "Meters",
+        "interpretation_notes": "A primary measure of high-magnitude visual amenity risk.",
+        "null_handling": "Imputed with a high sentinel value."
+      },
+      "ohl_132kv_sterilized_area_sqm": {
+        "description": "The absolute area of the solar site that is overlapped by a 132kV OHL wayleave corridor.",
+        "source_directive": "023",
+        "data_type": "Float",
+        "unit": "Square Meters (sqm)",
+        "interpretation_notes": "Raw value for land loss from sub-transmission lines.",
+        "null_handling": "Value is 0."
+      },
+      "ohl_132kv_tower_count_2km": {
+        "description": "The count of 132kV towers within a 2km radius.",
+        "source_directive": "023",
+        "data_type": "Integer",
+        "unit": "Count",
+        "interpretation_notes": "Raw count used for density calculation.",
+        "null_handling": "Value is 0."
+      },
+      "ohl_132kv_corridor_intersects_site": {
+        "description": "A binary flag indicating if a 132kV OHL wayleave corridor intersects the solar site.",
+        "source_directive": "023",
+        "data_type": "Binary Integer",
+        "unit": "N/A",
+        "interpretation_notes": "Flag for major land encumbrance.",
+        "null_handling": "Value is 0 or 1."
+      },
+      "ohl_132kv_sterilized_area_pct": {
+        "description": "The percentage of the solar site's total area that is overlapped (sterilized) by a 132kV OHL wayleave corridor.",
+        "source_directive": "023",
+        "data_type": "Float",
+        "unit": "Ratio (0 to 1)",
+        "interpretation_notes": "Directly quantifies land loss from sub-transmission lines.",
+        "null_handling": "Value is 0."
+      },
+      "ohl_total_tower_count_2km": {
+        "description": "The capstone synthetic feature summing the count of all steel towers (33kV and 132kV) in the local 2km area.",
+        "source_directive": "023",
+        "data_type": "Integer",
+        "unit": "Count",
+        "interpretation_notes": "A single, unified measure of the total visual impact from high-voltage steel towers.",
+        "null_handling": "Value is 0."
+      }
+    },
+    "__GRID_OHL_TOPOLOGY_DHV_DLV_EXTENDED__": {
+      "dhv_pole_density_in_2km_per_km2": {
+        "description": "The density of DHV (11kV) poles in the local 2km area.",
+        "source_directive": "024",
+        "data_type": "Float",
+        "unit": "Poles / km^2",
+        "interpretation_notes": "Measures the visual 'picket-fencing' of the landscape by the distribution network.",
+        "null_handling": "Value is 0."
+      },
+      "dlv_pole_density_in_2km_per_km2": {
+        "description": "The density of DLV poles in the local 2km area.",
+        "source_directive": "025",
+        "data_type": "Float",
+        "unit": "Poles / km^2",
+        "interpretation_notes": "The ultimate measure of visual clutter from the 'last mile' network, strongly indicating proximity to settlement.",
+        "null_handling": "Value is 0."
+      }
+    },
+    "__GRID_DETERMINISTIC_TOPOLOGY_EXTENDED__": {
+      "firm_capacity_summer_mw": {
+        "description": "The empirical, DNO-reported firm capacity for the governing primary substation service area during summer.",
+        "source_directive": "026",
+        "data_type": "Float",
+        "unit": "Megawatts (MW)",
+        "interpretation_notes": "Ground-truth operational data. Summer capacity is particularly relevant for solar projects.",
+        "null_handling": "Imputed with 0."
+      },
+      "demandrag_Yellow (Between 5% overloaded and 5% headroom)": {
+        "description": "A binary flag indicating if the governing substation service area is in the 'Yellow' demand category, signifying it is nearing constraint.",
+        "source_directive": "026",
+        "data_type": "Binary Integer",
+        "unit": "N/A",
+        "interpretation_notes": "A cautionary signal of limited remaining capacity.",
+        "null_handling": "Value is 0."
+      },
+      "constraint_season_Summer": {
+        "description": "A binary flag indicating if the governing primary substation service area's primary constraint occurs in Summer.",
+        "source_directive": "026",
+        "data_type": "Binary Integer",
+        "unit": "N/A",
+        "interpretation_notes": "A summer constraint is a significant negative signal for a solar project, as generation would align with the period of peak stress.",
+        "null_handling": "Value is 0."
+      },
+      "primary_sub_downstream_total_kva": {
+        "description": "The sum of nameplate capacities (kVA) of all secondary substations downstream of the governing primary.",
+        "source_directive": "027",
+        "data_type": "Float",
+        "unit": "Kilovolt-Amperes (kVA)",
+        "interpretation_notes": "Measures the total physical capacity of the entire downstream low-voltage network.",
+        "null_handling": "Imputed with 0."
+      },
+      "primary_sub_downstream_avg_utilisation": {
+        "description": "The average utilisation percentage of all secondary substations downstream of the governing primary.",
+        "source_directive": "027",
+        "data_type": "Float",
+        "unit": "Ratio (0 to 1)",
+        "interpretation_notes": "A powerful aggregated measure of the overall stress on the entire local distribution network.",
+        "null_handling": "Imputed with 0."
+      },
+      "sec_sub_gov_customer_count": {
+        "description": "The number of customers served by the single secondary substation whose service area the solar site falls within.",
+        "source_directive": "028",
+        "data_type": "Integer",
+        "unit": "Count",
+        "interpretation_notes": "A direct measure of the size of the immediate electrical neighborhood.",
+        "null_handling": "Imputed with 0."
+      },
+      "sec_sub_gov_area_sqm": {
+        "description": "The area of the secondary substation service polygon that the solar site falls within.",
+        "source_directive": "028",
+        "data_type": "Float",
+        "unit": "Square Meters (sqm)",
+        "interpretation_notes": "Raw value used to calculate customer density. A large area indicates a rural service zone.",
+        "null_handling": "Imputed with 0."
+      },
+     {
+  "cs_on_site_bool": {
+    "description": "A boolean flag (1/0) indicating if the solar site polygon intersects with any Countryside Stewardship (CS) agreement that was active at the time of the application's submission.",
+    "source_directive": "044",
+    "data_type": "Boolean (Integer)",
+    "unit": "Flag",
+    "interpretation_notes": "A direct measure of land-use conflict. A value of 1 indicates the proposed site is on land already under a formal agri-environment contract, a significant planning hurdle.",
+    "null_handling": "Defaults to 0 (no intersection)."
+  },
+  "cs_on_site_pct_area": {
+    "description": "The percentage of the solar site's total area that is covered by any active Countryside Stewardship (CS) agreements.",
+    "source_directive": "044",
+    "data_type": "Float",
+    "unit": "Ratio (0 to 1)",
+    "interpretation_notes": "Quantifies the *degree* of direct land-use conflict. A high value suggests the development would almost entirely replace land under environmental management.",
+    "null_handling": "Defaults to 0."
+  },
+  "cs_on_site_highest_tier": {
+    "description": "The highest tier of Countryside Stewardship (CS) agreement ('Higher Tier', 'Mid Tier', 'Capital Grants') found intersecting the solar site. (Note: This is the source categorical feature before one-hot encoding).",
+    "source_directive": "044",
+    "data_type": "Categorical (String)",
+    "unit": "Text",
+    "interpretation_notes": "A critical feature for qualifying the severity of the conflict. An intersection with a 'Higher Tier' agreement is a much stronger negative predictor than 'Capital Grants'.",
+    "null_handling": "Imputed with 'None'."
+  },
+  "cs_density_5km": {
+    "description": "The density of land under active Countryside Stewardship (CS) agreements within a 5km radius of the solar site, calculated as (total CS area / total buffer area).",
+    "source_directive": "044",
+    "data_type": "Float",
+    "unit": "Ratio (0 to 1)",
+    "interpretation_notes": "A key 'Risk Gradient' feature. Measures the saturation of local agri-environment policy. A high value indicates the surrounding landscape character is heavily defined by conservation efforts, suggesting strong potential for policy-based objections. (Repeated for 2km, 10km, 20km radii).",
+    "null_handling": "Defaults to 0."
+  },
+  "es_hls_on_site_bool": {
+    "description": "A boolean flag (1/0) indicating if the solar site polygon intersects with a legacy Higher Level Stewardship (HLS) agreement active at the time of submission.",
+    "source_directive": "045",
+    "data_type": "Boolean (Integer)",
+    "unit": "Flag",
+    "interpretation_notes": "A powerful negative predictor. HLS agreements were targeted at the most environmentally significant sites, marking the land with a history of high conservation value that persists even if the scheme is a legacy one.",
+    "null_handling": "Defaults to 0."
+  },
+  "es_hls_density_10km": {
+    "description": "The density of land under active Higher Level Stewardship (HLS) agreements within a 10km radius of the solar site.",
+    "source_directive": "045",
+    "data_type": "Float",
+    "unit": "Ratio (0 to 1)",
+    "interpretation_notes": "Models the historical conservation priority of the wider region. A high density suggests the area has long been recognized for its environmental value, a characterization that strongly influences current planning decisions. (Repeated for 2km, 5km, 20km radii).",
+    "null_handling": "Defaults to 0."
+  },
+  "nhlc_urban_on_site_pct_area": {
+    "description": "The percentage of the solar site's area that falls within a 250m grid cell classified as 'Urban', 'Commerce', 'Industry', or 'Civic Provision' by the NHLC dataset.",
+    "source_directive": "046",
+    "data_type": "Float",
+    "unit": "Ratio (0 to 1)",
+    "interpretation_notes": "Identifies brownfield or urban-fringe sites. A non-zero value can be a positive predictor, as development on previously developed land is often encouraged by planning policy.",
+    "null_handling": "Defaults to 0."
+  },
+  "nhlc_settlement_density_2km": {
+    "description": "The density of NHLC grid cells classified specifically as 'Settlement' within a 2km radius of the solar site.",
+    "source_directive": "046",
+    "data_type": "Float",
+    "unit": "Ratio (0 to 1)",
+    "interpretation_notes": "A precise proxy for proximity to residential areas and potential visual amenity objections. A higher density indicates a greater number of potential objectors in the immediate vicinity. (Repeated for 5km, 10km, 20km radii).",
+    "null_handling": "Defaults to 0."
+  },
+  "is_in_ukpn": {
+    "description": "A deterministic boolean flag (1/0) indicating if the solar site's centroid falls within the dissolved service area boundary of UK Power Networks (UKPN).",
+    "source_directive": "047",
+    "data_type": "Boolean (Integer)",
+    "unit": "Flag",
+    "interpretation_notes": "An essential feature for model calibration. Allows the single, unified model to learn the specific data patterns and feature weights associated with the region where our high-resolution grid data is available, without discarding the rest of the national dataset.",
+    "null_handling": "Defaults to 0 (Not in UKPN)."
+  }
+}
+    }
+  }
+}

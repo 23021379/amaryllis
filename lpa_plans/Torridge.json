@@ -1,0 +1,138 @@
+{
+  "domain": "www.torridge.gov.uk",
+  "plan_version": "3.0",
+  "last_updated": "2026-03-29T12:10:21.374565Z",
+  "instructions": [
+    {
+      "command": "GOTO_URL",
+      "params": {
+        "url": "https://publicaccess.torridge.gov.uk/online-applications/"
+      },
+      "description": "Navigate to the search page.",
+      "frame_name": null
+    },
+    {
+      "command": "FILL_INPUT",
+      "params": {
+        "selector": "#simpleSearchString",
+        "value": "{{REFERENCE_ID}}"
+      },
+      "description": "Enter the planning application reference ID into the simple search input field.",
+      "frame_name": null
+    },
+    {
+      "command": "CLICK_ELEMENT",
+      "params": {
+        "selector": "input.button.primary.recaptcha-submit"
+      },
+      "description": "Click the 'Search' button to submit the planning application query.",
+      "frame_name": null
+    },
+    {
+      "command": "WAIT_FOR_SELECTOR",
+      "params": {
+        "selector": "#searchresults, .search-results, h1:has-text('Application'), #simpleDetailsTable",
+        "timeout": 5000
+      },
+      "description": "Wait for the search results page to load or for the application details to be displayed.",
+      "frame_name": null
+    },
+    {
+      "command": "WAIT_FOR_SELECTOR",
+      "params": {
+        "selector": "#searchresults > li.searchresult >> a.summaryLink"
+      },
+      "description": "Wait for search results.",
+      "frame_name": null
+    },
+    {
+      "command": "CLICK_ELEMENT",
+      "params": {
+        "selector": "#searchresults > li.searchresult >> a.summaryLink"
+      },
+      "description": "Click the search result to view details.",
+      "frame_name": null
+    },
+    {
+      "command": "WAIT_FOR_SELECTOR",
+      "params": {
+        "selector": "a#tab_documents"
+      },
+      "description": "Wait for detail page.",
+      "frame_name": null
+    },
+    {
+      "command": "CLICK_ELEMENT",
+      "params": {
+        "selector": "a#tab_documents"
+      },
+      "description": "Open Documents tab.",
+      "frame_name": null
+    },
+    {
+      "command": "WAIT_FOR_SELECTOR",
+      "params": {
+        "selector": "p.associateddocument > a"
+      },
+      "description": "Wait for 'View Documents' link/button.",
+      "frame_name": null
+    },
+    {
+      "command": "CLICK_ELEMENT",
+      "params": {
+        "selector": "p.associateddocument > a"
+      },
+      "description": "Click 'View Documents' link.",
+      "frame_name": null
+    },
+    {
+      "command": "WAIT_FOR_SELECTOR",
+      "params": {
+        "selector": "table#Documents > tbody > tr:not(:first-child)"
+      },
+      "description": "Wait for documents table.",
+      "frame_name": null
+    }
+  ],
+  "results_page_processing": {
+    "listing_container_selector": "#searchresults > li.searchresult",
+    "listing_link_blueprint": {
+      "selector": "a.summaryLink",
+      "extraction_method": "ATTRIBUTE",
+      "attribute_name": "href",
+      "post_processing": null
+    },
+    "listing_address_blueprint": {
+      "selector": "p.address",
+      "extraction_method": "TEXT",
+      "attribute_name": null,
+      "post_processing": null
+    },
+    "pagination_blueprint": null
+  },
+  "detail_page_processing": {},
+  "document_page_processing": {
+    "document_tab_selector": null,
+    "document_container_selector": "table#Documents > tbody > tr:not(:first-child)",
+    "document_link_blueprint": {
+      "selector": "td:nth-child(4) a",
+      "extraction_method": "ATTRIBUTE",
+      "attribute_name": "href",
+      "post_processing": null
+    },
+    "document_date_blueprint": {
+      "selector": "td:nth-child(1)",
+      "extraction_method": "TEXT",
+      "attribute_name": null,
+      "post_processing": null
+    },
+    "document_type_blueprint": {
+      "selector": "td:nth-child(2)",
+      "extraction_method": "TEXT",
+      "attribute_name": null,
+      "post_processing": null
+    },
+    "pagination_blueprint": null,
+    "batch_processing": null
+  }
+}

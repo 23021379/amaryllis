@@ -1,0 +1,133 @@
+{
+  "domain": "www.southglos.gov.uk",
+  "plan_version": "3.0",
+  "last_updated": "2026-03-26T20:01:47.628616Z",
+  "instructions": [
+    {
+      "command": "GOTO_URL",
+      "params": {
+        "url": "https://developments.southglos.gov.uk/online-applications/search.do?action=simple"
+      },
+      "description": "Navigate to the simple search page for planning applications.",
+      "frame_name": null
+    },
+    {
+      "command": "CLICK_ELEMENT",
+      "params": {
+        "selector": "button.btn-primary:has-text(\"Continue\")"
+      },
+      "description": "Accept the cookie consent to proceed.",
+      "frame_name": null
+    },
+    {
+      "command": "FILL_INPUT",
+      "params": {
+        "selector": "#simpleSearchString",
+        "value": "{{REFERENCE_ID}}"
+      },
+      "description": "Fill the search input with the target reference ID.",
+      "frame_name": null
+    },
+    {
+      "command": "CLICK_ELEMENT",
+      "params": {
+        "selector": "input.button.primary.recaptcha-submit"
+      },
+      "description": "Submit the search by clicking the search button.",
+      "frame_name": null
+    },
+    {
+      "command": "WAIT_FOR_SELECTOR",
+      "params": {
+        "selector": "#searchresults, .search-results, h1:has-text('Summary')"
+      },
+      "description": "Wait for the search results to load.",
+      "frame_name": null
+    },
+    {
+      "command": "WAIT_FOR_SELECTOR",
+      "params": {
+        "selector": "li.searchresult >> a"
+      },
+      "description": "Wait for search results.",
+      "frame_name": null
+    },
+    {
+      "command": "CLICK_ELEMENT",
+      "params": {
+        "selector": "li.searchresult >> a"
+      },
+      "description": "Click the search result to view details.",
+      "frame_name": null
+    },
+    {
+      "command": "WAIT_FOR_SELECTOR",
+      "params": {
+        "selector": "a[href='/online-applications/applicationDetails.do?activeTab=documents&keyVal=Q4LXHWOKJH300']"
+      },
+      "description": "Wait for detail page.",
+      "frame_name": null
+    },
+    {
+      "command": "CLICK_ELEMENT",
+      "params": {
+        "selector": "a[href='/online-applications/applicationDetails.do?activeTab=documents&keyVal=Q4LXHWOKJH300']"
+      },
+      "description": "Open Documents tab.",
+      "frame_name": null
+    },
+    {
+      "command": "WAIT_FOR_SELECTOR",
+      "params": {
+        "selector": "table#Documents tbody tr"
+      },
+      "description": "Wait for documents table.",
+      "frame_name": null
+    }
+  ],
+  "results_page_processing": {
+    "listing_container_selector": "li.searchresult",
+    "listing_link_blueprint": {
+      "selector": "a",
+      "extraction_method": "ATTRIBUTE",
+      "attribute_name": "href",
+      "post_processing": null
+    },
+    "listing_address_blueprint": {
+      "selector": "p.address",
+      "extraction_method": "TEXT",
+      "attribute_name": null,
+      "post_processing": null
+    },
+    "pagination_blueprint": null
+  },
+  "detail_page_processing": {},
+  "document_page_processing": {
+    "document_tab_selector": null,
+    "document_container_selector": "table#Documents tbody tr",
+    "document_link_blueprint": {
+      "selector": "td:nth-child(5) a",
+      "extraction_method": "ATTRIBUTE",
+      "attribute_name": "href",
+      "post_processing": null
+    },
+    "document_date_blueprint": {
+      "selector": "td:nth-child(2)",
+      "extraction_method": "TEXT",
+      "attribute_name": null,
+      "post_processing": null
+    },
+    "document_type_blueprint": {
+      "selector": "td:nth-child(3)",
+      "extraction_method": "TEXT",
+      "attribute_name": null,
+      "post_processing": null
+    },
+    "pagination_blueprint": null,
+    "batch_processing": {
+      "checkbox_selector": "td input.bulkCheck",
+      "select_all_selector": null,
+      "batch_action_button_selector": "form#caseDownloadForm button[type=\"submit\"]"
+    }
+  }
+}

@@ -1,0 +1,2419 @@
+List of current known artifact production scripts that will need to be merged:
+
+
+"C:\Users\brand\Desktop\renewables\scripts\2_step_11.1_priority_artifact.py"
+"C:\Users\brand\Desktop\renewables\scripts\2_step_2.1_sssi_artifact.py"
+"C:\Users\brand\Desktop\renewables\scripts\2_step_3.1_sssi_unit_artifact.py"
+"C:\Users\brand\Desktop\renewables\scripts\2_step_4.1_NationalPark_artifact.py"
+"C:\Users\brand\Desktop\renewables\scripts\2_step_5.1_SAC_artifact.py"
+"C:\Users\brand\Desktop\renewables\scripts\2_step_6.1_SPA_artifact.py"
+"C:\Users\brand\Desktop\renewables\scripts\2_step_7.1_ALC_artifact.py"
+"C:\Users\brand\Desktop\renewables\scripts\2_step_8.1_NationalTrail_artifact.py"
+"C:\Users\brand\Desktop\renewables\scripts\2_step_9.1_crow_artifact.py"
+"C:\Users\brand\Desktop\renewables\scripts\2_step_10.1_HistoricPark_artifact.py"
+
+
+
+
+4_step_4_integrate_Transformers_PandT_OHL.py
+original:
+```
+import os
+import sys
+import logging
+import numpy as np
+import pandas as pd
+import geopandas as gpd
+from shapely.geometry import LineString
+import multiprocessing
+from functools import partial
+from itertools import chain
+
+
+# --- CONFIGURATION ---
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
+# Input Artifacts
+SOLAR_DATA_INPUT = r'C:\Users\brand\Desktop\renewables\REPD_Amaryllis_L4.csv'
+SUBSTATION_L1_ARTIFACT = 'Substations_Amaryllis_L1.gpkg'
+L0_ARTIFACT_DIR = r"C:\Users\brand\Desktop\renewables\data\L0_artifacts\dno_ng"
+L1_MASTER_ARTIFACT = r'C:\Users\brand\Desktop\renewables\NG_data\artifacts\NG_L1_Topological_Assets.gpkg'
+
+# Output Artifact
+L24_DATA_OUTPUT = r'C:\Users\brand\Desktop\renewables\NG_data\NG_REPD_Amaryllis_L5.csv'
+
+# Architectural Parameters
+TARGET_CRS = "EPSG:27700"
+DENSITY_RADII_M = [2000, 5000, 10000, 20000] # Define multiple radii for density analysis
+
+# MANDATE: The configuration-driven campaign definition. This is the "brain" of the orchestrator.
+ASSET_PROCESSING_CAMPAIGN = [
+    # --- 11kV (Distribution Low Voltage) ---
+    {"file": "DNO_NG_L0_11KV_cable_v1.0.geojson", "type": "line", "voltage": "11kv", "asset_tag": "dlv_cable", "buffer": 5},
+    {"file": "DNO_NG_L0_11KV_ohl_v1.0.geojson", "type": "line", "voltage": "11kv", "asset_tag": "dlv_ohl", "buffer": 5},
+    {"file": "DNO_NG_L0_11KV_poles_v1.0.geojson", "type": "point", "voltage": "11kv", "asset_tag": "pole"},
+    {"file": "DNO_NG_L0_11KV_tower_v1.0.geojson", "type": "point", "voltage": "11kv", "asset_tag": "tower"},
+    {"file": "DNO_NG_L0_11KV_transformer_v1.0.geojson", "type": "point", "voltage": "11kv", "asset_tag": "transformer"},
+    
+    # --- 33kV ---
+    {"file": "DNO_NG_L0_33KV_cable_v1.0.geojson", "type": "line", "voltage": "33kv", "asset_tag": "ohl_cable", "buffer": 20},
+    {"file": "DNO_NG_L0_33KV_ohl_v1.0.geojson", "type": "line", "voltage": "33kv", "asset_tag": "ohl", "buffer": 20},
+    {"file": "DNO_NG_L0_33KV_poles_v1.0.geojson", "type": "point", "voltage": "33kv", "asset_tag": "pole"},
+    {"file": "DNO_NG_L0_33KV_tower_v1.0.geojson", "type": "point", "voltage": "33kv", "asset_tag": "tower"},
+    {"file": "DNO_NG_L0_33KV_transformer_v1.0.geojson", "type": "point", "voltage": "33kv", "asset_tag": "transformer"},
+
+    # --- 66kV ---
+    {"file": "DNO_NG_L0_66KV_cable_v1.0.geojson", "type": "line", "voltage": "66kv", "asset_tag": "ohl_cable", "buffer": 25},
+    {"file": "DNO_NG_L0_66KV_ohl_v1.0.geojson", "type": "line", "voltage": "66kv", "asset_tag": "ohl", "buffer": 25},
+    {"file": "DNO_NG_L0_66KV_poles_v1.0.geojson", "type": "point", "voltage": "66kv", "asset_tag": "pole"},
+    {"file": "DNO_NG_L0_66KV_tower_v1.0.geojson", "type": "point", "voltage": "66kv", "asset_tag": "tower"},
+    {"file": "DNO_NG_L0_66KV_transformer_v1.0.geojson", "type": "point", "voltage": "66kv", "asset_tag": "transformer"},
+
+    # --- 132kV ---
+    {"file": "DNO_NG_L0_132KV_cable_v1.0.geojson", "type": "line", "voltage": "132kv", "asset_tag": "ohl_cable", "buffer": 30},
+    {"file": "DNO_NG_L0_132KV_ohl_v1.0.geojson", "type": "line", "voltage": "132kv", "asset_tag": "ohl", "buffer": 30},
+    {"file": "DNO_NG_L0_132KV_poles_v1.0.geojson", "type": "point", "voltage": "132kv", "asset_tag": "pole"},
+    # Note: No 132kV tower or transformer files in the provided list, but the engine is ready for them.
+]
+
+# Architectural Parameters
+LOCAL_NETWORK_BUFFER_METERS = 2000
+TARGET_CRS = "EPSG:27700"
+
+def forge_master_artifact():
+    """
+    Implements Doctrine: Unify the Battlefield (Correctly).
+    Creates a single, spatially-indexed master GeoPackage from all L0 assets.
+    This is a one-time operation.
+    """
+    logging.info("STARTING DIRECTIVE AD-GRID-05.3: Forging L1 Master Artifact.")
+    
+    # Ensure the old artifact is removed to prevent append errors on re-runs.
+    if os.path.exists(L1_MASTER_ARTIFACT):
+        os.remove(L1_MASTER_ARTIFACT)
+        logging.info(f"Removed existing artifact at {L1_MASTER_ARTIFACT}")
+
+    for i, config in enumerate(ASSET_PROCESSING_CAMPAIGN):
+        asset_path = os.path.join(L0_ARTIFACT_DIR, config['file'])
+        layer_name = f"{config['type']}s" # 'points' or 'lines'
+        
+        try:
+            logging.info(f"Processing {asset_path} -> layer '{layer_name}'")
+            gdf_asset = gpd.read_file(asset_path)
+
+            if gdf_asset.empty:
+                logging.warning(f"Asset file {asset_path} is empty. Skipping.")
+                continue
+
+            # MANDATE: Unconditional CRS unification
+            if gdf_asset.crs != TARGET_CRS:
+                gdf_asset = gdf_asset.to_crs(TARGET_CRS)
+            
+            # MANDATE: Add strategic metadata
+            gdf_asset['voltage'] = config['voltage']
+            gdf_asset['asset_tag'] = config['asset_tag']
+            if config['type'] == 'line':
+                gdf_asset['buffer_m'] = config['buffer']
+            
+            # Select only necessary columns
+            cols_to_keep = ['geometry', 'voltage', 'asset_tag']
+            if config['type'] == 'line':
+                cols_to_keep.append('buffer_m')
+            
+            gdf_asset = gdf_asset[cols_to_keep]
+
+            # MANDATE: Append to the GeoPackage. This creates the file on the first write.
+            # This is memory-efficient as it writes chunk-by-chunk.
+            gdf_asset.to_file(L1_MASTER_ARTIFACT, layer=layer_name, driver='GPKG', mode='a')
+
+        except Exception as e:
+            logging.error(f"FATAL ERROR processing {asset_path}. Halting. Error: {e}")
+            # This is a critical failure. Stop the process.
+            return
+
+    logging.info(f"SUCCESS: L1 Master Artifact forged at {L1_MASTER_ARTIFACT}")
+
+def load_and_unify_assets(campaign, asset_dir, target_crs):
+    """
+    Implements Doctrine: Unify the Battlefield.
+    Loads all assets, segregates by geometry type, and unifies them into master GeoDataFrames.
+    """
+    points_list = []
+    lines_list = []
+    logging.info("Unifying assets into master GeoDataFrames...")
+
+    for config in campaign:
+        asset_path = os.path.join(asset_dir, config['file'])
+        try:
+            gdf_asset = gpd.read_file(asset_path)
+            if gdf_asset.crs != target_crs:
+                gdf_asset = gdf_asset.to_crs(target_crs)
+            
+            gdf_asset['voltage'] = config['voltage']
+            gdf_asset['asset_tag'] = config['asset_tag']
+            
+            if config['type'] == 'point':
+                points_list.append(gdf_asset[['geometry', 'voltage', 'asset_tag']])
+            elif config['type'] == 'line':
+                gdf_asset['buffer_m'] = config['buffer']
+                lines_list.append(gdf_asset)
+
+        except Exception as e:
+            logging.warning(f"Could not load or process {asset_path}. Skipping. Error: {e}")
+            continue
+    
+    gdf_points_unified = gpd.GeoDataFrame(pd.concat(points_list, ignore_index=True), crs=target_crs)
+    gdf_lines_unified = gpd.GeoDataFrame(pd.concat(lines_list, ignore_index=True), crs=target_crs)
+    
+    # Pre-buffer line assets to create wayleave corridors
+    gdf_lines_unified['corridor_geom'] = gdf_lines_unified.apply(lambda row: row.geometry.buffer(row.buffer_m), axis=1)
+    
+    logging.info(f"Asset unification complete. Points: {len(gdf_points_unified)}, Lines: {len(gdf_lines_unified)}")
+    return gdf_points_unified, gdf_lines_unified
+
+def process_solar_batch(gdf_solar_batch, gdf_points_unified, gdf_lines_unified, gdf_substations):
+    """
+    Implements Doctrine: Solar-Centric Processing.
+    Processes a single batch of solar sites against the unified asset GDFs.
+    """
+    results = []
+
+    # --- Pre-computation for the batch ---
+    # Find nearest substation for each site in the batch (once)
+    batch_with_subs = gpd.sjoin_nearest(gdf_solar_batch, gdf_substations, how='left', distance_col='dist_to_sub_m')
+    batch_with_subs = batch_with_subs.drop_duplicates(subset='solar_farm_id', keep='first')
+
+    # --- Point Asset Processing ---
+    # 1. Find nearest of each type
+    nearest_points = gpd.sjoin_nearest(
+        gdf_solar_batch[['solar_farm_id', 'geometry']],
+        gdf_points_unified,
+        how='left',
+        distance_col='distance_m'
+    )
+    # Pivot to get one row per solar farm with distances to nearest of each type
+    df_nearest_points = nearest_points.pivot_table(
+        index='solar_farm_id',
+        columns=['voltage', 'asset_tag'],
+        values='distance_m',
+        aggfunc='min'
+    )
+    df_nearest_points.columns = [f"ohl_{v}_dist_to_nearest_{t}_m" for v, t in df_nearest_points.columns]
+
+    # 2. Calculate densities for all radii
+    point_features = {row.solar_farm_id: {} for _, row in gdf_solar_batch.iterrows()}
+    for radius_m in DENSITY_RADII_M:
+        buffer_geom = gdf_solar_batch.geometry.buffer(radius_m)
+        gdf_batch_buffers = gpd.GeoDataFrame(gdf_solar_batch[['solar_farm_id']], geometry=buffer_geom, crs=TARGET_CRS)
+        
+        points_in_buffer = gpd.sjoin(gdf_points_unified, gdf_batch_buffers, how="inner", predicate="intersects")
+        
+        if not points_in_buffer.empty:
+            point_counts = points_in_buffer.groupby(['solar_farm_id', 'voltage', 'asset_tag']).size()
+            for (solar_id, voltage, tag), count in point_counts.items():
+                radius_km_str = f"{int(radius_m / 1000)}km"
+                count_col = f"ohl_{voltage}_{tag}_count_{radius_km_str}"
+                density_col = f"ohl_{voltage}_{tag}_density_per_km2_{radius_km_str}"
+                buffer_area_km2 = np.pi * ((radius_m / 1000) ** 2)
+                
+                point_features[solar_id][count_col] = count
+                point_features[solar_id][density_col] = count / buffer_area_km2
+
+    # --- Line Asset Processing ---
+    line_features = {row.solar_farm_id: {} for _, row in gdf_solar_batch.iterrows()}
+    gdf_line_corridors = gdf_lines_unified.set_geometry('corridor_geom')
+
+    # 1. Find nearest corridor of each type
+    nearest_lines = gpd.sjoin_nearest(
+        gdf_solar_batch[['solar_farm_id', 'geometry']],
+        gdf_line_corridors,
+        how='left',
+        distance_col='distance_m'
+    )
+    df_nearest_lines = nearest_lines.pivot_table(
+        index='solar_farm_id',
+        columns=['voltage', 'asset_tag'],
+        values='distance_m',
+        aggfunc='min'
+    )
+    df_nearest_lines.columns = [f"{t}_{v}_dist_to_nearest_corridor_m" for t, v in df_nearest_lines.columns]
+
+    # 2. Calculate densities, intersections, and friction
+    for _, site in batch_with_subs.iterrows():
+        solar_id = site.solar_farm_id
+        site_geom = site.geometry
+        
+        # Create connection path
+        sub_geom = gdf_substations.loc[site['index_right']].geometry if pd.notna(site['index_right']) else None
+        connection_path = LineString([site_geom, sub_geom]) if sub_geom else None
+        
+        # Use spatial index for efficient querying of lines
+        possible_matches_idx = list(gdf_line_corridors.sindex.intersection(site_geom.buffer(max(DENSITY_RADII_M)).bounds))
+        nearby_lines = gdf_line_corridors.iloc[possible_matches_idx]
+
+        for _, line in nearby_lines.iterrows():
+            voltage = line['voltage']
+            tag = line['asset_tag']
+            
+            # Intersection
+            intersects_col = f"{tag}_{voltage}_corridor_intersects_site"
+            if line['corridor_geom'].intersects(site_geom):
+                line_features[solar_id][intersects_col] = 1
+
+            # Connection Friction
+            if connection_path and line['corridor_geom'].intersects(connection_path):
+                friction_col = f"{tag}_{voltage}_connection_path_intersection_count"
+                line_features[solar_id][friction_col] = line_features[solar_id].get(friction_col, 0) + 1
+
+        # Density
+        for radius_m in DENSITY_RADII_M:
+            site_buffer = site_geom.buffer(radius_m)
+            clipped_lines = gpd.overlay(gdf_lines_unified.set_geometry('geometry'), gpd.GeoDataFrame(geometry=[site_buffer], crs=TARGET_CRS), how='intersection')
+            if not clipped_lines.empty:
+                clipped_lines['length_km'] = clipped_lines.geometry.length / 1000
+                density_summary = clipped_lines.groupby(['voltage', 'asset_tag'])['length_km'].sum()
+                for (voltage, tag), length in density_summary.items():
+                    radius_km_str = f"{int(radius_m / 1000)}km"
+                    density_col = f"{tag}_{voltage}_density_in_{radius_km_str}_km_per_km2"
+                    buffer_area_km2 = np.pi * ((radius_m / 1000) ** 2)
+                    line_features[solar_id][density_col] = length / buffer_area_km2
+
+    # --- Assemble final results for the batch ---
+    for _, site in gdf_solar_batch.iterrows():
+        solar_id = site.solar_farm_id
+        final_features = {'solar_farm_id': solar_id}
+        final_features.update(point_features.get(solar_id, {}))
+        final_features.update(line_features.get(solar_id, {}))
+        # Add pivoted nearest point distances
+        if solar_id in df_nearest_points.index:
+            final_features.update(df_nearest_points.loc[solar_id].to_dict())
+        # Add pivoted nearest line distances
+        if solar_id in df_nearest_lines.index:
+            final_features.update(df_nearest_lines.loc[solar_id].to_dict())
+        results.append(final_features)
+
+    return results
+
+
+
+def main():
+    """
+    Main orchestration function for the PARALLELIZED topological feature engine.
+    """
+    logging.info("STARTING Directive AD-GRID-05.2: PARALLELIZED Topological Feature Engine.")
+
+    # --- Phase 1: Load Global Read-Only Data ---
+    logging.info("Phase 1: Loading and unifying all assets into parent process memory...")
+    df_solar_full = pd.read_csv(SOLAR_DATA_INPUT)
+    gdf_solar_full = gpd.GeoDataFrame(
+        df_solar_full, geometry=gpd.points_from_xy(df_solar_full.easting, df_solar_full.northing), crs=TARGET_CRS
+    )
+    gdf_solar_full['solar_farm_id'] = gdf_solar_full.index
+
+    gdf_substations = gpd.read_file(SUBSTATION_L1_ARTIFACT).to_crs(TARGET_CRS)
+    
+    gdf_points_unified, gdf_lines_unified = load_and_unify_assets(ASSET_PROCESSING_CAMPAIGN, L0_ARTIFACT_DIR, TARGET_CRS)
+    logging.info("All shared data loaded into memory.")
+
+    # --- Phase 2: Parallel Batch Processing ---
+    # MANDATE: Use one fewer core than total to leave resources for OS.
+    num_workers = 1
+    logging.info(f"Phase 2: Initializing worker pool with {num_workers} processes.")
+    
+    # Chunk the solar sites dataframe into a list of smaller dataframes for the workers.
+    solar_chunks = np.array_split(gdf_solar_full, num_workers)
+    
+    # Use functools.partial to create a worker function with the large, read-only
+    # dataframes already "baked in". This is essential for pool.map.
+    worker_func = partial(process_solar_batch, 
+                          gdf_points_unified=gdf_points_unified, 
+                          gdf_lines_unified=gdf_lines_unified, 
+                          gdf_substations=gdf_substations)
+
+    all_results = []
+    with multiprocessing.Pool(processes=num_workers) as pool:
+        logging.info("Distributing workload to worker processes...")
+        # pool.map applies the worker_func to each chunk in the solar_chunks list.
+        # It blocks until all processes are complete.
+        list_of_results_lists = pool.map(worker_func, solar_chunks)
+        logging.info("All worker processes completed. Consolidating results...")
+        
+        # Flatten the list of lists into a single list of results.
+        all_results = list(chain.from_iterable(list_of_results_lists))
+
+    # --- Phase 3: Final Merge and Synthesis ---
+    logging.info("Phase 3: Merging all parallel results...")
+    df_features = pd.DataFrame(all_results).fillna(-1.0)
+    gdf_solar_full = gdf_solar_full.merge(df_features, on='solar_farm_id', how='left')
+    
+    logging.info("Synthesizing capstone 'Alpha' features...")
+    for radius_m in DENSITY_RADII_M:
+        radius_km_str = f"{int(radius_m / 1000)}km"
+        count_cols = [col for col in gdf_solar_full.columns if f'_structure_count_{radius_km_str}' in col]
+        if count_cols:
+            gdf_solar_full[f'ohl_total_structure_count_{radius_km_str}'] = gdf_solar_full[count_cols].sum(axis=1)
+
+    intersection_cols = [col for col in gdf_solar_full.columns if '_connection_path_intersection_count' in col]
+    if intersection_cols:
+        gdf_solar_full['ohl_total_connection_path_intersections'] = gdf_solar_full[intersection_cols].sum(axis=1)
+
+    # --- Phase 4: Finalization ---
+    logging.info("Phase 4: Finalizing and persisting artifact...")
+    df_final = gdf_solar_full.drop(columns=['geometry'], errors='ignore')
+    df_final.to_csv(L24_DATA_OUTPUT, index=False)
+    logging.info(f"SUCCESS: Parallelized engine complete. Artifact saved to {L24_DATA_OUTPUT}")
+
+
+if __name__ == "__main__":
+    #main()
+    forge_master_artifact()
+```
+
+updated:
+```
+import os
+import logging
+import geopandas as gpd
+
+# --- CONFIGURATION ---
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
+# Input Artifacts
+L0_ARTIFACT_DIR = r"C:\Users\brand\Desktop\renewables\data\L0_artifacts\dno_ng"
+
+# Output Artifact
+L1_MASTER_ARTIFACT = r'C:\Users\brand\Desktop\renewables\NG_data\artifacts\NG_L1_Topological_Assets.gpkg'
+
+# Architectural Parameters
+TARGET_CRS = "EPSG:27700"
+
+# The configuration-driven campaign definition. This is the "brain" of the Forge.
+ASSET_PROCESSING_CAMPAIGN = [
+    # --- 11kV (Distribution Low Voltage) ---
+    {"file": "DNO_NG_L0_11KV_cable_v1.0.geojson", "type": "line", "voltage": "11kv", "asset_tag": "dlv_cable", "buffer": 5},
+    {"file": "DNO_NG_L0_11KV_ohl_v1.0.geojson", "type": "line", "voltage": "11kv", "asset_tag": "dlv_ohl", "buffer": 5},
+    {"file": "DNO_NG_L0_11KV_poles_v1.0.geojson", "type": "point", "voltage": "11kv", "asset_tag": "pole"},
+    {"file": "DNO_NG_L0_11KV_tower_v1.0.geojson", "type": "point", "voltage": "11kv", "asset_tag": "tower"},
+    {"file": "DNO_NG_L0_11KV_transformer_v1.0.geojson", "type": "point", "voltage": "11kv", "asset_tag": "transformer"},
+    
+    # --- 33kV ---
+    {"file": "DNO_NG_L0_33KV_cable_v1.0.geojson", "type": "line", "voltage": "33kv", "asset_tag": "ohl_cable", "buffer": 20},
+    {"file": "DNO_NG_L0_33KV_ohl_v1.0.geojson", "type": "line", "voltage": "33kv", "asset_tag": "ohl", "buffer": 20},
+    {"file": "DNO_NG_L0_33KV_poles_v1.0.geojson", "type": "point", "voltage": "33kv", "asset_tag": "pole"},
+    {"file": "DNO_NG_L0_33KV_tower_v1.0.geojson", "type": "point", "voltage": "33kv", "asset_tag": "tower"},
+    {"file": "DNO_NG_L0_33KV_transformer_v1.0.geojson", "type": "point", "voltage": "33kv", "asset_tag": "transformer"},
+
+    # --- 66kV ---
+    {"file": "DNO_NG_L0_66KV_cable_v1.0.geojson", "type": "line", "voltage": "66kv", "asset_tag": "ohl_cable", "buffer": 25},
+    {"file": "DNO_NG_L0_66KV_ohl_v1.0.geojson", "type": "line", "voltage": "66kv", "asset_tag": "ohl", "buffer": 25},
+    {"file": "DNO_NG_L0_66KV_poles_v1.0.geojson", "type": "point", "voltage": "66kv", "asset_tag": "pole"},
+    {"file": "DNO_NG_L0_66KV_tower_v1.0.geojson", "type": "point", "voltage": "66kv", "asset_tag": "tower"},
+    {"file": "DNO_NG_L0_66KV_transformer_v1.0.geojson", "type": "point", "voltage": "66kv", "asset_tag": "transformer"},
+
+    # --- 132kV ---
+    {"file": "DNO_NG_L0_132KV_cable_v1.0.geojson", "type": "line", "voltage": "132kv", "asset_tag": "ohl_cable", "buffer": 30},
+    {"file": "DNO_NG_L0_132KV_ohl_v1.0.geojson", "type": "line", "voltage": "132kv", "asset_tag": "ohl", "buffer": 30},
+    {"file": "DNO_NG_L0_132KV_poles_v1.0.geojson", "type": "point", "voltage": "132kv", "asset_tag": "pole"},
+]
+
+def forge_master_artifact():
+    """
+    Implements Doctrine: Unify the Battlefield.
+    Creates a single, spatially-indexed master GeoPackage from all L0 assets.
+    """
+    logging.info("STARTING: Forging L1 Master DNO/NG Topological Asset Artifact.")
+    
+    if os.path.exists(L1_MASTER_ARTIFACT):
+        os.remove(L1_MASTER_ARTIFACT)
+        logging.info(f"Removed existing artifact at {L1_MASTER_ARTIFACT}")
+
+    for config in ASSET_PROCESSING_CAMPAIGN:
+        asset_path = os.path.join(L0_ARTIFACT_DIR, config['file'])
+        layer_name = f"{config['type']}s"
+        
+        try:
+            logging.info(f"Processing {asset_path} -> layer '{layer_name}'...")
+            gdf_asset = gpd.read_file(asset_path)
+
+            if gdf_asset.empty:
+                logging.warning(f"Asset file {asset_path} is empty. Skipping.")
+                continue
+
+            # MANDATE: Enforce CRS unification (Pattern 1 Defense)
+            if gdf_asset.crs.to_string() != TARGET_CRS:
+                gdf_asset = gdf_asset.to_crs(TARGET_CRS)
+            
+            gdf_asset['voltage'] = config['voltage']
+            gdf_asset['asset_tag'] = config['asset_tag']
+            
+            cols_to_keep = ['geometry', 'voltage', 'asset_tag']
+            if config['type'] == 'line':
+                gdf_asset['buffer_m'] = config['buffer']
+                cols_to_keep.append('buffer_m')
+            
+            gdf_asset = gdf_asset[cols_to_keep]
+
+            gdf_asset.to_file(L1_MASTER_ARTIFACT, layer=layer_name, driver='GPKG', mode='a')
+
+        except Exception as e:
+            logging.error(f"FATAL ERROR processing {asset_path}. Halting forge. Error: {e}")
+            return
+
+    logging.info(f"SUCCESS: L1 Master Artifact forged at {L1_MASTER_ARTIFACT}")
+
+if __name__ == "__main__":
+    forge_master_artifact()
+```
+
+
+---
+
+_________________________________________________________________________________
+
+
+scripts\4_step_5_integrate_substation.py
+original
+```
+import pandas as pd
+import geopandas as gpd
+import numpy as np
+import logging
+import re
+from scipy.spatial import cKDTree
+from tqdm import tqdm
+import sys
+from typing import List
+
+# --- CONFIGURATION ---
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
+# Input Artifacts
+NGED_SUBSTATION_INPUT = r"C:\Users\brand\Desktop\renewables\national gird (middle)\network_opportunity_map_headroom.csv.csv"
+SOLAR_SITES_INPUT = r"C:\Users\brand\Desktop\renewables\NG_data\NG_REPD_Amaryllis_L5.csv"
+
+# Output Artifact
+L27_OUTPUT_PATH = r'C:\Users\brand\Desktop\renewables\NG_data\NG_REPD_Amaryllis_L6.csv'
+
+# Architectural Parameters
+SOURCE_CRS = "EPSG:4326"  # WGS84 for raw lon/lat
+TARGET_CRS = "EPSG:27700" # British National Grid
+POWER_FACTOR = 1.0 # Assumed for MW to kVA conversion
+KNN_NEIGHBORS = 5
+RADIUS_METERS = 10000
+
+def parse_max_voltage(voltage_string: str) -> float:
+    """
+    Mandate 7.1: Parses a string to find all numeric voltage values and returns the maximum.
+    e.g., "132/33kV" -> 132.0
+    """
+    if not isinstance(voltage_string, str):
+        return np.nan
+    
+    # Find all numbers (including decimals) in the string
+    numeric_values = re.findall(r'(\d+\.?\d*)', voltage_string)
+    
+    if not numeric_values:
+        return np.nan
+        
+    return max([float(v) for v in numeric_values])
+
+
+def clean_col_names(df: pd.DataFrame) -> pd.DataFrame:
+    """Amaryllis Standard: Cleans and standardizes DataFrame column names."""
+    new_cols = []
+    for col in df.columns:
+        new_col = col.lower().strip()
+        new_col = ''.join(c if c.isalnum() else '_' for c in new_col)
+        while '__' in new_col:
+            new_col = new_col.replace('__', '_')
+        new_col = new_col.strip('_')
+        new_cols.append(new_col)
+    df.columns = new_cols
+    return df
+
+def ingest_and_prepare_substations(filepath: str) -> gpd.GeoDataFrame:
+    """Phase 1: Ingests, decontaminates, and georeferences the raw NGED data."""
+    logging.info(f"Phase 1: Ingesting raw NGED data from {filepath}...")
+    df = pd.read_csv(filepath)
+    
+    # CRITICAL MANDATE: Schema Normalization
+    df = clean_col_names(df)
+
+    # DECONTAMINATION GATE: Purge records with invalid coordinates before georeferencing.
+    initial_count = len(df)
+    df.dropna(subset=['longitude', 'latitude'], inplace=True)
+    final_count = len(df)
+    if initial_count > final_count:
+        dropped_count = initial_count - final_count
+        logging.warning(f"Dropped {dropped_count} records due to missing coordinate data.")
+    
+    # CRITICAL MANDATE: Georeferencing & CRS Unification (Anti-Pattern 1 Gate)
+    logging.info(f"Georeferencing {len(df)} valid records from source CRS {SOURCE_CRS}...")
+    gdf = gpd.GeoDataFrame(
+        df,
+        geometry=gpd.points_from_xy(df.longitude, df.latitude),
+        crs=SOURCE_CRS
+    )
+    logging.info(f"Re-projecting to project standard CRS {TARGET_CRS}...")
+    gdf = gdf.to_crs(TARGET_CRS)
+    
+    logging.info("Phase 1 Complete: Substation data ingested and standardized.")
+    return gdf
+
+def synthesize_substation_features(gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
+    """Phase 2: Performs in-situ synthesis of features on the master substation GDF."""
+    logging.info("Phase 2: Synthesizing features on master substation artifact...")
+    
+    # Paranoid Type Casting
+    numeric_cols = [
+        'demandtotalcapacity', 'demandmaximum', 'generationconnectedheadroommw',
+        'demandconnectedheadroommw', 'demand50percentile'
+    ]
+    for col in numeric_cols:
+        if col in gdf.columns:
+            gdf[col] = pd.to_numeric(gdf[col], errors='coerce')
+
+    # Mandate 7.1: Robust Voltage Parsing
+    if 'voltages' in gdf.columns:
+        gdf['max_voltage_kv'] = gdf['voltages'].apply(parse_max_voltage)
+
+    # Standardize Capacity Units (MW -> kVA)
+    gdf['substation_total_kva'] = gdf['demandtotalcapacity'] * 1000 * POWER_FACTOR
+
+    # Mandate 7.2: Decommission generic loading and synthesize stratified seasonal loading
+    with np.errstate(divide='ignore', invalid='ignore'):
+        # Winter loading based on absolute maximum demand
+        gdf['winter_nameplate_loading_pct'] = np.where(
+            gdf['demandtotalcapacity'] > 0,
+            gdf['demandmaximum'] / gdf['demandtotalcapacity'],
+            np.nan
+        )
+        # Summer loading based on 50th percentile as proxy for typical/off-peak load
+        gdf['summer_nameplate_loading_pct'] = np.where(
+            gdf['demandtotalcapacity'] > 0,
+            gdf['demand50percentile'] / gdf['demandtotalcapacity'],
+            np.nan
+        )
+
+    # Standardize Headroom Metric
+    gdf['substation_headroom_mw'] = gdf['generationconnectedheadroommw']
+
+    # One-Hot Encode RAG Status
+    if 'demandconnectedrag' in gdf.columns:
+        gdf['demandconnectedrag'] = gdf['demandconnectedrag'].str.lower()
+        rag_dummies = pd.get_dummies(gdf['demandconnectedrag'], prefix='demandrag', dtype=int)
+        # Ensure all potential RAG columns exist, filling with 0 if a color is not present
+        for color in ['green', 'red', 'yellow', 'amber']: # Amber is a common synonym
+             col_name = f'demandrag_{color}'
+             if col_name not in rag_dummies.columns:
+                 rag_dummies[col_name] = 0
+        # Standardize to green, red, yellow
+        if 'demandrag_amber' in rag_dummies.columns:
+            rag_dummies['demandrag_yellow'] = rag_dummies['demandrag_yellow'] | rag_dummies['demandrag_amber']
+            rag_dummies.drop(columns=['demandrag_amber'], inplace=True)
+
+        gdf = pd.concat([gdf, rag_dummies[['demandrag_green', 'demandrag_red', 'demandrag_yellow']]], axis=1)
+    
+    logging.info("Phase 2 Complete: In-situ feature synthesis finished.")
+    return gdf
+
+def calculate_aggregated_proximity_features(gdf_solar: gpd.GeoDataFrame, gdf_substations: gpd.GeoDataFrame) -> pd.DataFrame:
+    """Phase 4: The 'New Density' Engine for multi-scale aggregation."""
+    logging.info(f"Phase 4: Building spatial index for {len(gdf_substations)} substations...")
+    
+    # Build a high-performance spatial index on substation coordinates
+    substation_coords = np.array(list(gdf_substations.geometry.apply(lambda p: (p.x, p.y))))
+    spatial_index = cKDTree(substation_coords)
+    
+    solar_coords = np.array(list(gdf_solar.geometry.apply(lambda p: (p.x, p.y))))
+
+    # --- K-Nearest Neighbors Aggregation (Vectorized) ---
+    logging.info(f"Querying {KNN_NEIGHBORS}-Nearest-Neighbors for {len(solar_coords)} solar sites...")
+    distances_knn, indices_knn = spatial_index.query(solar_coords, k=KNN_NEIGHBORS)
+    
+    # Use NumPy indexing for high-performance feature extraction
+    neighbor_headroom = gdf_substations['substation_headroom_mw'].to_numpy()[indices_knn]
+    neighbor_kva = gdf_substations['substation_total_kva'].to_numpy()[indices_knn]
+    
+    # Calculate aggregate statistics
+    agg_features = pd.DataFrame({
+        f'avg_dist_to_{KNN_NEIGHBORS}nn_substations_km': np.mean(distances_knn, axis=1) / 1000,
+        f'avg_headroom_{KNN_NEIGHBORS}nn_substations_mw': np.nanmean(neighbor_headroom, axis=1),
+        f'std_headroom_{KNN_NEIGHBORS}nn_substations_mw': np.nanstd(neighbor_headroom, axis=1),
+        f'avg_total_kva_{KNN_NEIGHBORS}nn': np.nanmean(neighbor_kva, axis=1)
+    }, index=gdf_solar.index)
+
+    # --- Radius-Based Aggregation ---
+    logging.info(f"Querying substations within {RADIUS_METERS}m radius...")
+    indices_radius = spatial_index.query_ball_point(solar_coords, r=RADIUS_METERS)
+    
+    # This part is less suited to vectorization, so we iterate efficiently
+    total_kva_in_radius = [
+        gdf_substations['substation_total_kva'].iloc[indices].sum()
+        for indices in tqdm(indices_radius, desc="Aggregating by Radius")
+    ]
+    agg_features[f'total_kva_in_{RADIUS_METERS//1000}km_radius'] = total_kva_in_radius
+    
+    logging.info("Phase 4 Complete: Aggregated features generated.")
+    return agg_features
+
+def main():
+    """Main execution block for the Unified Substation Intelligence Engine."""
+    logging.info("STARTING Directive AD-GRID-06: Unified Substation Intelligence Synthesis.")
+    
+    try:
+        # Phases 1 & 2: Prepare the master substation data artifact
+        gdf_substations_raw = ingest_and_prepare_substations(NGED_SUBSTATION_INPUT)
+        gdf_substations_l1 = synthesize_substation_features(gdf_substations_raw)
+
+        # Load solar application data
+        logging.info(f"Loading solar application data from {SOLAR_SITES_INPUT}...")
+        df_solar = pd.read_csv(SOLAR_SITES_INPUT)
+        gdf_solar = gpd.GeoDataFrame(
+            df_solar, geometry=gpd.points_from_xy(df_solar.easting, df_solar.northing), crs=TARGET_CRS
+        )
+    except FileNotFoundError as e:
+        logging.error(f"FATAL: Prerequisite artifact not found: {e}. Terminating.")
+        sys.exit(1)
+    except KeyError as e:
+        logging.error(f"FATAL: Missing required column in input file: {e}. Terminating.")
+        sys.exit(1)
+
+    # Phase 3: Direct Feature Integration via Proximity Join
+    logging.info("Phase 3: Executing proximity join to find nearest substation...")
+    gdf_joined = gpd.sjoin_nearest(gdf_solar, gdf_substations_l1, distance_col="dist_to_nearest_substation_m")
+
+    # DECONTAMINATION GATE: Enforce one-to-one join result.
+    # The sjoin_nearest operation can, in rare edge cases (e.g., multiple equidistant points),
+    # return multiple matches for a single left geometry. This guard rail de-duplicates the
+    # result based on the solar site index, ensuring each site appears exactly once.
+    if gdf_joined.index.has_duplicates:
+        duplicate_count = gdf_joined.index.duplicated().sum()
+        logging.warning(f"Detected {duplicate_count} duplicate solar site entries post-join. Enforcing 1-to-1 relationship by keeping first match.")
+        gdf_joined = gdf_joined[~gdf_joined.index.duplicated(keep='first')]
+    
+    # Rename direct features to match project schema
+    rename_map = {
+        "substation_headroom_mw": "nearest_substation_headroom_mw",
+        "substation_total_kva": "nearest_substation_total_kva",
+        "max_voltage_kv": "nearest_substation_voltage_kv",
+        "winter_nameplate_loading_pct": "winter_nameplate_loading_pct",
+        "summer_nameplate_loading_pct": "summer_nameplate_loading_pct",
+        "demandrag_green": "demandrag_green",
+        "demandrag_red": "demandrag_red",
+        "demandrag_yellow": "demandrag_yellow",
+    }
+    # Filter map to only include columns that actually exist after the join
+    rename_map_filtered = {k: v for k, v in rename_map.items() if k in gdf_joined.columns}
+    gdf_joined.rename(columns=rename_map_filtered, inplace=True)
+    gdf_joined['dist_to_nearest_substation_km'] = gdf_joined['dist_to_nearest_substation_m'] / 1000.0
+
+    # Phase 4: The "New Density" Engine
+    aggregated_features = calculate_aggregated_proximity_features(gdf_solar, gdf_substations_l1)
+
+    # Final Integration
+    logging.info("Finalizing artifact: Joining direct and aggregated features...")
+    # Ensure indices align for a clean join
+    gdf_final = gdf_joined.join(aggregated_features)
+
+    # --- Finalization ---
+    logging.info("Cleaning up and saving final artifact...")
+    cols_to_drop = [
+        'index_right', 'geometry', 'dist_to_nearest_substation_m'
+    ] + [c for c in gdf_final.columns if c not in rename_map_filtered.values() and c in gdf_substations_l1.columns]
+    
+    df_final = pd.DataFrame(gdf_final.drop(columns=cols_to_drop, errors='ignore'))
+    
+    return_ti_orig = {
+        "demandrag_green": "demandrag_green (Over 5% headroom)",
+        "demandrag_red": "demandrag_red (More than 5% overloaded)",
+        "demandrag_yellow": "demandrag_yellow (Between 5% overloaded and 5% headroom)",
+    }
+    df_final.rename(columns=return_ti_orig, inplace=True)
+    # Verify no data loss
+    if len(df_final) != len(gdf_solar):
+        logging.error(f"FATAL: Row count mismatch. Original: {len(gdf_solar)}, Final: {len(df_final)}. Data loss occurred.")
+        sys.exit(1)
+
+    df_final.to_csv(L27_OUTPUT_PATH, index=False)
+    logging.info(f"SUCCESS: Directive AD-GRID-06 complete. L27 artifact saved to {L27_OUTPUT_PATH}.")
+
+if __name__ == "__main__":
+    main()
+```
+
+updated:
+```
+import pandas as pd
+import geopandas as gpd
+import numpy as np
+import logging
+import re
+import sys
+
+# --- CONFIGURATION ---
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
+# Input Artifacts
+NGED_SUBSTATION_INPUT = r"C:\Users\brand\Desktop\renewables\national gird (middle)\network_opportunity_map_headroom.csv.csv"
+
+# Output Artifact
+L1_SUBSTATION_ARTIFACT = r"C:\Users\brand\Desktop\renewables\Substations_Amaryllis_L1.gpkg"
+
+# Architectural Parameters
+SOURCE_CRS = "EPSG:4326"  # WGS84 for raw lon/lat
+TARGET_CRS = "EPSG:27700" # British National Grid
+POWER_FACTOR = 1.0 # Assumed for MW to kVA conversion
+
+def parse_max_voltage(voltage_string: str) -> float:
+    """Parses a string to find all numeric voltage values and returns the maximum."""
+    if not isinstance(voltage_string, str): return np.nan
+    numeric_values = re.findall(r'(\d+\.?\d*)', voltage_string)
+    if not numeric_values: return np.nan
+    return max([float(v) for v in numeric_values])
+
+def clean_col_names(df: pd.DataFrame) -> pd.DataFrame:
+    """Amaryllis Standard: Cleans and standardizes DataFrame column names."""
+    new_cols = [re.sub(r'[^a-z0-9]+', '_', col.lower().strip()).strip('_') for col in df.columns]
+    df.columns = new_cols
+    return df
+
+def main():
+    """Forge script to create the L1 Substation Intelligence Artifact."""
+    logging.info("STARTING: Forge operation for L1 Substation Intelligence.")
+    
+    try:
+        # --- Phase 1: Ingest and Decontaminate ---
+        logging.info(f"Ingesting raw NGED data from {NGED_SUBSTATION_INPUT}...")
+        df = pd.read_csv(NGED_SUBSTATION_INPUT)
+        df = clean_col_names(df)
+
+        initial_count = len(df)
+        df.dropna(subset=['longitude', 'latitude'], inplace=True)
+        if len(df) < initial_count:
+            logging.warning(f"Dropped {initial_count - len(df)} records due to missing coordinates.")
+
+        # --- Phase 2: Georeference and Unify CRS ---
+        gdf = gpd.GeoDataFrame(df, geometry=gpd.points_from_xy(df.longitude, df.latitude), crs=SOURCE_CRS)
+        gdf = gdf.to_crs(TARGET_CRS)
+        
+        # --- Phase 3: Synthesize Features ---
+        logging.info("Synthesizing features for L1 artifact...")
+        numeric_cols = ['demandtotalcapacity', 'demandmaximum', 'generationconnectedheadroommw', 'demandconnectedheadroommw', 'demand50percentile']
+        for col in numeric_cols:
+            if col in gdf.columns:
+                gdf[col] = pd.to_numeric(gdf[col], errors='coerce')
+
+        if 'voltages' in gdf.columns:
+            gdf['max_voltage_kv'] = gdf['voltages'].apply(parse_max_voltage)
+
+        gdf['substation_total_kva'] = gdf['demandtotalcapacity'] * 1000 * POWER_FACTOR
+        gdf['substation_headroom_mw'] = gdf['generationconnectedheadroommw']
+
+        with np.errstate(divide='ignore', invalid='ignore'):
+            gdf['winter_nameplate_loading_pct'] = np.where(gdf['demandtotalcapacity'] > 0, gdf['demandmaximum'] / gdf['demandtotalcapacity'], np.nan)
+            gdf['summer_nameplate_loading_pct'] = np.where(gdf['demandtotalcapacity'] > 0, gdf['demand50percentile'] / gdf['demandtotalcapacity'], np.nan)
+
+        if 'demandconnectedrag' in gdf.columns:
+            gdf['demandconnectedrag'] = gdf['demandconnectedrag'].str.lower().str.replace('amber', 'yellow')
+            rag_dummies = pd.get_dummies(gdf['demandconnectedrag'], prefix='demandrag', dtype=int)
+            for color in ['green', 'red', 'yellow']:
+                if f'demandrag_{color}' not in rag_dummies.columns: rag_dummies[f'demandrag_{color}'] = 0
+            gdf = pd.concat([gdf, rag_dummies[['demandrag_green', 'demandrag_red', 'demandrag_yellow']]], axis=1)
+
+        # --- Phase 4: Finalize and Persist Artifact ---
+        # Select and rename columns to the final L1 schema
+        final_schema = {
+            'geometry': 'geometry',
+            'max_voltage_kv': 'max_voltage_kv',
+            'substation_total_kva': 'total_kva',
+            'substation_headroom_mw': 'headroom_mw',
+            'winter_nameplate_loading_pct': 'winter_loading_pct',
+            'summer_nameplate_loading_pct': 'summer_loading_pct',
+            'demandrag_green': 'is_demandrag_green',
+            'demandrag_red': 'is_demandrag_red',
+            'demandrag_yellow': 'is_demandrag_yellow',
+        }
+        gdf_l1 = gdf[[col for col in final_schema.keys() if col in gdf.columns]].rename(columns=final_schema)
+        
+        logging.info(f"Persisting L1 artifact with {len(gdf_l1)} records to {L1_SUBSTATION_ARTIFACT}...")
+        gdf_l1.to_file(L1_SUBSTATION_ARTIFACT, driver='GPKG')
+        logging.info("SUCCESS: Forge operation complete.")
+
+    except FileNotFoundError as e:
+        logging.error(f"FATAL: Raw input artifact not found: {e}. Terminating forge.")
+        sys.exit(1)
+    except Exception as e:
+        logging.error(f"FATAL: An unexpected error occurred during the forge operation: {e}")
+        sys.exit(1)
+
+if __name__ == "__main__":
+    main()
+```
+
+---
+
+___________________________________________________________________
+
+
+
+scripts\4_step_6_integrate_substations_2.py
+original
+```
+import pandas as pd
+import geopandas as gpd
+import numpy as np
+import logging
+import sys
+from scipy.spatial import cKDTree
+from tqdm import tqdm
+
+# --- CONFIGURATION ---
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
+# Input Artifacts
+PRIMARY_SUB_HEATMAP_INPUT  = r"C:\Users\brand\Desktop\renewables\national gird (middle)\network_opportunity_map_headroom.csv.csv"
+DIST_SUB_OPERATIONAL_INPUT = r"C:\Users\brand\Desktop\renewables\national gird (middle)\Substation Demand.csv"
+DIST_SUB_LOCATION_INPUT = r"C:\Users\brand\Desktop\renewables\national gird (middle)\distribution_substation_locations.csv"
+SOLAR_SITES_INPUT = r'C:\Users\brand\Desktop\renewables\NG_data\NG_REPD_Amaryllis_L6.csv'
+
+# Output Artifact
+L1_PRIMARY_SUBS_AUTH_OUTPUT = r'C:\Users\brand\Desktop\renewables\NG_data\artifacts\DNO_NG_L1_Primary_Substations_Authoritative_v1.0.geoparquet'
+L1_DIST_SUBS_AUTH_OUTPUT = r'C:\Users\brand\Desktop\renewables\NG_data\artifacts\DNO_NG_L1_Distribution_Substations_Authoritative_v1.0.geoparquet'
+L28_OUTPUT_PATH = r'C:\Users\brand\Desktop\renewables\NG_data\NG_REPD_Amaryllis_L7.csv'
+
+# Architectural Parameters
+TARGET_CRS = "EPSG:27700"
+PRIMARY_SUB_PROXY_NEIGHBORS = 10 # Number of nearby subs to aggregate for primary features
+
+def clean_col_names(df: pd.DataFrame) -> pd.DataFrame:
+    """Amaryllis Standard: Cleans and standardizes DataFrame column names."""
+    new_cols = []
+    for col in df.columns:
+        new_col = col.lower().strip().replace(' ', '_')
+        new_col = ''.join(c if c.isalnum() else '_' for c in new_col)
+        while '__' in new_col: new_col = new_col.replace('__', '_')
+        new_col = new_col.strip('_')
+        new_cols.append(new_col)
+    df.columns = new_cols
+    return df
+
+def create_l1_distribution_artifact(op_path: str, loc_path: str) -> gpd.GeoDataFrame:
+    """Phase 1: Executes the Geospatial Bridge Protocol."""
+    logging.info("Phase 1: Executing Geospatial Bridge Protocol...")
+    df_op = pd.read_csv(op_path)
+    df_loc = pd.read_csv(loc_path)
+    df_op = clean_col_names(df_op)
+    df_loc = clean_col_names(df_loc)
+
+    op_count, loc_count = len(df_op), len(df_loc)
+    gdf_fused = pd.merge(df_op, df_loc, on='substation_number', how='inner')
+    logging.info(f"Fused operational ({op_count}) and location ({loc_count}) data. Result: {len(gdf_fused)} records.")
+
+    gdf_fused.dropna(subset=['easting', 'northing'], inplace=True)
+    gdf = gpd.GeoDataFrame(
+        gdf_fused, geometry=gpd.points_from_xy(gdf_fused.easting, gdf_fused.northing), crs=TARGET_CRS
+    ).to_crs(TARGET_CRS)
+    
+    for col in ['transformer_rating_kva', 'day_md', 'night_md']:
+        gdf[col] = pd.to_numeric(gdf[col], errors='coerce')
+
+    # Pre-computation of individual utilization for downstream aggregation
+    with np.errstate(divide='ignore', invalid='ignore'):
+        gdf['dist_sub_utilisation_pct'] = np.where(
+            gdf['transformer_rating_kva'] > 0,
+            gdf['day_md'] / gdf['transformer_rating_kva'], np.nan
+        )
+
+    logging.info("Phase 1 Complete: L1 Distribution Substation artifact created.")
+    return gdf
+
+def synthesize_primary_sub_aggregates(gdf_solar: gpd.GeoDataFrame, gdf_dist_subs: gpd.GeoDataFrame) -> pd.DataFrame:
+    """Synthesizes primary substation features by aggregating a k-NN cluster of distribution subs."""
+    logging.info(f"Synthesizing primary sub features via {PRIMARY_SUB_PROXY_NEIGHBORS}-NN aggregation...")
+    
+    dist_coords = np.array(list(gdf_dist_subs.geometry.apply(lambda p: (p.x, p.y))))
+    solar_coords = np.array(list(gdf_solar.geometry.apply(lambda p: (p.x, p.y))))
+    spatial_index = cKDTree(dist_coords)
+    
+    _, indices_knn = spatial_index.query(solar_coords, k=PRIMARY_SUB_PROXY_NEIGHBORS)
+    
+    # Use NumPy indexing for high-performance aggregation
+    kva_values = gdf_dist_subs['transformer_rating_kva'].to_numpy()[indices_knn]
+    util_values = gdf_dist_subs['dist_sub_utilisation_pct'].to_numpy()[indices_knn]
+    
+    agg_features = pd.DataFrame({
+        'primary_sub_total_kva': np.nansum(kva_values, axis=1),
+        'primary_sub_downstream_sec_sub_count': PRIMARY_SUB_PROXY_NEIGHBORS, # Renamed for parity
+        'primary_sub_avg_tx_kva': np.nanmean(kva_values, axis=1),
+        'primary_sub_max_tx_kva': np.nanmax(kva_values, axis=1),
+        'primary_sub_min_tx_kva': np.nanmin(kva_values, axis=1),
+        'primary_sub_tx_kva_variance': np.nanvar(kva_values, axis=1),
+        'primary_sub_downstream_avg_utilisation': np.nanmean(util_values, axis=1) # New feature
+    }, index=gdf_solar.index)
+    
+    return agg_features
+
+def main():
+    """Main execution block for the Distribution Substation Intelligence Engine."""
+    logging.info("STARTING Directive AD-GRID-08: Distribution Substation Intelligence Synthesis.")
+    
+    try:
+        gdf_dist_subs = create_l1_distribution_artifact(DIST_SUB_OPERATIONAL_INPUT, DIST_SUB_LOCATION_INPUT)
+        df_solar = pd.read_csv(SOLAR_SITES_INPUT)
+        gdf_solar = gpd.GeoDataFrame(
+            df_solar, geometry=gpd.points_from_xy(df_solar.easting, df_solar.northing), crs=TARGET_CRS
+        )
+    except FileNotFoundError as e:
+        logging.error(f"FATAL: Prerequisite artifact not found: {e}. Terminating."); sys.exit(1)
+
+    # --- Direct Feature Synthesis (Secondary Substation) ---
+    logging.info("Synthesizing direct features from nearest secondary substation...")
+    gdf_solar_with_sec = gpd.sjoin_nearest(gdf_solar, gdf_dist_subs, how="left", distance_col="dist_to_sec_sub_m")
+    
+    # De-duplicate in case of equidistant matches
+    gdf_solar_with_sec = gdf_solar_with_sec[~gdf_solar_with_sec.index.duplicated(keep='first')]
+
+    with np.errstate(divide='ignore', invalid='ignore'):
+        gdf_solar_with_sec['sec_sub_gov_utilisation_pct'] = np.where(
+            gdf_solar_with_sec['transformer_rating_kva'] > 0,
+            gdf_solar_with_sec['day_md'] / gdf_solar_with_sec['transformer_rating_kva'], np.nan
+        )
+    
+    gdf_solar_with_sec.rename(columns={'transformer_rating_kva': 'sec_sub_gov_onan_rating_kva'}, inplace=True)
+    
+    # --- Aggregate Feature Synthesis (Primary Substation Proxy) ---
+    df_primary_aggregates = synthesize_primary_sub_aggregates(gdf_solar, gdf_dist_subs)
+
+    # --- Final Integration ---
+    logging.info("Integrating synthesized primary and secondary features...")
+    
+    # Select only the direct features we need to join
+    sec_features_to_join = [
+        'sec_sub_gov_onan_rating_kva', 'sec_sub_gov_utilisation_pct'
+    ]
+    
+    # Join the direct (secondary) and aggregated (primary) features to the original solar data
+    gdf_final = gdf_solar.join(gdf_solar_with_sec[sec_features_to_join]).join(df_primary_aggregates)
+
+    # --- Final Synthesis of Second-Order Features ---
+    logging.info("Synthesizing final second-order ratio features...")
+    with np.errstate(divide='ignore', invalid='ignore'):
+        # Synthesize Substation Characterization Ratio
+        gdf_final['kva_per_transformer'] = np.where(
+            gdf_final['primary_sub_downstream_sec_sub_count'] > 0,
+            gdf_final['primary_sub_total_kva'] / gdf_final['primary_sub_downstream_sec_sub_count'], np.nan
+        )
+        # Synthesize Project-to-Grid Context Ratio
+        # Assumes 'installed_capacity_mwelec' exists in the source solar CSV
+        if 'installed_capacity_mwelec' in gdf_final.columns:
+            gdf_final['installed_capacity_mwelec'] = pd.to_numeric(gdf_final['installed_capacity_mwelec'], errors='coerce')
+            gdf_final['kva_per_mwelec_ratio'] = np.where(
+                gdf_final['installed_capacity_mwelec'] > 0,
+                gdf_final['primary_sub_total_kva'] / (gdf_final['installed_capacity_mwelec'] * 1000), np.nan
+            )
+        else:
+            logging.warning("Column 'installed_capacity_mwelec' not found. Skipping 'kva_per_mwelec_ratio' synthesis.")
+
+
+    # --- Finalization ---
+    logging.info("Cleaning up and saving final artifact...")
+    df_final = pd.DataFrame(gdf_final.drop(columns='geometry', errors='ignore'))
+    
+    if len(df_final) != len(gdf_solar):
+        logging.error(f"FATAL: Row count mismatch. Original: {len(gdf_solar)}, Final: {len(df_final)}. Data loss occurred."); sys.exit(1)
+
+    df_final.to_csv(L28_OUTPUT_PATH, index=False)
+    logging.info(f"SUCCESS: Directive AD-GRID-09 complete. L28 artifact saved to {L28_OUTPUT_PATH}.")
+
+if __name__ == "__main__":
+    main()
+```
+
+updated
+```
+import pandas as pd
+import geopandas as gpd
+import numpy as np
+import logging
+import sys
+import os
+import re
+
+# --- CONFIGURATION ---
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
+# Input Artifacts
+BASE_DIR = r"C:\Users\brand\Desktop\renewables"
+DIST_SUB_OPERATIONAL_INPUT = os.path.join(BASE_DIR, "national gird (middle)", "Substation Demand.csv")
+DIST_SUB_LOCATION_INPUT = os.path.join(BASE_DIR, "national gird (middle)", "distribution_substation_locations.csv")
+
+# Output Artifact
+L1_DIST_SUBS_AUTH_OUTPUT = os.path.join(BASE_DIR, "NG_data", "artifacts", "DNO_NG_L1_Distribution_Substations.gpkg")
+
+# Architectural Parameters
+TARGET_CRS = "EPSG:27700"
+
+def clean_col_names(df: pd.DataFrame) -> pd.DataFrame:
+    """Amaryllis Standard: Cleans and standardizes DataFrame column names."""
+    new_cols = [re.sub(r'[^a-z0-g0-9]+', '_', col.lower().strip()).strip('_') for col in df.columns]
+    df.columns = new_cols
+    return df
+
+def main():
+    """Forge script to execute the Geospatial Bridge Protocol and create the L1 Distribution Substation artifact."""
+    logging.info("STARTING: Forge operation for L1 Distribution Substation Intelligence.")
+    try:
+        df_op = pd.read_csv(DIST_SUB_OPERATIONAL_INPUT)
+        df_loc = pd.read_csv(DIST_SUB_LOCATION_INPUT)
+        df_op = clean_col_names(df_op)
+        df_loc = clean_col_names(df_loc)
+
+        gdf_fused = pd.merge(df_op, df_loc, on='substation_number', how='inner')
+        logging.info(f"Fused operational and location data. Result: {len(gdf_fused)} records.")
+
+        gdf_fused.dropna(subset=['easting', 'northing'], inplace=True)
+        gdf = gpd.GeoDataFrame(
+            gdf_fused, geometry=gpd.points_from_xy(gdf_fused.easting, gdf_fused.northing), crs=TARGET_CRS
+        )
+        
+        # Schema hardening and type enforcement
+        final_schema = {
+            'geometry': 'geometry',
+            'substation_number': 'substation_id',
+            'transformer_rating_kva': 'rating_kva',
+            'day_md': 'demand_day_md',
+            'night_md': 'demand_night_md'
+        }
+        
+        # Select and rename columns, dropping unneeded raw data
+        gdf = gdf[final_schema.keys()].rename(columns=final_schema)
+
+        for col in ['rating_kva', 'demand_day_md', 'demand_night_md']:
+            gdf[col] = pd.to_numeric(gdf[col], errors='coerce')
+
+        # Pre-compute core metrics for the L1 artifact
+        with np.errstate(divide='ignore', invalid='ignore'):
+            gdf['utilisation_pct'] = np.where(gdf['rating_kva'] > 0, gdf['demand_day_md'] / gdf['rating_kva'], np.nan) * 100
+
+        gdf.to_file(L1_DIST_SUBS_AUTH_OUTPUT, driver='GPKG')
+        logging.info(f"SUCCESS: Forge operation complete. L1 artifact saved to {L1_DIST_SUBS_AUTH_OUTPUT}")
+
+    except FileNotFoundError as e:
+        logging.error(f"FATAL: Raw input artifact not found: {e}. Terminating forge.")
+        sys.exit(1)
+    except Exception as e:
+        logging.error(f"FATAL: An unexpected error occurred during the forge operation: {e}")
+        sys.exit(1)
+
+if __name__ == "__main__":
+    main()
+```
+
+
+---
+
+_________________________________________________________________________________
+
+
+
+scripts\4_step_6_integrate_substations_3.py
+original
+```
+import pandas as pd
+import geopandas as gpd
+import numpy as np
+import logging
+import sys
+from scipy.spatial import cKDTree
+from tqdm import tqdm
+
+# --- CONFIGURATION ---
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
+# Input Artifacts
+PRIMARY_SUB_HEATMAP_INPUT  = r"C:\Users\brand\Desktop\renewables\national gird (middle)\network_opportunity_map_headroom.csv.csv"
+DIST_SUB_OPERATIONAL_INPUT = r"C:\Users\brand\Desktop\renewables\national gird (middle)\Substation Demand.csv"
+DIST_SUB_LOCATION_INPUT = r"C:\Users\brand\Desktop\renewables\national gird (middle)\distribution_substation_locations.csv"
+SOLAR_SITES_INPUT = r'C:\Users\brand\Desktop\renewables\NG_data\NG_REPD_Amaryllis_L7.csv'
+
+# Output Artifact
+L1_PRIMARY_SUBS_AUTH_OUTPUT = r'C:\Users\brand\Desktop\renewables\NG_data\artifacts\DNO_NG_L1_Primary_Substations_Authoritative_v1.0.geoparquet'
+L1_DIST_SUBS_AUTH_OUTPUT = r'C:\Users\brand\Desktop\renewables\NG_data\artifacts\DNO_NG_L1_Distribution_Substations_Authoritative_v1.0.geoparquet'
+L29_OUTPUT_PATH = r'C:\Users\brand\Desktop\renewables\NG_data\NG_REPD_Amaryllis_L8.csv'
+
+# Architectural Parameters
+TARGET_CRS = "EPSG:27700"
+SOURCE_CRS_WGS84 = "EPSG:4326"
+
+def clean_col_names(df: pd.DataFrame) -> pd.DataFrame:
+    """Amaryllis Standard: Cleans and standardizes DataFrame column names."""
+    new_cols = []
+    for col in df.columns:
+        new_col = col.lower().strip().replace(' ', '_')
+        new_col = ''.join(c if c.isalnum() else '_' for c in new_col)
+        while '__' in new_col: new_col = new_col.replace('__', '_')
+        new_col = new_col.strip('_')
+        new_cols.append(new_col)
+    df.columns = new_cols
+    return df
+
+def forge_l1_primary_artifact(heatmap_path: str) -> gpd.GeoDataFrame:
+    """Phase 2.1: Forges the authoritative Primary Substation L1 artifact."""
+    logging.info(f"Forging L1 Primary Substation artifact from {heatmap_path}...")
+    df = pd.read_csv(heatmap_path, low_memory=False)
+    df = clean_col_names(df)
+
+    # The Critical Filter: Isolate the true primary substation population
+    df['type'] = df['type'].str.strip().str.lower()
+    df_primary = df[df['type'] == 'primary'].copy()
+    logging.info(f"Filtered to {len(df_primary)} records of type 'Primary'.")
+
+    df_primary.dropna(subset=['longitude', 'latitude'], inplace=True)
+    gdf = gpd.GeoDataFrame(
+        df_primary,
+        geometry=gpd.points_from_xy(df_primary.longitude, df_primary.latitude),
+        crs=SOURCE_CRS_WGS84
+    ).to_crs(TARGET_CRS)
+    
+    gdf.to_parquet(L1_PRIMARY_SUBS_AUTH_OUTPUT)
+    logging.info(f"SUCCESS: L1 Primary Substation artifact saved to {L1_PRIMARY_SUBS_AUTH_OUTPUT}")
+    return gdf
+
+def forge_l1_distribution_artifact(op_path: str, loc_path: str) -> gpd.GeoDataFrame:
+    """Phase 2.2: Forges the authoritative Distribution Substation L1 artifact."""
+    logging.info(f"Forging L1 Distribution Substation artifact...")
+    df_op = pd.read_csv(op_path)
+    df_loc = pd.read_csv(loc_path)
+    df_op = clean_col_names(df_op)
+    df_loc = clean_col_names(df_loc)
+
+    gdf_fused = pd.merge(df_op, df_loc, on='substation_number', how='inner')
+    
+    gdf_fused.dropna(subset=['easting', 'northing'], inplace=True)
+    gdf = gpd.GeoDataFrame(
+        gdf_fused,
+        geometry=gpd.points_from_xy(gdf_fused.easting, gdf_fused.northing),
+        crs=TARGET_CRS
+    ).to_crs(TARGET_CRS) # Paranoid re-projection
+    
+    gdf.to_parquet(L1_DIST_SUBS_AUTH_OUTPUT)
+    logging.info(f"SUCCESS: L1 Distribution Substation artifact saved to {L1_DIST_SUBS_AUTH_OUTPUT}")
+    return gdf
+
+def main():
+    """Main execution block for the Hierarchical Substation Intelligence Engine."""
+    logging.info("STARTING Directive AD-GRID-11: Hierarchical Substation Synthesis.")
+    
+    try:
+        # Phase 2: Forge the two authoritative L1 artifacts
+        gdf_primary_subs = forge_l1_primary_artifact(PRIMARY_SUB_HEATMAP_INPUT)
+        gdf_dist_subs = forge_l1_distribution_artifact(DIST_SUB_OPERATIONAL_INPUT, DIST_SUB_LOCATION_INPUT)
+        
+        # Load main solar data
+        df_solar = pd.read_csv(SOLAR_SITES_INPUT)
+        gdf_solar = gpd.GeoDataFrame(
+            df_solar, geometry=gpd.points_from_xy(df_solar.easting, df_solar.northing), crs=TARGET_CRS
+        )
+    except FileNotFoundError as e:
+        logging.error(f"FATAL: Prerequisite artifact not found: {e}. Terminating."); sys.exit(1)
+
+    # --- Phase 3: The Corrected Hierarchical Synthesis ---
+    logging.info("Synthesizing downstream secondary substation count...")
+    
+    # De-duplicate distribution artifact to count unique SITES, not transformers
+    gdf_dist_sites = gdf_dist_subs.drop_duplicates(subset='substation_number').copy()
+    
+    # Link the hierarchy: Find the governing primary sub for each distribution site
+    gdf_linked_sites = gpd.sjoin_nearest(gdf_dist_sites, gdf_primary_subs, how="inner")
+    
+    # MANDATED DE-DUPLICATION GUARD RAIL: Enforce one-to-one parent-child relationship.
+    # Use the unique key of the 'child' (distribution sub) to de-duplicate.
+    gdf_linked_sites = gdf_linked_sites.drop_duplicates(subset='substation_number', keep='first')
+
+    # Group and Count
+    downstream_counts = gdf_linked_sites.groupby('substationid').size()
+    downstream_counts.name = 'primary_sub_downstream_sec_sub_count'
+    
+    logging.info(f"Calculated downstream counts for {len(downstream_counts)} primary substations.")
+
+    # --- Final Integration ---
+    logging.info("Integrating downstream counts with solar site data...")
+    
+    # First, link solar sites to their governing primary substation
+    gdf_solar_linked = gpd.sjoin_nearest(gdf_solar, gdf_primary_subs, how="left")
+    
+    # MANDATED DE-DUPLICATION GUARD RAIL: Immediately cleanse join artifacts.
+    if gdf_solar_linked.index.has_duplicates:
+        duplicate_count = gdf_solar_linked.index.duplicated().sum()
+        logging.warning(f"Detected {duplicate_count} duplicate solar site entries post-primary sub join. Enforcing 1-to-1 relationship by keeping first match.")
+        gdf_solar_linked = gdf_solar_linked[~gdf_solar_linked.index.duplicated(keep='first')]
+
+    # Merge the calculated counts using the primary substation ID
+    # Note: We merge with the original solar dataframe to avoid carrying over all columns from gdf_primary_subs
+    df_final = pd.merge(
+        gdf_solar_linked,
+        downstream_counts,
+        left_on='substationid',
+        right_index=True,
+        how='left'
+    )
+    
+    # --- Finalization ---
+    logging.info("Cleaning up and saving final artifact...")
+    # Drop geometry and intermediate join columns
+    cols_to_drop = ['geometry', 'index_right', 'substationid'] + [c for c in df_final.columns if c in gdf_primary_subs.columns and c != 'geometry']
+    df_final.drop(columns=cols_to_drop, inplace=True, errors='ignore')
+    
+    if len(df_final) != len(gdf_solar):
+        logging.warning(f"Row count mismatch after join. Original: {len(gdf_solar)}, Final: {len(df_final)}. This should be investigated.")
+
+    df_final.to_csv(L29_OUTPUT_PATH, index=False)
+    logging.info(f"SUCCESS: Directive AD-GRID-11 complete. L29 artifact saved to {L29_OUTPUT_PATH}.")
+
+if __name__ == "__main__":
+    main()
+```
+
+updated
+```
+import geopandas as gpd
+import logging
+import sys
+import os
+
+# --- CONFIGURATION ---
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
+# Input Artifacts (L1)
+BASE_DIR = r"C:\Users\brand\Desktop\renewables"
+L1_PRIMARY_SUBS_INPUT = os.path.join(BASE_DIR, "NG_data", "artifacts", "DNO_NG_L1_Primary_Substations.gpkg")
+L1_DIST_SUBS_INPUT = os.path.join(BASE_DIR, "NG_data", "artifacts", "DNO_NG_L1_Distribution_Substations.gpkg")
+
+# Output Artifact (L2 Enriched)
+L2_PRIMARY_SUBS_ENRICHED_OUTPUT = os.path.join(BASE_DIR, "NG_data", "artifacts", "DNO_NG_L2_Primary_Substations_Enriched.gpkg")
+
+def main():
+    """Forge script to enrich L1 Primary Substations with downstream secondary sub counts."""
+    logging.info("STARTING: Offline synthesis to enrich Primary Substation data.")
+    try:
+        gdf_primary = gpd.read_file(L1_PRIMARY_SUBS_INPUT)
+        gdf_dist = gpd.read_file(L1_DIST_SUBS_INPUT)
+
+        # De-duplicate distribution artifact to count unique SITES, not transformers
+        gdf_dist_sites = gdf_dist.drop_duplicates(subset='substation_id').copy()
+
+        # Link the hierarchy: Find the governing primary sub for each distribution site
+        gdf_linked_sites = gpd.sjoin_nearest(gdf_dist_sites, gdf_primary, how="inner")
+        
+        # Guard rail: Enforce a single parent for each child
+        gdf_linked_sites.drop_duplicates(subset='substation_id', keep='first', inplace=True)
+
+        # Group by the primary substation's unique ID and count the children
+        downstream_counts = gdf_linked_sites.groupby('primary_sub_id').size()
+        downstream_counts.name = 'downstream_sec_sub_count'
+        
+        logging.info(f"Calculated downstream counts for {len(downstream_counts)} primary substations.")
+
+        # Merge the new feature back into the primary substation data
+        gdf_primary_enriched = gdf_primary.merge(
+            downstream_counts,
+            left_on='primary_sub_id',
+            right_index=True,
+            how='left'
+        )
+        # Fill primary subs with no children with 0, not NaN
+        gdf_primary_enriched['downstream_sec_sub_count'].fillna(0, inplace=True)
+        
+        gdf_primary_enriched.to_file(L2_PRIMARY_SUBS_ENRICHED_OUTPUT, driver='GPKG')
+        logging.info(f"SUCCESS: Enriched L2 Primary Substation artifact saved to {L2_PRIMARY_SUBS_ENRICHED_OUTPUT}")
+
+    except FileNotFoundError as e:
+        logging.error(f"FATAL: Prerequisite L1 artifact not found: {e}. Terminating forge.")
+        sys.exit(1)
+    except Exception as e:
+        logging.error(f"FATAL: An unexpected error occurred during the enrichment forge operation: {e}")
+        sys.exit(1)
+
+if __name__ == "__main__":
+    main()
+
+import pandas as pd
+import geopandas as gpd
+import logging
+import sys
+import os
+import re
+
+# --- CONFIGURATION ---
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
+# Input Artifacts
+BASE_DIR = r"C:\Users\brand\Desktop\renewables"
+PRIMARY_SUB_HEATMAP_INPUT = os.path.join(BASE_DIR, "national gird (middle)", "network_opportunity_map_headroom.csv.csv")
+
+# Output Artifact
+L1_PRIMARY_SUBS_AUTH_OUTPUT = os.path.join(BASE_DIR, "NG_data", "artifacts", "DNO_NG_L1_Primary_Substations.gpkg")
+
+# Architectural Parameters
+TARGET_CRS = "EPSG:27700"
+SOURCE_CRS_WGS84 = "EPSG:4326"
+
+def clean_col_names(df: pd.DataFrame) -> pd.DataFrame:
+    """Amaryllis Standard: Cleans and standardizes DataFrame column names."""
+    new_cols = [re.sub(r'[^a-z0-9]+', '_', col.lower().strip()).strip('_') for col in df.columns]
+    df.columns = new_cols
+    return df
+
+def main():
+    """Forge script to create the L1 Primary Substation artifact."""
+    logging.info("STARTING: Forge operation for L1 Primary Substations.")
+    try:
+        df = pd.read_csv(PRIMARY_SUB_HEATMAP_INPUT, low_memory=False)
+        df = clean_col_names(df)
+
+        df['type'] = df['type'].str.strip().str.lower()
+        df_primary = df[df['type'] == 'primary'].copy()
+        logging.info(f"Filtered to {len(df_primary)} records of type 'Primary'.")
+
+        df_primary.dropna(subset=['longitude', 'latitude'], inplace=True)
+        gdf = gpd.GeoDataFrame(
+            df_primary,
+            geometry=gpd.points_from_xy(df_primary.longitude, df_primary.latitude),
+            crs=SOURCE_CRS_WGS84
+        ).to_crs(TARGET_CRS)
+        
+        # Select and standardize schema for the L1 artifact
+        gdf_l1 = gdf[['substationid', 'geometry']].rename(columns={'substationid': 'primary_sub_id'})
+        
+        gdf_l1.to_file(L1_PRIMARY_SUBS_AUTH_OUTPUT, driver='GPKG')
+        logging.info(f"SUCCESS: L1 Primary Substation artifact saved to {L1_PRIMARY_SUBS_AUTH_OUTPUT}")
+
+    except FileNotFoundError as e:
+        logging.error(f"FATAL: Raw input artifact not found: {e}. Terminating forge.")
+        sys.exit(1)
+    except Exception as e:
+        logging.error(f"FATAL: An unexpected error occurred during the forge operation: {e}")
+        sys.exit(1)
+
+if __name__ == "__main__":
+    main()
+```
+
+
+---
+
+_______________________________________________________________________________________________________________________
+
+
+scripts\4_step_6_integrate_substations_4.py
+original
+```
+import pandas as pd
+import geopandas as gpd
+import numpy as np
+import logging
+import sys
+import re
+from thefuzz import process as fuzzy_process
+from scipy.spatial import cKDTree
+
+# --- CONFIGURATION ---
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
+# Input Artifacts
+FAULT_LEVEL_INPUT = r"C:\Users\brand\Desktop\renewables\national gird (middle)\substation fault.csv"
+PRIMARY_SUBS_AUTH_INPUT = r"C:\Users\brand\Desktop\renewables\NG_data\artifacts\DNO_NG_L1_Primary_Substations_Authoritative_v1.0.geoparquet"
+SOLAR_SITES_INPUT = r"C:\Users\brand\Desktop\renewables\NG_data\NG_REPD_Amaryllis_L8.csv"
+
+# Output Artifacts
+L1_FAULT_ENRICHED_OUTPUT = r"C:\Users\brand\Desktop\renewables\NG_data\artifacts\DNO_NG_L1_Primary_Substations_FaultEnriched_v1.0.geoparquet"
+L30_FINAL_OUTPUT = r"C:\Users\brand\Desktop\renewables\NG_data\NG_REPD_Amaryllis_L9.csv.csv"
+
+# Architectural Parameters
+TARGET_CRS = "EPSG:27700"
+FUZZY_MATCH_CONFIDENCE_THRESHOLD = 90
+KNN_NEIGHBORS = 5
+
+def clean_col_names(df: pd.DataFrame) -> pd.DataFrame:
+    """Amaryllis Standard: Cleans and standardizes DataFrame column names."""
+    new_cols = []
+    for col in df.columns:
+        new_col = col.lower().strip().replace(' ', '_')
+        new_col = ''.join(c if c.isalnum() else '_' for c in new_col)
+        while '__' in new_col: new_col = new_col.replace('__', '_')
+        new_col = new_col.strip('_')
+        new_cols.append(new_col)
+    df.columns = new_cols
+    return df
+
+def aggregate_fault_levels(fault_path: str) -> pd.DataFrame:
+    """Phase 1: Ingests, decontaminates, and performs critical max-aggregation."""
+    logging.info("Phase 1: Ingesting and aggregating raw fault level data...")
+    df = pd.read_csv(fault_path)
+    df = clean_col_names(df)
+
+    for col in ['3ph_rms_break', '1ph_rms_break']:
+        df[col] = pd.to_numeric(df[col], errors='coerce')
+
+    # CRITICAL MANDATE: Aggregate using max() to model worst-case engineering constraint
+    agg_rules = {
+        '3ph_rms_break': 'max',
+        '1ph_rms_break': 'max'
+    }
+    df_agg = df.groupby('substation_or_busbar_name').agg(agg_rules).reset_index()
+    
+    logging.info(f"Aggregated raw fault data from {len(df)} rows to {len(df_agg)} unique substations.")
+    return df_agg
+
+def sanitize_join_key(name: str) -> str:
+    """Creates a sanitized key for robust direct and fuzzy matching."""
+    if not isinstance(name, str): return ''
+    name = name.lower()
+    # Remove common terms and punctuation
+    stopwords = ['kv', 'substation', 'primary', 'bsp', 'grid']
+    for word in stopwords:
+        name = name.replace(word, '')
+    name = re.sub(r'[^a-z0-9]', '', name)
+    return name.strip()
+
+def fuse_with_fault_data(gdf_primary: gpd.GeoDataFrame, df_fault: pd.DataFrame) -> gpd.GeoDataFrame:
+    """Phase 2: Executes the Fuzzy Geospatial Bridge protocol."""
+    logging.info("Phase 2: Executing Fuzzy Geospatial Bridge...")
+    
+    # Create sanitized join keys in both dataframes
+    gdf_primary['sanitized_join_key'] = gdf_primary['name'].apply(sanitize_join_key)
+    df_fault['sanitized_join_key'] = df_fault['substation_or_busbar_name'].apply(sanitize_join_key)
+    
+    # Stage A: Direct Join
+    gdf_enriched = pd.merge(
+        gdf_primary, df_fault, on='sanitized_join_key', how='left'
+    )
+    
+    # Isolate orphans for Stage B
+    orphans = gdf_enriched[gdf_enriched['3ph_rms_break'].isna()].copy()
+    successes = gdf_enriched[gdf_enriched['3ph_rms_break'].notna()]
+    logging.info(f"Direct join successful for {len(successes)}/{len(gdf_enriched)} records.")
+    
+    if not orphans.empty:
+        logging.info(f"Attempting fuzzy match for {len(orphans)} orphan records...")
+        choices = df_fault['sanitized_join_key'].unique()
+        
+        matches = orphans['sanitized_join_key'].apply(
+            lambda x: fuzzy_process.extractOne(x, choices, score_cutoff=FUZZY_MATCH_CONFIDENCE_THRESHOLD)
+        )
+        
+        # Filter out low-confidence matches
+        valid_matches = matches.dropna()
+        if not valid_matches.empty:
+            match_df = pd.DataFrame(valid_matches.tolist(), index=valid_matches.index, columns=['match', 'score'])
+            match_df = pd.merge(match_df, df_fault, left_on='match', right_on='sanitized_join_key', how='left')
+            
+            # Update the orphan records with the matched fault data
+            orphans.update(match_df)
+            logging.info(f"Successfully matched {len(valid_matches)} records via fuzzy logic.")
+        
+        # Recombine successes and high-confidence fuzzy matches
+        gdf_enriched = pd.concat([successes, orphans], ignore_index=True)
+
+    gdf_enriched.to_parquet(L1_FAULT_ENRICHED_OUTPUT)
+    logging.info(f"SUCCESS: Fault-enriched L1 artifact saved to {L1_FAULT_ENRICHED_OUTPUT}")
+    return gdf_enriched
+
+def main():
+    """Main execution block for the Fault Level Intelligence Engine."""
+    logging.info("STARTING Directive AD-GRID-12: Fault Level Intelligence Synthesis.")
+    try:
+        df_fault_agg = aggregate_fault_levels(FAULT_LEVEL_INPUT)
+        gdf_primary_subs = gpd.read_parquet(PRIMARY_SUBS_AUTH_INPUT)
+        df_solar = pd.read_csv(SOLAR_SITES_INPUT)
+        gdf_solar = gpd.GeoDataFrame(
+            df_solar, geometry=gpd.points_from_xy(df_solar.easting, df_solar.northing), crs=TARGET_CRS
+        )
+    except FileNotFoundError as e:
+        logging.error(f"FATAL: Prerequisite artifact not found: {e}. Terminating."); sys.exit(1)
+
+    gdf_enriched_subs = fuse_with_fault_data(gdf_primary_subs, df_fault_agg)
+
+    # --- Phase 3: Final Integration & Synthesis ---
+    logging.info("Phase 3: Integrating fault features into solar site data...")
+    
+    # Direct Feature Integration
+    gdf_solar_joined = gpd.sjoin_nearest(gdf_solar, gdf_enriched_subs, how="left")
+    
+    # MANDATED DE-DUPLICATION GUARD RAIL: Immediately cleanse join artifacts.
+    if gdf_solar_joined.index.has_duplicates:
+        duplicate_count = gdf_solar_joined.index.duplicated().sum()
+        logging.warning(f"Detected {duplicate_count} duplicate solar site entries post-join. Enforcing 1-to-1 relationship by keeping first match.")
+        gdf_solar_joined = gdf_solar_joined[~gdf_solar_joined.index.duplicated(keep='first')]
+
+    gdf_solar_joined.rename(columns={
+        '3ph_rms_break': 'nearest_sub_max_3ph_fault_ka',
+        '1ph_rms_break': 'nearest_sub_max_ef_fault_ka'
+    }, inplace=True)
+
+    # Aggregate Feature Synthesis (k-NN)
+    logging.info(f"Synthesizing {KNN_NEIGHBORS}-NN aggregate fault features...")
+    # Ensure we only use substations with valid fault data for aggregation
+    gdf_agg_source = gdf_enriched_subs.dropna(subset=['3ph_rms_break', '1ph_rms_break'])
+    
+    agg_coords = np.array(list(gdf_agg_source.geometry.apply(lambda p: (p.x, p.y))))
+    solar_coords = np.array(list(gdf_solar.geometry.apply(lambda p: (p.x, p.y))))
+    spatial_index = cKDTree(agg_coords)
+    
+    _, indices_knn = spatial_index.query(solar_coords, k=KNN_NEIGHBORS)
+    
+    fault_3ph_values = gdf_agg_source['3ph_rms_break'].to_numpy()[indices_knn]
+    fault_1ph_values = gdf_agg_source['1ph_rms_break'].to_numpy()[indices_knn]
+    
+    agg_features = pd.DataFrame({
+        'avg_max_3ph_fault_5nn_ka': np.nanmean(fault_3ph_values, axis=1),
+        'avg_max_ef_fault_5nn_ka': np.nanmean(fault_1ph_values, axis=1)
+    }, index=gdf_solar.index)
+    
+    # Final join of aggregated features
+    df_final = gdf_solar_joined.join(agg_features)
+
+    # --- Finalization ---
+    logging.info("Cleaning up and saving final artifact...")
+    cols_to_drop = [col for col in df_final.columns if col in gdf_enriched_subs.columns and col != 'geometry']
+    cols_to_drop += ['geometry', 'index_right']
+    df_final = df_final.drop(columns=cols_to_drop, errors='ignore')
+    
+    df_final.to_csv(L30_FINAL_OUTPUT, index=False)
+    logging.info(f"SUCCESS: Directive AD-GRID-12 complete. L30 artifact saved to {L30_FINAL_OUTPUT}.")
+
+if __name__ == "__main__":
+    main()
+```
+
+updated
+```
+import pandas as pd
+import geopandas as gpd
+import logging
+import sys
+import os
+import re
+from thefuzz import process as fuzzy_process
+
+# --- CONFIGURATION ---
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
+# Input Artifacts
+BASE_DIR = r"C:\Users\brand\Desktop\renewables"
+FAULT_LEVEL_INPUT = os.path.join(BASE_DIR, "national gird (middle)", "substation fault.csv")
+L1_PRIMARY_SUBS_INPUT = os.path.join(BASE_DIR, "NG_data", "artifacts", "DNO_NG_L1_Primary_Substations.gpkg") # Using GPKG for consistency
+
+# Output Artifact (L2 Enriched)
+L2_FAULT_ENRICHED_OUTPUT = os.path.join(BASE_DIR, "NG_data", "artifacts", "DNO_NG_L2_Primary_Substations_FaultEnriched.gpkg")
+
+# Architectural Parameters
+TARGET_CRS = "EPSG:27700"
+FUZZY_MATCH_CONFIDENCE_THRESHOLD = 90
+
+def clean_col_names(df: pd.DataFrame) -> pd.DataFrame:
+    """Amaryllis Standard: Cleans and standardizes DataFrame column names."""
+    new_cols = [re.sub(r'[^a-z0-9]+', '_', col.lower().strip()).strip('_') for col in df.columns]
+    df.columns = new_cols
+    return df
+
+def sanitize_join_key(name: str) -> str:
+    """Creates a sanitized key for robust matching."""
+    if not isinstance(name, str): return ''
+    name = name.lower()
+    stopwords = ['kv', 'substation', 'primary', 'bsp', 'grid']
+    for word in stopwords: name = name.replace(word, '')
+    return re.sub(r'[^a-z0-9]', '', name).strip()
+
+def main():
+    """Forge script to enrich L1 Primary Substations with aggregated fault level data."""
+    logging.info("STARTING: Forge operation for Fault Level Enrichment.")
+    try:
+        # --- Stage 1: Ingest and Aggregate Raw Fault Data ---
+        df_fault = pd.read_csv(FAULT_LEVEL_INPUT)
+        df_fault = clean_col_names(df_fault)
+
+        for col in ['3ph_rms_break', '1ph_rms_break']:
+            df_fault[col] = pd.to_numeric(df_fault[col], errors='coerce')
+
+        agg_rules = {'3ph_rms_break': 'max', '1ph_rms_break': 'max'}
+        df_fault_agg = df_fault.groupby('substation_or_busbar_name').agg(agg_rules).reset_index()
+        
+        # --- Stage 2: Execute Fuzzy Geospatial Bridge ---
+        gdf_primary = gpd.read_file(L1_PRIMARY_SUBS_INPUT)
+        
+        gdf_primary['sanitized_join_key'] = gdf_primary['primary_sub_id'].apply(sanitize_join_key)
+        df_fault_agg['sanitized_join_key'] = df_fault_agg['substation_or_busbar_name'].apply(sanitize_join_key)
+
+        # Direct Join
+        gdf_enriched = pd.merge(gdf_primary, df_fault_agg, on='sanitized_join_key', how='left')
+        
+        orphans = gdf_enriched[gdf_enriched['3ph_rms_break'].isna()]
+        successes = gdf_enriched[gdf_enriched['3ph_rms_break'].notna()]
+        logging.info(f"Direct join successful for {len(successes)}/{len(gdf_enriched)} records.")
+        
+        # Fuzzy Join for Orphans
+        if not orphans.empty:
+            choices = df_fault_agg['sanitized_join_key'].unique()
+            matches = orphans['sanitized_join_key'].apply(
+                lambda x: fuzzy_process.extractOne(x, choices, score_cutoff=FUZZY_MATCH_CONFIDENCE_THRESHOLD)
+            )
+            valid_matches = matches.dropna()
+            if not valid_matches.empty:
+                match_df = pd.DataFrame(valid_matches.tolist(), index=valid_matches.index, columns=['match', 'score'])
+                # Join fuzzy match results back to the original fault data to get fault values
+                match_df = pd.merge(match_df, df_fault_agg, left_on='match', right_on='sanitized_join_key', how='left')
+                # Use update to fill NaNs in orphans with matched data, preserving original index
+                orphans_to_update = orphans.set_index('sanitized_join_key')
+                match_df_to_update = match_df.set_index('sanitized_join_key')
+                orphans_to_update.update(match_df_to_update)
+                orphans = orphans_to_update.reset_index()
+                logging.info(f"Successfully matched {len(valid_matches)} orphan records via fuzzy logic.")
+
+            gdf_enriched = pd.concat([successes, orphans], ignore_index=True)
+
+        # --- Stage 3: Finalize and Persist L2 Artifact ---
+        final_schema = {
+            'geometry': 'geometry',
+            'primary_sub_id': 'primary_sub_id',
+            '3ph_rms_break': 'max_3ph_fault_ka',
+            '1ph_rms_break': 'max_ef_fault_ka',
+        }
+        gdf_l2 = gdf_enriched[final_schema.keys()].rename(columns=final_schema)
+        
+        gdf_l2.to_file(L2_FAULT_ENRICHED_OUTPUT, driver='GPKG')
+        logging.info(f"SUCCESS: Enriched L2 Fault Level artifact saved to {L2_FAULT_ENRICHED_OUTPUT}")
+
+    except FileNotFoundError as e:
+        logging.error(f"FATAL: Prerequisite artifact not found: {e}. Terminating forge.")
+        sys.exit(1)
+
+if __name__ == "__main__":
+    main()
+```
+
+
+
+import pandas as pd
+import geopandas as gpd
+import logging
+import sys
+import os
+import re
+
+# --- CONFIGURATION ---
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
+# Input Artifacts
+BASE_DIR = r"C:\Users\brand\Desktop\renewables"
+LCT_INPUT = os.path.join(BASE_DIR, "national gird (middle)", "lct-connections.csv")
+L1_PRIMARY_SUBS_INPUT = os.path.join(BASE_DIR, "NG_data", "artifacts", "DNO_NG_L1_Primary_Substations.gpkg")
+
+# Output Artifact (L2)
+L2_LCT_SPATIOTEMPORAL_OUTPUT = os.path.join(BASE_DIR, "NG_data", "artifacts", "DNO_NG_L2_LCT_SpatioTemporal.gpkg")
+
+# Architectural Parameters
+TARGET_CRS = "EPSG:27700"
+
+def clean_col_names(df: pd.DataFrame) -> pd.DataFrame:
+    """Amaryllis Standard: Cleans and standardizes DataFrame column names."""
+    new_cols = [re.sub(r'[^a-z0-9]+', '_', col.lower().strip()).strip('_') for col in df.columns]
+    df.columns = new_cols
+    return df
+
+def main():
+    """Forge script to create the L2 Spatio-Temporal LCT artifact."""
+    logging.info("STARTING: Forge operation for L2 Spatio-Temporal LCT artifact.")
+    try:
+        df_lct = pd.read_csv(LCT_INPUT, dtype=str)
+        df_lct = clean_col_names(df_lct)
+
+        # Decontamination and Type Enforcement
+        for col in ['ev', 'es', 'hp', 'pv']:
+            df_lct[col] = pd.to_numeric(df_lct[col], errors='coerce')
+        df_lct['connected_month'] = pd.to_datetime(df_lct['connected_month'], errors='coerce')
+        df_lct.dropna(subset=['connected_month', 'primary_substation_number'], inplace=True)
+
+        gdf_primary_subs = gpd.read_file(L1_PRIMARY_SUBS_INPUT)
+        
+        # Enforce consistent key data types before merge
+        df_lct['primary_substation_number'] = pd.to_numeric(df_lct['primary_substation_number'], errors='coerce').astype('Int64')
+        gdf_primary_subs['primary_sub_id'] = pd.to_numeric(gdf_primary_subs['primary_sub_id'], errors='coerce').astype('Int64')
+        
+        # Geospatial Bridge Protocol
+        gdf_merged = pd.merge(
+            df_lct, gdf_primary_subs, left_on='primary_substation_number', right_on='primary_sub_id', how='inner'
+        )
+        logging.info(f"Successfully bridged {len(gdf_merged)} LCT records to authoritative primary substations.")
+
+        # Finalize Schema for L2 artifact
+        gdf_l2 = gpd.GeoDataFrame(gdf_merged, geometry='geometry', crs=TARGET_CRS)
+        final_cols = ['primary_sub_id', 'connected_month', 'ev', 'es', 'hp', 'pv', 'geometry']
+        gdf_l2 = gdf_l2[final_cols]
+        
+        gdf_l2.to_file(L2_LCT_SPATIOTEMPORAL_OUTPUT, driver='GPKG')
+        logging.info(f"SUCCESS: L2 Spatio-Temporal LCT artifact saved to {L2_LCT_SPATIOTEMPORAL_OUTPUT}")
+
+    except FileNotFoundError as e:
+        logging.error(f"FATAL: Prerequisite artifact not found: {e}. Terminating forge.")
+        sys.exit(1)
+
+if __name__ == "__main__":
+    main()
+
+
+
+
+
+
+
+import geopandas as gpd
+import logging
+import sys
+import os
+import re
+
+# --- CONFIGURATION ---
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
+# Input Artifacts
+BASE_DIR = r"C:\Users\brand\Desktop\renewables"
+LPA_BOUNDARIES_INPUT = os.path.join(BASE_DIR, "geospatial", "boundaries", "LPA_APR_2023_UK_BFC_V2_-8090289602527947672.geojson")
+
+# Output Artifact (L1)
+L1_LPA_RECONCILED_OUTPUT = os.path.join(BASE_DIR, "NG_data", "artifacts", "DNO_NG_L1_LPA_Boundaries_Reconciled.gpkg")
+
+# Architectural Parameters
+TARGET_CRS = "EPSG:27700"
+
+def reconcile_authority_name(name: str) -> str:
+    """Applies the mandated, aggressive name reconciliation protocol."""
+    if not isinstance(name, str): return None
+    name = name.lower()
+    suffixes = [' lpa', ' council', ' unitary authority', ' borough', ' district']
+    for suffix in suffixes:
+        if name.endswith(suffix): name = name[:-len(suffix)]
+    return ''.join(filter(str.isalnum, name))
+
+def main():
+    """Forge script to create the L1 Reconciled LPA Boundaries artifact."""
+    logging.info("STARTING: Forge operation for L1 Reconciled LPA Boundaries.")
+    try:
+        gdf_lpa = gpd.read_file(LPA_BOUNDARIES_INPUT).to_crs(TARGET_CRS)
+        
+        # Apply reconciliation protocol and create the standardized join key
+        gdf_lpa['reconciled_key'] = gdf_lpa['LPA23NM'].apply(reconcile_authority_name)
+        
+        # Finalize schema for the L1 artifact
+        gdf_l1 = gdf_lpa[['reconciled_key', 'geometry']]
+        
+        gdf_l1.to_file(L1_LPA_RECONCILED_OUTPUT, driver='GPKG')
+        logging.info(f"SUCCESS: L1 Reconciled LPA Boundaries artifact saved to {L1_LPA_RECONCILED_OUTPUT}")
+
+    except FileNotFoundError as e:
+        logging.error(f"FATAL: Raw input artifact not found: {e}. Terminating forge.")
+        sys.exit(1)
+
+if __name__ == "__main__":
+    main()
+
+
+
+
+
+import pandas as pd
+import logging
+import sys
+import os
+import re
+
+# --- CONFIGURATION ---
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
+# Input Artifacts
+BASE_DIR = r"C:\Users\brand\Desktop\renewables"
+NG_DFES_LPA_FORECAST_CSV_INPUT = os.path.join(BASE_DIR, "national gird (middle)", "dfes_energy_projections.csv")
+
+# Output Artifact (L1)
+L1_DFES_LOOKUP_ARTIFACT_OUTPUT = os.path.join(BASE_DIR, "NG_data", "artifacts", "DNO_NG_L1_DFES_Lookup_Reconciled.csv")
+
+# Architectural Parameters
+TARGET_SCENARIO = 'Holistic Transition'
+
+def reconcile_authority_name(name: str) -> str:
+    """Applies the mandated, aggressive name reconciliation protocol."""
+    if not isinstance(name, str): return None
+    name = name.lower()
+    suffixes = [' lpa', ' council', ' unitary authority', ' borough', ' district']
+    for suffix in suffixes:
+        if name.endswith(suffix): name = name[:-len(suffix)]
+    return ''.join(filter(str.isalnum, name))
+
+def main():
+    """Forge script to create the L1 DFES Lookup Artifact."""
+    logging.info("STARTING: Forge operation for L1 DFES Forecast Lookup.")
+    try:
+        df_ng = pd.read_csv(NG_DFES_LPA_FORECAST_CSV_INPUT)
+
+        df_ng = df_ng[df_ng['scenario'] == TARGET_SCENARIO].copy()
+        for col in ['TWh_total', 'percentage_met_by_renewables']:
+            df_ng[col] = pd.to_numeric(df_ng[col], errors='coerce')
+        df_ng.dropna(subset=['TWh_total', 'percentage_met_by_renewables'], inplace=True)
+        df_ng['year'] = df_ng['year'].astype(int)
+
+        df_pivot = df_ng.pivot_table(index=['local_authority', 'year'], columns='energy_type', values='TWh_total').reset_index()
+        df_pivot.rename(columns={'Generation': 'generation_twh', 'Demand': 'demand_twh', 'Storage': 'storage_twh'}, inplace=True)
+
+        df_renewables = df_ng[['local_authority', 'year', 'percentage_met_by_renewables']].drop_duplicates()
+        df_analysis = pd.merge(df_pivot, df_renewables, on=['local_authority', 'year'])
+        
+        df_analysis['reconciled_key'] = df_analysis['local_authority'].apply(reconcile_authority_name)
+        
+        final_cols = ['reconciled_key', 'year', 'generation_twh', 'demand_twh', 'storage_twh', 'percentage_met_by_renewables']
+        df_l1 = df_analysis[final_cols]
+        
+        df_l1.to_csv(L1_DFES_LOOKUP_ARTIFACT_OUTPUT, index=False)
+        logging.info(f"SUCCESS: L1 DFES Lookup artifact created at {L1_DFES_LOOKUP_ARTIFACT_OUTPUT}")
+
+    except FileNotFoundError as e:
+        logging.error(f"FATAL: Raw input artifact not found: {e}. Terminating forge.")
+        sys.exit(1)
+
+if __name__ == '__main__':
+    main()
+
+
+
+
+
+
+
+import pandas as pd
+import logging
+import sys
+import os
+import re
+
+# --- CONFIGURATION ---
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+BASE_DIR = r"C:\Users\brand\Desktop\renewables\geospatial\lsoa-level"
+OUTPUT_DIR = r"C:\Users\brand\Desktop\renewables\NG_data\artifacts"
+
+# Input Paths
+AHAH_PATH = os.path.join(BASE_DIR, 'AHAH_V4.csv')
+OAC_PATH = os.path.join(BASE_DIR, 'iuc2018.csv')
+COUNCIL_TAX_PATH = os.path.join(BASE_DIR, 'lsoa_house_efficiency.csv')
+NDVI_PATH = os.path.join(BASE_DIR, 'LSOA veg.csv')
+RUC_PATH = os.path.join(BASE_DIR, 'Rural_Urban_Classification_(2021)_of_LSOAs_in_EW.csv')
+
+# Output Artifact
+L1_NONSPATIAL_OUTPUT = os.path.join(OUTPUT_DIR, 'DNO_NG_L1_LSOA_SocioEconomic_NonSpatial.csv')
+
+def _normalize_columns(df):
+    df.columns = [re.sub(r'[^a-z0-9]+', '_', col.lower().strip()).strip('_') for col in df.columns]
+    return df
+
+def main():
+    """Forge script to create the L1 non-spatial LSOA socio-economic artifact."""
+    logging.info("STARTING: Forge operation for L1 Non-Spatial LSOA Socio-Economic data.")
+    try:
+        df_master = _normalize_columns(pd.read_csv(AHAH_PATH)).set_index('lsoa21cd')
+        
+        # Join OAC, Council Tax, NDVI, RUC
+        df_oac = _normalize_columns(pd.read_csv(OAC_PATH))
+        df_master = df_master.join(df_oac.set_index('lsoa11_cd'), how='left')
+
+        df_ct = _normalize_columns(pd.read_csv(COUNCIL_TAX_PATH))
+        df_ct['lsoa21cd'] = df_ct['2021_super_output_area_lower_layer'].str.extract(r'(E\d{8}|W\d{8})')
+        df_ct.rename(columns={'total': 'ct_total', 'band_a': 'ct_band_a', 'band_b': 'ct_band_b', 'band_c': 'ct_band_c', 'band_d': 'ct_band_d', 'band_e': 'ct_band_e', 'band_f': 'ct_band_f', 'band_g': 'ct_band_g'}, inplace=True)
+        ct_cols = ['lsoa21cd'] + [col for col in df_ct.columns if col.startswith('ct_')]
+        df_master = df_master.join(df_ct[ct_cols].set_index('lsoa21cd'), how='left')
+
+        df_ndvi = _normalize_columns(pd.read_csv(NDVI_PATH))
+        df_master = df_master.join(df_ndvi.set_index('lsoa21cd'), how='left')
+
+        df_ruc = _normalize_columns(pd.read_csv(RUC_PATH))
+        df_master = df_master.join(df_ruc.set_index('lsoa21cd'), how='left')
+        
+        df_master.to_csv(L1_NONSPATIAL_OUTPUT)
+        logging.info(f"SUCCESS: L1 Non-Spatial artifact saved to {L1_NONSPATIAL_OUTPUT}")
+
+    except FileNotFoundError as e:
+        logging.error(f"FATAL: Raw input artifact not found: {e}. Terminating forge.")
+        sys.exit(1)
+
+if __name__ == "__main__":
+    main()
+
+
+
+import pandas as pd
+import geopandas as gpd
+import logging
+import sys
+import os
+
+# --- CONFIGURATION ---
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+BASE_DIR = r"C:\Users\brand\Desktop\renewables"
+L1_NONSPATIAL_INPUT = os.path.join(BASE_DIR, "NG_data", "artifacts", "DNO_NG_L1_LSOA_SocioEconomic_NonSpatial.csv")
+LSOA_BOUNDARIES_INPUT = os.path.join(BASE_DIR, "geospatial", "boundaries", "Lower_layer_Super_Output_Areas_December_2021_Boundaries_EW_BFE_V10_5579272939529726760.gpkg")
+L2_GEOSPATIAL_OUTPUT = os.path.join(BASE_DIR, "NG_data", "artifacts", "DNO_NG_L2_LSOA_SocioEconomic_Geospatial.gpkg")
+TARGET_CRS = "EPSG:27700"
+
+def main():
+    """Forge script to create the L2 geospatial LSOA socio-economic artifact."""
+    logging.info("STARTING: Forge operation for L2 Geospatial LSOA Socio-Economic data.")
+    try:
+        df_l1 = pd.read_csv(L1_NONSPATIAL_INPUT)
+        gdf_lsoa = gpd.read_file(LSOA_BOUNDARIES_INPUT).to_crs(TARGET_CRS)
+        
+        gdf_l2 = gdf_lsoa.merge(df_l1, left_on='LSOA21CD', right_on='lsoa21cd', how='left')
+        gdf_l2.drop(columns=['lsoa21nm', 'lsoa21nmw', 'lsoa21cd_y'], errors='ignore', inplace=True)
+        gdf_l2.rename(columns={'lsoa21cd_x': 'lsoa21cd'}, inplace=True)
+        
+        gdf_l2.to_file(L2_GEOSPATIAL_OUTPUT, driver='GPKG')
+        logging.info(f"SUCCESS: L2 Geospatial artifact saved to {L2_GEOSPATIAL_OUTPUT}")
+
+    except FileNotFoundError as e:
+        logging.error(f"FATAL: Prerequisite artifact not found: {e}. Terminating forge.")
+        sys.exit(1)
+
+if __name__ == "__main__":
+    main()
+
+
+
+
+
+import pandas as pd
+import geopandas as gpd
+import logging
+import sys
+import os
+
+# --- CONFIGURATION ---
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+BASE_DIR = r"C:\Users\brand\Desktop\renewables"
+L2_LSOA_INPUT = os.path.join(BASE_DIR, "NG_data", "artifacts", "DNO_NG_L2_LSOA_SocioEconomic_Geospatial.gpkg")
+L1_LPA_INPUT = os.path.join(BASE_DIR, "NG_data", "artifacts", "DNO_NG_L1_LPA_Boundaries_Reconciled.gpkg")
+L2_LPA_AGG_OUTPUT = os.path.join(BASE_DIR, "NG_data", "artifacts", "DNO_NG_L2_LPA_SocioEconomic_Aggregates.gpkg")
+TARGET_CRS = "EPSG:27700"
+
+def _calculate_property_value_idx(row):
+    bands = {'a': 1, 'b': 2, 'c': 3, 'd': 4, 'e': 5, 'f': 6, 'g': 7}
+    numerator = sum(weight * row.get(f'ct_band_{band}', 0) for band, weight in bands.items())
+    denominator = row.get('ct_total', 0)
+    return numerator / denominator if denominator > 0 else 0
+
+def main():
+    """Forge script to pre-compute LPA-level socio-economic aggregate features."""
+    logging.info("STARTING: Forge operation for LPA-level Socio-Economic Synthesis.")
+    try:
+        gdf_lsoa = gpd.read_file(L2_LSOA_INPUT)
+        gdf_lpa = gpd.read_file(L1_LPA_INPUT)
+
+        # Pre-calculate LSOA-level indices
+        gdf_lsoa['property_value_idx'] = gdf_lsoa.apply(_calculate_property_value_idx, axis=1)
+        oac_dummies = pd.get_dummies(gdf_lsoa['grp_label'], prefix='oac_pct', dtype=int)
+        gdf_lsoa = gdf_lsoa.join(oac_dummies)
+
+        # Link LSOAs to their parent LPA
+        gdf_lsoa_with_lpa = gpd.sjoin(gdf_lsoa, gdf_lpa, how='inner', predicate='intersects')
+        gdf_lsoa_with_lpa.drop_duplicates(subset=['lsoa21cd'], keep='first', inplace=True)
+        
+        # Define and execute aggregation
+        agg_spec = { 'property_value_idx': ['mean', 'std'] }
+        for col in oac_dummies.columns: agg_spec[col] = 'mean'
+        
+        df_lpa_agg = gdf_lsoa_with_lpa.groupby('reconciled_key').agg(agg_spec)
+        df_lpa_agg.columns = ['_'.join(col).strip() for col in df_lpa_agg.columns.values]
+        
+        # Merge aggregated data back to LPA geometries
+        gdf_lpa_enriched = gdf_lpa.merge(df_lpa_agg, on='reconciled_key', how='left')
+        gdf_lpa_enriched.to_file(L2_LPA_AGG_OUTPUT, driver='GPKG')
+        logging.info(f"SUCCESS: L2 LPA Aggregate artifact saved to {L2_LPA_AGG_OUTPUT}")
+
+    except FileNotFoundError as e:
+        logging.error(f"FATAL: Prerequisite artifact not found: {e}. Terminating forge.")
+        sys.exit(1)
+
+if __name__ == "__main__":
+    main()
+
+
+
+
+
+
+
+
+
+// FILE: amaryllis/forge/forge_012_oa_nonspatial.py
+// REASONING: Creating a dedicated Forge script to encapsulate the logic from `harmonize_oa_data`. This script's sole responsibility is to ingest a directory of hostile, raw OA-level CSVs, perform schema normalization, decontamination, and unification, and persist a single, authoritative L1 artifact: `DNO_NG_L1_OA_SocioEconomic_NonSpatial.csv`. This isolates the high-risk data cleansing process from the production pipeline.
+
+// AFTER
+```python
+import pandas as pd
+from pathlib import Path
+import logging
+import re
+
+# --- CONFIGURATION ---
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+BASE_DIR = Path(r"C:\Users\brand\Desktop\renewables\geospatial\oa-level")
+OUTPUT_DIR = Path(r"C:\Users\brand\Desktop\renewables\NG_data\artifacts")
+L1_NONSPATIAL_OUTPUT = OUTPUT_DIR / 'DNO_NG_L1_OA_SocioEconomic_NonSpatial.csv'
+
+def sanitize_col_name(col_name):
+    s = str(col_name).strip().lower()
+    s = re.sub(r'\s+', '_', s)
+    s = re.sub(r'[^0-9a-zA-Z_]', '', s)
+    return s
+
+def main():
+    """Forge script to harmonize raw OA CSVs into a single L1 non-spatial artifact."""
+    logging.info("STARTING: Forge operation for L1 Non-Spatial OA Socio-Economic data.")
+    try:
+        pop_df = pd.read_csv(BASE_DIR / 'OA - population.csv', index_col='2021 output area')
+        pop_df.columns = [f"pop_{c}" for c in pop_df.columns]
+        pop_df.index.name = 'oa21cd'
+        master_df = pop_df
+
+        categorical_files = { 'dep': ('ons-deprivation.csv', 'Household deprivation (6 categories)'), 'edu': ('ons-education_deprivation.csv', 'Household deprived in the education dimension (3 categories)'), 'emp': ('ons-employment_deprivation.csv', 'Household deprived in the employment dimension (3 categories)'), 'hhd_comp': ('ons-household_composition.csv', 'Household composition (6 categories)'), 'car': ('ons-vehicles.csv', 'Car or van availability (3 categories)') }
+
+        for prefix, (filename, desc_col) in categorical_files.items():
+            df = pd.read_csv(BASE_DIR / filename)
+            code_col = [c for c in df.columns if 'Code' in c][0]
+            df = df[df[code_col] != -8]
+            pivot_df = df.pivot_table(index='Output Areas Code', columns=desc_col, values='Observation', fill_value=0)
+            pivot_df.columns = [f"{prefix}_{sanitize_col_name(c)}" for c in pivot_df.columns]
+            pivot_df.index.name = 'oa21cd'
+            master_df = master_df.join(pivot_df, how='left')
+
+        oac_df = pd.read_csv(BASE_DIR / 'OUTPUT AREA CLASSIFICATION.csv', index_col='oa21cd')
+        oac_df.columns = [sanitize_col_name(c) for c in oac_df.columns]
+        master_df = master_df.join(oac_df, how='left')
+
+        master_df.fillna(-1.0, inplace=True)
+        master_df.to_csv(L1_NONSPATIAL_OUTPUT)
+        logging.info(f"SUCCESS: L1 Non-Spatial artifact saved to {L1_NONSPATIAL_OUTPUT}")
+
+    except FileNotFoundError as e:
+        logging.error(f"FATAL: Raw input artifact not found: {e}. Terminating forge.")
+
+if __name__ == "__main__":
+    main()
+```
+
+**Phase 2: Isolate the Geospatial OA Data Forge Operation**
+
+Fusing the non-spatial data with OA boundaries is the next logical Forge step.
+
+// FILE: amaryllis/forge/forge_013_oa_geospatial.py
+// REASONING: This Forge script executes the "Geospatial Fusion" protocol. It consumes the clean L1 non-spatial artifact and the raw OA boundary file. It performs the critical CRS unification and join, producing the authoritative L2 artifact: `DNO_NG_L2_OA_SocioEconomic_Geospatial.gpkg`.
+
+// AFTER
+```python
+import pandas as pd
+import geopandas as gpd
+import logging
+from pathlib import Path
+
+# --- CONFIGURATION ---
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+BASE_DIR = Path(r"C:\Users\brand\Desktop\renewables")
+L1_NONSPATIAL_INPUT = BASE_DIR / "NG_data" / "artifacts" / "DNO_NG_L1_OA_SocioEconomic_NonSpatial.csv"
+OA_BOUNDARIES_INPUT = BASE_DIR / "geospatial" / "boundaries" / "Output_Areas_2021_EW_BGC_V2_-5587136561181621407.gpkg"
+L2_GEOSPATIAL_OUTPUT = BASE_DIR / "NG_data" / "artifacts" / "DNO_NG_L2_OA_SocioEconomic_Geospatial.gpkg"
+TARGET_CRS = "EPSG:27700"
+
+def main():
+    """Forge script to create the L2 geospatial OA socio-economic artifact."""
+    logging.info("STARTING: Forge operation for L2 Geospatial OA Socio-Economic data.")
+    try:
+        l1_df = pd.read_csv(L1_NONSPATIAL_INPUT, index_col='oa21cd')
+        oa_gdf = gpd.read_file(OA_BOUNDARIES_INPUT).to_crs(TARGET_CRS)
+        oa_gdf = oa_gdf.rename(columns={'OA21CD': 'oa21cd'})
+        merged_gdf = oa_gdf[['oa21cd', 'geometry']].merge(l1_df, on='oa21cd', how='inner')
+        merged_gdf.to_file(L2_GEOSPATIAL_OUTPUT, driver='GPKG')
+        logging.info(f"SUCCESS: L2 Geospatial artifact saved to {L2_GEOSPATIAL_OUTPUT}")
+
+    except FileNotFoundError as e:
+        logging.error(f"FATAL: Prerequisite artifact not found: {e}. Terminating forge.")
+
+if __name__ == "__main__":
+    main()
+
+
+
+
+
+// FILE: amaryllis/forge/geospatial_forge_engine.py
+// REASONING: Creating a new, standardized Forge script to serve as the primary engine for processing large-scale, raw geospatial data. This script is a direct implementation of the "Forge vs. Factory" doctrine, designed to produce the clean L1 artifacts our Executors depend on. Its architecture incorporates several critical defenses learned from past failures:
+1.  **Pattern 4 Defense (Resource Overload):** The `_load_gpkg_in_chunks` generator is a non-negotiable protocol to prevent memory overload when processing national-scale datasets.
+2.  **Pattern 1 Defense (Geospatial Corruption):** The unconditional CRS unification gate (`to_crs(TARGET_CRS)`) is enforced on every chunk to eliminate the risk of projection mismatch.
+3.  **Pattern 2 Defense (Data Contamination):** The `RECLASS_MAPS` dictionary implements the "Strategic Triage" mandate, converting noisy source classifications into a clean, unified `super_class` schema. This hardens the pipeline against schema drift from external data providers.
+
+// AFTER
+```python
+import fiona
+import geopandas as gpd
+import pandas as pd
+from pathlib import Path
+import logging
+import re
+
+# --- CONFIGURATION ---
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
+# MANDATED RECLASSIFICATION MAPS
+# This implements the "Strategic Triage & Reclassification" mandate.
+# These maps are the single source of truth for reducing noise from raw source data.
+RECLASS_MAPS = {
+    'osm_buildings': {
+        'source_cols_priority': ['type', 'fclass'], 
+        'default_crs_if_missing': 'EPSG:4326',
+        'map': {
+            'apartments': 'residential_building', 'house': 'residential_building',
+            'residential': 'residential_building', 'detached': 'residential_building',
+            'semidetached_house': 'residential_building', 'commercial': 'industrial_commercial',
+            'industrial': 'industrial_commercial', 'office': 'industrial_commercial',
+            'retail': 'industrial_commercial', 'supermarket': 'industrial_commercial',
+            'warehouse': 'industrial_commercial',
+        }
+    },
+    'clc_land_cover': {
+        'source_cols_priority': ['code_18'], 
+        'default_crs_if_missing': 'EPSG:27700',
+        'map': {
+            '111': 'urban_fabric', '112': 'urban_fabric', '121': 'industrial_commercial_clc',
+            '211': 'agricultural', '221': 'agricultural', '231': 'agricultural',
+            '311': 'natural_protected_clc', '312': 'natural_protected_clc', '321': 'natural_protected_clc',
+            '324': 'natural_protected_clc', '332': 'natural_protected_clc', '333': 'natural_protected_clc',
+        }
+    },
+    'osm_roads': {
+        'source_cols_priority': ['fclass'], 
+        'default_crs_if_missing': 'EPSG:4326',
+        'map': {
+            'motorway': 'major_road', 'primary': 'major_road', 'secondary': 'major_road',
+            'tertiary': 'major_road', 'trunk': 'major_road', 'residential': 'minor_road',
+            'service': 'minor_road', 'unclassified': 'minor_road',
+        }
+    },
+    'osm_landuse': {
+        'source_cols_priority': ['fclass'], 'default_crs_if_missing': 'EPSG:4326',
+        'map': {
+            'commercial': 'industrial_commercial', 'industrial': 'industrial_commercial',
+            'retail': 'industrial_commercial', 'quarry': 'industrial_commercial',
+        }
+    },
+    'osm_railways': {
+        'source_cols_priority': ['fclass'], 'default_crs_if_missing': 'EPSG:4326',
+        'map': { 'rail': 'rail', 'light_rail': 'light_rail', 'subway': 'subway', 'narrow_gauge': 'narrow_gauge' }
+    },
+    'osm_places': {
+        'source_cols_priority': ['fclass'], 'default_crs_if_missing': 'EPSG:4326',
+        'map': {
+            'island': 'island', 'city': 'urban_area', 'town': 'urban_area',
+            'village': 'urban_area', 'hamlet': 'urban_area', 'national_capital': 'urban_area',
+            'farm': 'rural_area', 'locality': 'rural_area', 'suburb': 'rural_area'
+        }
+    },
+}
+
+TARGET_CRS = "EPSG:27700"
+
+def _load_geospatial_file_in_chunks(file_path: Path, chunk_size=50000):
+    """
+    Generator to load large, fiona-compatible geospatial files with on-the-fly
+    Shapefile repair, mitigating Pattern 2 (Data Contamination) and 4 (Resource Overload).
+    """
+    with fiona.Env(SHAPE_RESTORE_SHX='YES'):
+        try:
+            str_path = str(file_path)
+            with fiona.open(str_path, 'r') as source:
+                total_features = len(source)
+        except fiona.errors.DriverError as e:
+            raise IOError(f"Critical Data Integrity Failure for '{file_path}'. Restore failed.") from e
+
+        for start in range(0, total_features, chunk_size):
+            stop = min(start + chunk_size, total_features)
+            yield gpd.read_file(str_path, rows=slice(start, stop))
+
+def forge_l1_artifact(source_files: list, output_path: Path, reclass_key: str):
+    """
+    Fortified V3.0 implementation, incorporating the Hierarchical Reclassification Protocol.
+    """
+    logging.info(f"Beginning forge for L1 artifact: {output_path.name}...")
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    reclass_config = RECLASS_MAPS.get(reclass_key)
+    if not reclass_config: raise ValueError(f"Reclass key '{reclass_key}' not found.")
+
+    source_cols = reclass_config['source_cols_priority']
+    reclass_map = reclass_config['map']
+    
+    is_first_chunk = True
+    for file_path in source_files:
+        logging.info(f"  Processing source file: {file_path}...")
+        for gdf_chunk in _load_geospatial_file_in_chunks(Path(file_path)):
+            if gdf_chunk.crs is None:
+                default_crs = reclass_config.get('default_crs_if_missing')
+                if not default_crs: raise ValueError(f"Config Error for '{reclass_key}': No CRS and no default.")
+                gdf_chunk.set_crs(default_crs, inplace=True)
+            if gdf_chunk.crs != TARGET_CRS:
+                gdf_chunk = gdf_chunk.to_crs(TARGET_CRS)
+            
+            gdf_chunk.columns = [col.lower() for col in gdf_chunk.columns]
+            gdf_chunk['super_class'] = None 
+
+            for col in source_cols:
+                if col in gdf_chunk.columns:
+                    current_map = gdf_chunk[col].astype(str).map(reclass_map)
+                    gdf_chunk['super_class'] = gdf_chunk['super_class'].fillna(current_map)
+
+            gdf_chunk.dropna(subset=['super_class', 'geometry'], inplace=True)
+            if gdf_chunk.empty: continue
+
+            is_polygon_mask = gdf_chunk.geom_type.isin(['Polygon', 'MultiPolygon'])
+            gdf_chunk.loc[is_polygon_mask, 'geometry'] = gdf_chunk.loc[is_polygon_mask, 'geometry'].buffer(0)
+            
+            final_chunk = gdf_chunk[['super_class', 'geometry']]
+
+            if is_first_chunk:
+                if output_path.exists(): output_path.unlink()
+                final_chunk.to_file(output_path, driver='GPKG', layer=output_path.stem)
+                is_first_chunk = False
+            else:
+                final_chunk.to_file(output_path, driver='GPKG', layer=output_path.stem, mode='a')
+
+    if is_first_chunk:
+        raise ValueError(f"Forge failed for '{output_path.name}'. No classifiable data found after applying hierarchical mapping.")
+    
+    logging.info(f"Forge complete. L1 artifact saved to: {output_path}")
+
+# Example usage block
+if __name__ == '__main__':
+    # This block demonstrates how the forge engine would be called by an orchestration script.
+    # It should be configured and run as a standalone, offline process.
+    
+    # Define the base directory for raw data
+    RAW_DATA_DIR = Path(r"C:\path\to\your\raw\data") # <-- CONFIGURE THIS PATH
+    
+    # Define the output directory for L1 artifacts
+    L1_ARTIFACT_DIR = Path(r"C:\path\to\your\L1\artifacts") # <-- CONFIGURE THIS PATH
+    
+    # --- Example 1: Forge OSM Buildings Artifact ---
+    # logging.info("### FORGING OSM BUILDINGS ###")
+    # osm_building_files = [RAW_DATA_DIR / "gis_osm_buildings_a_free_1.gpkg"]
+    # forge_l1_artifact(
+    #     source_files=osm_building_files,
+    #     output_path=L1_ARTIFACT_DIR / "OSM_L1_Buildings.gpkg",
+    #     reclass_key='osm_buildings'
+    # )
+    
+    # --- Example 2: Forge CLC Land Cover Artifact ---
+    # logging.info("### FORGING CLC LAND COVER ###")
+    # clc_land_cover_files = [RAW_DATA_DIR / "clc_2018.gpkg"]
+    # forge_l1_artifact(
+    #     source_files=clc_land_cover_files,
+    #     output_path=L1_ARTIFACT_DIR / "CLC_L1_LandCover.gpkg",
+    #     reclass_key='clc_land_cover'
+    # )
+    pass
+
+
+
+
+
+import fiona
+import geopandas as gpd
+from pathlib import Path
+import logging
+import re
+
+# --- CONFIGURATION ---
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
+# MANDATED RECLASSIFICATION MAPS
+RECLASS_MAPS = {
+    'osm_buildings': {'source_col': 'fclass', 'default_crs_if_missing': 'EPSG:4326', 'map': {'apartments': 'residential_building', 'house': 'residential_building', 'residential': 'residential_building', 'commercial': 'industrial_commercial', 'industrial': 'industrial_commercial', 'office': 'industrial_commercial', 'retail': 'industrial_commercial'}},
+    'clc_land_cover': {'source_col': 'code_18', 'default_crs_if_missing': 'EPSG:27700', 'map': {'111': 'urban_fabric', '112': 'urban_fabric', '121': 'industrial_commercial_clc', '211': 'agricultural', '311': 'natural_protected_clc', '312': 'natural_protected_clc'}},
+    'osm_roads': {'source_col': 'fclass', 'default_crs_if_missing': 'EPSG:4326', 'map': {'motorway': 'major_road', 'primary': 'major_road', 'secondary': 'major_road', 'trunk': 'major_road', 'residential': 'minor_road'}},
+    'osm_landuse': {'source_col': 'fclass', 'default_crs_if_missing': 'EPSG:4326', 'map': {'commercial': 'industrial_commercial', 'industrial': 'industrial_commercial', 'retail': 'industrial_commercial', 'quarry': 'industrial_commercial'}},
+    'osm_railways': {'source_col': 'fclass', 'default_crs_if_missing': 'EPSG:4326', 'map': {'rail': 'rail'}},
+    'osm_places': {'source_col': 'fclass', 'default_crs_if_missing': 'EPSG:4326', 'map': {}},
+}
+TARGET_CRS = "EPSG:27700"
+
+def _load_geospatial_file_in_chunks(file_path: Path, chunk_size=50000):
+    """Generator to load large geospatial files with on-the-fly Shapefile repair."""
+    with fiona.Env(SHAPE_RESTORE_SHX='YES'):
+        try:
+            with fiona.open(str(file_path), 'r') as source:
+                total_features = len(source)
+        except Exception as e:
+            raise IOError(f"Critical Data Integrity Failure opening {file_path}") from e
+
+        for start in range(0, total_features, chunk_size):
+            yield gpd.read_file(str(file_path), rows=slice(start, start + chunk_size))
+
+def forge_l1_artifact(source_files: list, output_path: Path, reclass_key: str):
+    """Executes the full ingestion, unification, and reclassification protocol."""
+    logging.info(f"Beginning forge for L1 artifact: {output_path.name}...")
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    
+    config = RECLASS_MAPS[reclass_key]
+    is_first_chunk = True
+
+    for file_path in source_files:
+        logging.info(f"  Processing source file: {file_path}...")
+        for gdf_chunk in _load_geospatial_file_in_chunks(Path(file_path)):
+            if gdf_chunk.crs is None:
+                gdf_chunk.set_crs(config['default_crs_if_missing'], inplace=True)
+            if gdf_chunk.crs != TARGET_CRS:
+                gdf_chunk = gdf_chunk.to_crs(TARGET_CRS)
+
+            gdf_chunk.columns = [col.lower() for col in gdf_chunk.columns]
+            if config['map']:
+                gdf_chunk['super_class'] = gdf_chunk[config['source_col']].astype(str).map(config['map'])
+            else: # Pass-through case
+                gdf_chunk['super_class'] = gdf_chunk[config['source_col']]
+            
+            gdf_chunk.dropna(subset=['super_class', 'geometry'], inplace=True)
+            if gdf_chunk.empty: continue
+            
+            gdf_chunk.geometry = gdf_chunk.geometry.buffer(0)
+            
+            mode = 'w' if is_first_chunk else 'a'
+            gdf_chunk[['super_class', 'geometry']].to_file(output_path, driver='GPKG', layer=output_path.stem, mode=mode)
+            is_first_chunk = False
+    
+    if is_first_chunk:
+        raise ValueError(f"Forge failed for '{output_path.name}'. No classifiable data found.")
+    logging.info(f"Forge complete. L1 artifact saved to: {output_path}")
+
+if __name__ == '__main__':
+    # This main block orchestrates the offline forging of all necessary L1 artifacts.
+    RAW_DATA_DIR = Path(r"C:\Users\brand\Desktop\renewables\bridging")
+    L1_ARTIFACT_DIR = Path(r"C:\Users\brand\Desktop\renewables\NG_data\artifacts")
+    
+    forge_l1_artifact([RAW_DATA_DIR / 'gis_osm_buildings_a_free_1.shp'], L1_ARTIFACT_DIR / 'OSM_L1_Buildings.gpkg', 'osm_buildings')
+    forge_l1_artifact([RAW_DATA_DIR / 'clc2018_uk.shp'], L1_ARTIFACT_DIR / 'CLC_L1_LandCover.gpkg', 'clc_land_cover')
+    forge_l1_artifact([RAW_DATA_DIR / 'gis_osm_roads_free_1.shp'], L1_ARTIFACT_DIR / 'OSM_L1_Roads.gpkg', 'osm_roads')
+    forge_l1_artifact([RAW_DATA_DIR / 'gis_osm_landuse_a_free_1.shp'], L1_ARTIFACT_DIR / 'OSM_L1_LandUse.gpkg', 'osm_landuse')
+    forge_l1_artifact([RAW_DATA_DIR / 'gis_osm_railways_free_1.shp'], L1_ARTIFACT_DIR / 'OSM_L1_Railways.gpkg', 'osm_railways')
+    forge_l1_artifact([RAW_DATA_DIR / 'gis_osm_places_free_1.shp'], L1_ARTIFACT_DIR / 'OSM_L1_Places.gpkg', 'osm_places')
+
+
+
+
+
+
+
+
+
+	
+

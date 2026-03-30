@@ -1,0 +1,11 @@
+Quantile Models Validation Report
+==================================================
+
+P10 Model Path: C:\Users\brand\Desktop\renewables\data\artifacts\modeling_outputs\specialist_gm_solar_v3.5_refactored\p10_quantile_model_v3.5.joblib
+P90 Model Path: C:\Users\brand\Desktop\renewables\data\artifacts\modeling_outputs\specialist_gm_solar_v3.5_refactored\p90_quantile_model_v3.5.joblib
+
+Validation Metrics:
+  Coverage: 69.87%
+  P10 Calibration: 16.12%
+  P90 Calibration: 85.99%
+  Mean Interval Width: 44.4 days

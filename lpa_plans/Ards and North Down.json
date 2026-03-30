@@ -1,0 +1,113 @@
+{
+  "domain": "www.ardsandnorthdown.gov.uk",
+  "plan_version": "3.0",
+  "last_updated": "2026-03-11T14:53:33.305562Z",
+  "instructions": [
+    {
+      "command": "GOTO_URL",
+      "params": {
+        "url": "https://planningregister.planningsystemni.gov.uk/simple-search"
+      },
+      "description": "Navigate to the search page."
+    },
+    {
+      "command": "FILL_INPUT",
+      "params": {
+        "selector": "#search-test",
+        "value": "{{REFERENCE_ID}}"
+      },
+      "description": "Fill the primary search input field with the planning application reference ID."
+    },
+    {
+      "command": "CLICK_ELEMENT",
+      "params": {
+        "selector": "button[aria-label=\"Search\"]"
+      },
+      "description": "Click the search button to submit the query."
+    },
+    {
+      "command": "WAIT_FOR_SELECTOR",
+      "params": {
+        "selector": "h2:has-text('Search results'), h1:has-text('Application Details'), div.tqc-card, div.results:not(:empty)"
+      },
+      "description": "Wait for the search results container to populate or for direct navigation to an application details page."
+    },
+    {
+      "command": "WAIT_FOR_SELECTOR",
+      "params": {
+        "selector": "div.ApplicationCard__StyledLink-sc-1oe3v7i-0 >> a"
+      },
+      "description": "Wait for search results."
+    },
+    {
+      "command": "CLICK_ELEMENT",
+      "params": {
+        "selector": "div.ApplicationCard__StyledLink-sc-1oe3v7i-0 >> a"
+      },
+      "description": "Click the search result to view details."
+    },
+    {
+      "command": "WAIT_FOR_SELECTOR",
+      "params": {
+        "selector": "button[id=\"tabs-application-tabs--tab-3\"]"
+      },
+      "description": "Wait for detail page."
+    },
+    {
+      "command": "CLICK_ELEMENT",
+      "params": {
+        "selector": "button[id=\"tabs-application-tabs--tab-3\"]"
+      },
+      "description": "Open Documents tab."
+    },
+    {
+      "command": "WAIT_FOR_SELECTOR",
+      "params": {
+        "selector": "table.chakra-table.tqc-datatable > tbody > tr"
+      },
+      "description": "Wait for documents table."
+    }
+  ],
+  "results_page_processing": {
+    "listing_container_selector": "div.ApplicationCard__StyledLink-sc-1oe3v7i-0",
+    "listing_link_blueprint": {
+      "selector": "a",
+      "extraction_method": "ATTRIBUTE",
+      "attribute_name": "href",
+      "post_processing": null
+    },
+    "listing_address_blueprint": {
+      "selector": "p.css-102diyt",
+      "extraction_method": "TEXT",
+      "attribute_name": null,
+      "post_processing": null
+    },
+    "pagination_blueprint": null
+  },
+  "detail_page_processing": {},
+  "document_page_processing": {
+    "document_container_selector": "table.chakra-table.tqc-datatable > tbody > tr",
+    "document_link_blueprint": {
+      "selector": "td:nth-child(5) a.tqc-link[id^='view_document']",
+      "extraction_method": "ATTRIBUTE",
+      "attribute_name": "href",
+      "post_processing": null
+    },
+    "document_date_blueprint": {
+      "selector": "td:nth-child(1)",
+      "extraction_method": "TEXT",
+      "attribute_name": null,
+      "post_processing": null
+    },
+    "document_type_blueprint": {
+      "selector": "td:nth-child(2)",
+      "extraction_method": "TEXT",
+      "attribute_name": null,
+      "post_processing": null
+    },
+    "pagination_blueprint": {
+      "next_page_selector": "nav.tqc-pagination button[aria-label='Go to next page']"
+    },
+    "batch_processing": null
+  }
+}

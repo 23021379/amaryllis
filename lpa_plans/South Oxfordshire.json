@@ -1,0 +1,82 @@
+{
+  "domain": "www.southoxon.gov.uk",
+  "plan_version": "3.0",
+  "last_updated": "2026-03-27T18:13:37.899149Z",
+  "instructions": [
+    {
+      "command": "GOTO_URL",
+      "params": {
+        "url": "https://data.southoxon.gov.uk/ccm/support/Main.jsp?MODULE=ApplicationRef&TYPE=Application"
+      },
+      "description": "Navigate to the search page.",
+      "frame_name": null
+    },
+    {
+      "command": "CLICK_ELEMENT",
+      "params": {
+        "selector": "button.ccc-notify-button.ccc-accept-button"
+      },
+      "description": "Dismiss the cookie consent banner by clicking the 'Accept' button.",
+      "frame_name": null
+    },
+    {
+      "command": "FILL_INPUT",
+      "params": {
+        "selector": "input#REF",
+        "value": "{{REFERENCE_ID}}"
+      },
+      "description": "Fill the 'REF' input field with the planning application reference ID.",
+      "frame_name": null
+    },
+    {
+      "command": "CLICK_ELEMENT",
+      "params": {
+        "selector": "input[type='Submit'][value='Search']"
+      },
+      "description": "Click the 'Search' button to submit the form.",
+      "frame_name": null
+    },
+    {
+      "command": "WAIT_FOR_SELECTOR",
+      "params": {
+        "selector": "h1:has-text('Application Details'), h1:has-text('Summary'), #searchresults, .search-results"
+      },
+      "description": "Wait for the search results or application details page to load.",
+      "frame_name": null
+    },
+    {
+      "command": "WAIT_FOR_SELECTOR",
+      "params": {
+        "selector": "div.tablediv > div.rowdiv >> div.celldiv > a"
+      },
+      "description": "Wait for search results.",
+      "frame_name": null
+    },
+    {
+      "command": "CLICK_ELEMENT",
+      "params": {
+        "selector": "div.tablediv > div.rowdiv >> div.celldiv > a"
+      },
+      "description": "Click the search result to view details.",
+      "frame_name": null
+    }
+  ],
+  "results_page_processing": {
+    "listing_container_selector": "div.tablediv > div.rowdiv",
+    "listing_link_blueprint": {
+      "selector": "div.celldiv > a",
+      "extraction_method": "ATTRIBUTE",
+      "attribute_name": "href",
+      "post_processing": null
+    },
+    "listing_address_blueprint": {
+      "selector": "div.celldiv > a",
+      "extraction_method": "TEXT",
+      "attribute_name": null,
+      "post_processing": null
+    },
+    "pagination_blueprint": null
+  },
+  "detail_page_processing": {},
+  "document_page_processing": null
+}

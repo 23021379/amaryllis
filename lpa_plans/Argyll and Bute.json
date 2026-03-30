@@ -1,0 +1,118 @@
+{
+  "domain": "www.argyll-bute.gov.uk",
+  "plan_version": "3.0",
+  "last_updated": "2026-03-11T14:56:22.500112Z",
+  "instructions": [
+    {
+      "command": "GOTO_URL",
+      "params": {
+        "url": "https://publicaccess.argyll-bute.gov.uk/online-applications/search.do?action=simple&searchType=Application"
+      },
+      "description": "Navigate to the search page."
+    },
+    {
+      "command": "FILL_INPUT",
+      "params": {
+        "selector": "input#simpleSearchString",
+        "value": "{{REFERENCE_ID}}"
+      },
+      "description": "Enter the application reference number into the simple search input field."
+    },
+    {
+      "command": "CLICK_ELEMENT",
+      "params": {
+        "selector": "input[type=\"submit\"][value=\"Search\"]"
+      },
+      "description": "Click the 'Search' button to submit the query."
+    },
+    {
+      "command": "WAIT_FOR_SELECTOR",
+      "params": {
+        "selector": "table.results-table, #searchresults, h1:has-text('Application Details'), h1:has-text('Summary')"
+      },
+      "description": "Wait for the search results table or the application details page to load, indicating successful submission."
+    },
+    {
+      "command": "WAIT_FOR_SELECTOR",
+      "params": {
+        "selector": "ul.tabs"
+      },
+      "description": "Wait for Application Details modal/view to appear."
+    },
+    {
+      "command": "WAIT_FOR_SELECTOR",
+      "params": {
+        "selector": "a#tab_externalDocuments"
+      },
+      "description": "Wait for detail page."
+    },
+    {
+      "command": "CLICK_ELEMENT",
+      "params": {
+        "selector": "a#tab_externalDocuments"
+      },
+      "description": "Open Documents tab."
+    },
+    {
+      "command": "WAIT_FOR_SELECTOR",
+      "params": {
+        "selector": "p.associateddocument a"
+      },
+      "description": "Wait for 'View Documents' link/button."
+    },
+    {
+      "command": "CLICK_ELEMENT",
+      "params": {
+        "selector": "p.associateddocument a"
+      },
+      "description": "Click 'View Documents' link."
+    },
+    {
+      "command": "WAIT_FOR_SELECTOR",
+      "params": {
+        "selector": "table#docs > tbody > tr"
+      },
+      "description": "Wait for documents table."
+    }
+  ],
+  "results_page_processing": {
+    "listing_container_selector": "ul.tabs",
+    "listing_link_blueprint": {
+      "selector": "body",
+      "extraction_method": "ATTRIBUTE",
+      "attribute_name": "id",
+      "post_processing": null
+    },
+    "listing_address_blueprint": {
+      "selector": "body",
+      "extraction_method": "TEXT",
+      "attribute_name": null,
+      "post_processing": null
+    },
+    "pagination_blueprint": null
+  },
+  "detail_page_processing": {},
+  "document_page_processing": {
+    "document_container_selector": "table#docs > tbody > tr",
+    "document_link_blueprint": {
+      "selector": "td:nth-child(5) a.icon-pdf",
+      "extraction_method": "ATTRIBUTE",
+      "attribute_name": "href",
+      "post_processing": null
+    },
+    "document_date_blueprint": {
+      "selector": "td:nth-child(4)",
+      "extraction_method": "TEXT",
+      "attribute_name": null,
+      "post_processing": null
+    },
+    "document_type_blueprint": {
+      "selector": "td:nth-child(2)",
+      "extraction_method": "TEXT",
+      "attribute_name": null,
+      "post_processing": null
+    },
+    "pagination_blueprint": null,
+    "batch_processing": null
+  }
+}

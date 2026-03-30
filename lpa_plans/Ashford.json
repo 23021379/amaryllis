@@ -1,0 +1,111 @@
+{
+  "domain": "www.ashford.gov.uk",
+  "plan_version": "3.0",
+  "last_updated": "2026-03-11T15:27:15.267517Z",
+  "instructions": [
+    {
+      "command": "GOTO_URL",
+      "params": {
+        "url": "https://abcportal.ashford.gov.uk/pr/s/register-view?c__r=Arcus_BE_Public_Register"
+      },
+      "description": "Navigate to the search page."
+    },
+    {
+      "command": "FILL_INPUT",
+      "params": {
+        "selector": "arcuscommunity-pr_search input[type=\"text\"], arcuscommunity-pr_search input.slds-input",
+        "value": "{{REFERENCE_ID}}"
+      },
+      "description": "Fill the primary text input field within the planning search component with the application reference ID."
+    },
+    {
+      "command": "CLICK_ELEMENT",
+      "params": {
+        "selector": "arcuscommunity-pr_search button:has-text(\"Search\"), arcuscommunity-pr_search button[type=\"submit\"]"
+      },
+      "description": "Click the 'Search' button to submit the query. This accounts for a text button or a submit type button within the search component."
+    },
+    {
+      "command": "WAIT_FOR_SELECTOR",
+      "params": {
+        "selector": "div[class*=\"search-results\"], div[class*=\"result-list\"], article[class*=\"application-details\"], h1:has-text(\"Application Details\"), h2:has-text(\"Search Results\")"
+      },
+      "description": "Wait for elements indicating search results or the application details page to become visible."
+    },
+    {
+      "command": "WAIT_FOR_SELECTOR",
+      "params": {
+        "selector": "div.slds-form.slds-box[arcuscommunity-pr_articles_pr_articles] >> label:has-text(\"Application Reference\") + div.slds-form-element__control lightning-formatted-url a"
+      },
+      "description": "Wait for search results."
+    },
+    {
+      "command": "CLICK_ELEMENT",
+      "params": {
+        "selector": "div.slds-form.slds-box[arcuscommunity-pr_articles_pr_articles] >> label:has-text(\"Application Reference\") + div.slds-form-element__control lightning-formatted-url a"
+      },
+      "description": "Click the search result to view details."
+    },
+    {
+      "command": "WAIT_FOR_SELECTOR",
+      "params": {
+        "selector": "a[role=\"tab\"]:has-text(\"Plans And Documents\")"
+      },
+      "description": "Wait for detail page."
+    },
+    {
+      "command": "CLICK_ELEMENT",
+      "params": {
+        "selector": "a[role=\"tab\"]:has-text(\"Plans And Documents\")"
+      },
+      "description": "Open Documents tab."
+    },
+    {
+      "command": "WAIT_FOR_SELECTOR",
+      "params": {
+        "selector": "table.pr-table > tbody > tr.pr-table__row"
+      },
+      "description": "Wait for documents table."
+    }
+  ],
+  "results_page_processing": {
+    "listing_container_selector": "div.slds-form.slds-box[arcuscommunity-pr_articles_pr_articles]",
+    "listing_link_blueprint": {
+      "selector": "label:has-text(\"Application Reference\") + div.slds-form-element__control lightning-formatted-url a",
+      "extraction_method": "ATTRIBUTE",
+      "attribute_name": "href",
+      "post_processing": null
+    },
+    "listing_address_blueprint": {
+      "selector": "label:has-text(\"Application Reference\") + div.slds-form-element__control lightning-formatted-url a",
+      "extraction_method": "TEXT",
+      "attribute_name": null,
+      "post_processing": null
+    },
+    "pagination_blueprint": null
+  },
+  "detail_page_processing": {},
+  "document_page_processing": {
+    "document_container_selector": "table.pr-table > tbody > tr.pr-table__row",
+    "document_link_blueprint": {
+      "selector": "td:nth-child(3) a[download]",
+      "extraction_method": "ATTRIBUTE",
+      "attribute_name": "href",
+      "post_processing": null
+    },
+    "document_date_blueprint": {
+      "selector": "td:nth-child(1)",
+      "extraction_method": "TEXT",
+      "attribute_name": null,
+      "post_processing": null
+    },
+    "document_type_blueprint": {
+      "selector": "td:nth-child(2)",
+      "extraction_method": "TEXT",
+      "attribute_name": null,
+      "post_processing": null
+    },
+    "pagination_blueprint": null,
+    "batch_processing": null
+  }
+}

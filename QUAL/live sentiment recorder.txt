@@ -1,0 +1,107 @@
+This is the domain of **OSINT (Open Source Intelligence).**
+
+You are correct: The Planning Portal is the **Courtroom**, but the **Conspiracy** happens in the village pub (or rather, the village Facebook Group).
+
+However, as Lead Architect, I must issue a **Critical Warning**: Do **not** attempt to build a scraper that logs into Facebook, Nextdoor, or LinkedIn.
+1.  **Technical Suicide:** They use "Shadow DOMs" and dynamic classes that change weekly. Your maintenance costs will be astronomical.
+2.  **Legal Risk:** Logging in to scrape violates Terms of Service (Computer Misuse Act territory in extreme cases).
+3.  **Ban Hammer:** They will IP ban your entire corporate range.
+
+Instead, we will use **"Side-Channel" Intelligence**. We will listen to the *public* echoes of these private conversations using Search APIs and specialized aggregators.
+
+Here is the **"Live Sentiment Monitor" Architecture**.
+
+---
+
+### **1. The "Hyper-Local" News Radar (Google News API)**
+
+**The Insight:**
+Before a "Stop the Solar Farm" group forms, a local journalist writes an article.
+*   *Headlines:* "Monster Farm Planned for Congresbury" vs "Green Energy Boost for North Somerset."
+*   The **Comment Section** below these articles is where the *uncensored* sentiment lives.
+
+**The Implementation:**
+*   **Tool:** **SerpApi** (Google News Engine) or **NewsAPI.org**.
+*   **Query Pattern:** `"{Village Name}" AND ("Solar" OR "Photovoltaic" OR "Renewable")`.
+*   **Frequency:** Daily at 08:00.
+*   **Extraction:**
+    1.  Get the Article URL.
+    2.  Use Python `newspaper3k` library to parse the body text.
+    3.  **The "Vibe Check":** Feed the headline and first paragraph to an LLM (GPT-4o-mini).
+    4.  **Classification:** `Positive` / `Neutral` / `Hostile`.
+
+**Actionable Intel:**
+If a local paper runs a "Hostile" story, the `nimby_coefficient` for that week spikes by 50%. The client must issue a "Myth-Buster" press release immediately.
+
+---
+
+### **2. The "Action Group" Detector (Change.org / GoFundMe)**
+
+**The Insight:**
+This is the **single most dangerous signal** for a live application.
+If the opposition is organized enough to set up a Petition or a Fundraising page (to hire a barrister), your client is in trouble.
+*   *Note:* These pages are indexed by Google immediately.
+
+**The Implementation:**
+*   **Tool:** **SerpApi** (Google Search).
+*   **Query (The "Google Dork"):**
+    *   `site:change.org "Congresbury" "Solar"`
+    *   `site:gofundme.com "Stop" "Solar" "{Location}"`
+    *   `site:justgiving.com "Legal Fund" "{Location}"`
+*   **Logic:**
+    *   If **Result Count > 0**: trigger **RED ALERT**.
+    *   **Extract:** `Signature Count` or `Funds Raised`.
+    *   **Velocity:** Track this daily. If signatures jump from 100 to 1,000 in 24 hours, the viral tipping point has been reached.
+
+---
+
+### **3. The "Facebook Loophole" (Public Groups)**
+
+**The Insight:**
+You cannot scrape *private* groups. But many "Action Groups" are *Public* to attract members. Google indexes these public posts.
+
+**The Implementation:**
+*   **Tool:** **SerpApi** (Google Search).
+*   **Query:** `site:facebook.com/groups "{Village Name}" "Solar"`.
+*   **The Trick:** Do not try to parse the Facebook HTML. Parse the **Search Snippet**.
+    *   *Snippet:* "...join our fight against the ugly solar farm on Smith's Field..."
+*   **Sentiment Analysis:** Even 150 characters of snippet text is enough for an LLM to identify the **Topic of Rage** (e.g., "Ugly", "Traffic", "Wildlife").
+
+---
+
+### **4. The "Search Volume" Proxy (Google Trends)**
+
+**The Insight:**
+If people are angry, they search.
+If the search volume for "Solar Farm Health Risks" or "Solar Glare Epilepsy" spikes in the *specific region* of your client's proposal, you know exactly what the community is whispering about.
+
+**The Implementation:**
+*   **Tool:** `pytrends` (Unofficial API) or **Google Trends** (Official).
+*   **Geo-Target:** Filter by Region (e.g., "North Somerset").
+*   **Keywords:** "Solar Glare", "Lithium Battery Fire", "Property Prices Solar Farm".
+*   **The Strategy:**
+    *   If searches for "Battery Fire" spike: Tell the client to publish their **Fire Safety Plan** on the front page of their consultation website *tomorrow*.
+
+---
+
+### **The "Live Discourse" Dashboard**
+
+You merge these streams into a simple report for the "PS Guys":
+
+**Project:** Field House Solar Farm (Live)
+
+| Source | Status | Sentiment | Key Themes | Action |
+| :--- | :--- | :--- | :--- | :--- |
+| **Local News** | 2 Articles | Negative (-0.8) | "Loss of View", "Industrialisation" | **Draft "Screening Plan" PR** |
+| **Petitions** | Change.org | 450 Signatures | "Save our Skylarks" | **Highlight Ecology Net Gain** |
+| **Social** | Facebook | High Activity | "Construction Traffic" | **Publish Traffic Routing Map** |
+| **Search** | Trends | Spiking | "House Prices" | **Share "No Impact" Study** |
+
+### **Summary Blueprint**
+
+1.  **Do NOT build a social media scraper.** It is a trap.
+2.  **Build a "Search Listener"** using SerpApi.
+3.  **Targets:** `site:change.org`, `site:facebook.com` (public), and Local News domains.
+4.  **Processing:** Use `newspaper3k` to get text $\rightarrow$ LLM to extract "Objection Themes."
+
+This gives you 80% of the intelligence for 1% of the cost (and risk) of a full social media surveillance tool.

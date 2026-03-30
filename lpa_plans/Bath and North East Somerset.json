@@ -1,0 +1,127 @@
+{
+  "domain": "www.bathnes.gov.uk",
+  "plan_version": "3.0",
+  "last_updated": "2026-03-23T19:35:32.659725Z",
+  "instructions": [
+    {
+      "command": "GOTO_URL",
+      "params": {
+        "url": "https://app.bathnes.gov.uk/webforms/planning/"
+      },
+      "description": "Navigate to the search page.",
+      "frame_name": null
+    },
+    {
+      "command": "FILL_INPUT",
+      "params": {
+        "selector": "#txtboxAppRef",
+        "value": "{{REFERENCE_ID}}"
+      },
+      "description": "Enter the planning application reference number into the primary search input field.",
+      "frame_name": null
+    },
+    {
+      "command": "CLICK_ELEMENT",
+      "params": {
+        "selector": "#searchBtn"
+      },
+      "description": "Submit the search form by clicking the search button.",
+      "frame_name": null
+    },
+    {
+      "command": "WAIT_FOR_SELECTOR",
+      "params": {
+        "selector": "#results-list, .results-overflow-content, .govuk-error-summary"
+      },
+      "description": "Wait for the results container to populate or for an error summary to appear, indicating the search has completed.",
+      "frame_name": null
+    },
+    {
+      "command": "WAIT_FOR_SELECTOR",
+      "params": {
+        "selector": "#results-table tr.govuk-table__row >> a[href*='details.html']"
+      },
+      "description": "Wait for search results.",
+      "frame_name": null
+    },
+    {
+      "command": "CLICK_ELEMENT",
+      "params": {
+        "selector": "#results-table tr.govuk-table__row >> a[href*='details.html']"
+      },
+      "description": "Click the search result to view details.",
+      "frame_name": null
+    },
+    {
+      "command": "WAIT_FOR_SELECTOR",
+      "params": {
+        "selector": "a#tab_documents_Section"
+      },
+      "description": "Wait for detail page.",
+      "frame_name": null
+    },
+    {
+      "command": "CLICK_ELEMENT",
+      "params": {
+        "selector": "a#tab_documents_Section"
+      },
+      "description": "Open Documents tab.",
+      "frame_name": null
+    },
+    {
+      "command": "WAIT_FOR_SELECTOR",
+      "params": {
+        "selector": "table#Documents tbody tr"
+      },
+      "description": "Wait for documents table.",
+      "frame_name": null
+    }
+  ],
+  "results_page_processing": {
+    "listing_container_selector": "#results-table tr.govuk-table__row",
+    "listing_link_blueprint": {
+      "selector": "a[href*='details.html']",
+      "extraction_method": "ATTRIBUTE",
+      "attribute_name": "href",
+      "post_processing": null
+    },
+    "listing_address_blueprint": {
+      "selector": "td.govuk-table__cell",
+      "extraction_method": "TEXT",
+      "attribute_name": null,
+      "post_processing": null
+    },
+    "pagination_blueprint": null
+  },
+  "detail_page_processing": {},
+  "document_page_processing": {
+    "document_tab_selector": null,
+    "document_container_selector": "table#Documents tbody tr",
+    "document_link_blueprint": {
+      "selector": "td:nth-child(5) a",
+      "extraction_method": "ATTRIBUTE",
+      "attribute_name": "href",
+      "post_processing": null
+    },
+    "document_date_blueprint": {
+      "selector": "td:nth-child(4)",
+      "extraction_method": "TEXT",
+      "attribute_name": null,
+      "post_processing": null
+    },
+    "document_type_blueprint": {
+      "selector": "td:nth-child(2)",
+      "extraction_method": "TEXT",
+      "attribute_name": null,
+      "post_processing": null
+    },
+    "pagination_blueprint": {
+      "next_page_selector": ".dataTables_paginate a.next"
+    },
+    "batch_processing": {
+      "checkbox_selector": "td:nth-child(1) input[type='checkbox']",
+      "select_all_selector": "thead th:nth-child(1) input[type='checkbox']",
+      "batch_action_button_selector": "#downloadSelected"
+    }
+  }
+}

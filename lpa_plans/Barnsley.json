@@ -1,0 +1,106 @@
+{
+  "domain": "www.barnsley.gov.uk",
+  "plan_version": "3.0",
+  "last_updated": "2026-03-11T15:35:49.977532Z",
+  "instructions": [
+    {
+      "command": "GOTO_URL",
+      "params": {
+        "url": "https://planningexplorer.barnsley.gov.uk/"
+      },
+      "description": "Navigate to the search page."
+    },
+    {
+      "command": "FILL_INPUT",
+      "params": {
+        "selector": "input#ApplicationNumber",
+        "value": "{{REFERENCE_ID}}"
+      },
+      "description": "Fill the 'Application Reference Number' input field with the target reference ID."
+    },
+    {
+      "command": "CLICK_ELEMENT",
+      "params": {
+        "selector": "input.btn-primary[value='Search']"
+      },
+      "description": "Submit the search by clicking the 'Search' button."
+    },
+    {
+      "command": "WAIT_FOR_SELECTOR",
+      "params": {
+        "selector": "#searchresults, .search-results, table.table, h1:has-text('Summary'), h1:has-text('Application Details'), h2:has-text('Application Details')"
+      },
+      "description": "Wait for the search results container or application details heading to appear on the page, confirming search success."
+    },
+    {
+      "command": "WAIT_FOR_SELECTOR",
+      "params": {
+        "selector": "table#table1 > tbody > tr.trow--planning >> td:nth-child(1) > a"
+      },
+      "description": "Wait for search results."
+    },
+    {
+      "command": "CLICK_ELEMENT",
+      "params": {
+        "selector": "table#table1 > tbody > tr.trow--planning >> td:nth-child(1) > a"
+      },
+      "description": "Click the search result to view details."
+    },
+    {
+      "command": "WAIT_FOR_SELECTOR",
+      "params": {
+        "selector": "div.panel-heading[href='#collapseTwo']"
+      },
+      "description": "Wait for detail page."
+    },
+    {
+      "command": "CLICK_ELEMENT",
+      "params": {
+        "selector": "div.panel-heading[href='#collapseTwo']"
+      },
+      "description": "Open Documents tab."
+    },
+    {
+      "command": "WAIT_FOR_SELECTOR",
+      "params": {
+        "selector": "div#documents div#collapseTwo div.panel-body table tbody tr:has(a.right)"
+      },
+      "description": "Wait for documents table."
+    }
+  ],
+  "results_page_processing": {
+    "listing_container_selector": "table#table1 > tbody > tr.trow--planning",
+    "listing_link_blueprint": {
+      "selector": "td:nth-child(1) > a",
+      "extraction_method": "ATTRIBUTE",
+      "attribute_name": "href",
+      "post_processing": null
+    },
+    "listing_address_blueprint": {
+      "selector": "td:nth-child(1) > a > strong",
+      "extraction_method": "TEXT",
+      "attribute_name": null,
+      "post_processing": null
+    },
+    "pagination_blueprint": null
+  },
+  "detail_page_processing": {},
+  "document_page_processing": {
+    "document_container_selector": "div#documents div#collapseTwo div.panel-body table tbody tr:has(a.right)",
+    "document_link_blueprint": {
+      "selector": "a.right",
+      "extraction_method": "ATTRIBUTE",
+      "attribute_name": "href",
+      "post_processing": null
+    },
+    "document_date_blueprint": null,
+    "document_type_blueprint": {
+      "selector": "a.right",
+      "extraction_method": "TEXT",
+      "attribute_name": null,
+      "post_processing": null
+    },
+    "pagination_blueprint": null,
+    "batch_processing": null
+  }
+}

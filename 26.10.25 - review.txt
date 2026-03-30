@@ -1,0 +1,17 @@
+While technically the dataset is complete and I am fine tuning an optuna trial, the dataset was not completed in its entirety; I just want a rough idea of how well the model will perform.
+This prototype-v2 has 3600 rows, 153 columns. A lot of features were removed due to high Nan rate in step 2; this is obviously an issue.
+This sample shape should give a decent performance, though.
+
+step 2 issue:
+	161 columns were removed due to nan-rate > 60%. This shouldn't be the case since my imputation step was fairly exhaustive and accurate. I used '-1.0' as the null sentinel for the imputation step. It is likely that the imputation step did not see 	actual nans as nans, and it didn't see '0.0' as a nan either.
+ 	This means I just need to update the imputation step.
+
+	If this is not the case, then idk.
+
+infrastructure issue:
+	I have almost finished the infrastructure integration. I wanted a quick prototype, and so I brushed over the infrastructure phase. 
+	This means the imputation step would be slightly less accurate than desired. It also means that a lot of nans are caused by this, as the features are present in the dataset, they are just empty.
+
+161 columns issue:
+	While these two issues help explain why 161 columns were removed during step 2, it doesn't explain the situation fully. 161 is over half of the dataset. 
+	I must have messed up the NG/UKPN merge or the demographic merge or something!

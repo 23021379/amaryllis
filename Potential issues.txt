@@ -1,0 +1,12 @@
+Potential issues;
+
+1. missing features in executors
+	compare executors to their parents.
+
+2. duplicate executors
+	compare executors, similar ones get merged.
+
+3. forging
+	known artifact forgers are saved to a file, but there will be many unknowns. WIll need to check every script again for forgers.
+	Forgers need to be aggregated into a single file/ series of execs.
+

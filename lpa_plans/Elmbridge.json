@@ -1,0 +1,144 @@
+{
+  "domain": "www.elmbridge.gov.uk",
+  "plan_version": "3.0",
+  "last_updated": "2026-03-24T14:53:50.911586Z",
+  "instructions": [
+    {
+      "command": "GOTO_URL",
+      "params": {
+        "url": "https://www.elmbridge.gov.uk/planning/find-or-comment-planning-application"
+      },
+      "description": "Navigate to the planning application search page.",
+      "frame_name": null
+    },
+    {
+      "command": "CLICK_ELEMENT",
+      "params": {
+        "selector": "button.agree-button.eu-cookie-compliance-secondary-button"
+      },
+      "description": "Accept the cookie consent.",
+      "frame_name": null
+    },
+    {
+      "command": "TRY_CLICK_ELEMENT",
+      "params": {
+        "selector": "a.service-cta-block__link--cta-action:has-text('Search for a planning application')"
+      },
+      "description": "Click the link to navigate to the planning application search form.",
+      "frame_name": null
+    },
+    {
+      "command": "WAIT_FOR_NAVIGATION",
+      "params": {},
+      "description": "Wait for the navigation to complete after clicking the search link.",
+      "frame_name": null
+    },
+    {
+      "command": "FILL_INPUT",
+      "params": {
+        "selector": "#simpleSearchString",
+        "value": "{{REFERENCE_ID}}"
+      },
+      "description": "Fill the search input with the target reference ID.",
+      "frame_name": null
+    },
+    {
+      "command": "PRESS_KEY",
+      "params": {
+        "selector": "#simpleSearchString",
+        "key": "Enter"
+      },
+      "description": "Submit the search by pressing Enter.",
+      "frame_name": null
+    },
+    {
+      "command": "WAIT_FOR_SELECTOR",
+      "params": {
+        "selector": "#search-results, .search-results, h1:has-text('Planning Applications')"
+      },
+      "description": "Wait for the search results to load.",
+      "frame_name": null
+    },
+    {
+      "command": "WAIT_FOR_SELECTOR",
+      "params": {
+        "selector": "body >> body"
+      },
+      "description": "Wait for search results.",
+      "frame_name": null
+    },
+    {
+      "command": "CLICK_ELEMENT",
+      "params": {
+        "selector": "body >> body"
+      },
+      "description": "Click the search result to view details.",
+      "frame_name": null
+    },
+    {
+      "command": "WAIT_FOR_SELECTOR",
+      "params": {
+        "selector": "li:has(> a[href*='PlanningPlansAndDocsTab.tmplt'])"
+      },
+      "description": "Wait for detail page.",
+      "frame_name": null
+    },
+    {
+      "command": "CLICK_ELEMENT",
+      "params": {
+        "selector": "li:has(> a[href*='PlanningPlansAndDocsTab.tmplt'])"
+      },
+      "description": "Open Documents tab.",
+      "frame_name": null
+    },
+    {
+      "command": "WAIT_FOR_SELECTOR",
+      "params": {
+        "selector": "table.document-detail tbody tr:has(td.document-description)"
+      },
+      "description": "Wait for documents table.",
+      "frame_name": null
+    }
+  ],
+  "results_page_processing": {
+    "listing_container_selector": "body",
+    "listing_link_blueprint": {
+      "selector": "body",
+      "extraction_method": "ATTRIBUTE",
+      "attribute_name": "id",
+      "post_processing": null
+    },
+    "listing_address_blueprint": {
+      "selector": "body",
+      "extraction_method": "TEXT",
+      "attribute_name": null,
+      "post_processing": null
+    },
+    "pagination_blueprint": null
+  },
+  "detail_page_processing": {},
+  "document_page_processing": {
+    "document_tab_selector": null,
+    "document_container_selector": "table.document-detail tbody tr:has(td.document-description)",
+    "document_link_blueprint": {
+      "selector": "a[href*='docid']",
+      "extraction_method": "ATTRIBUTE",
+      "attribute_name": "href",
+      "post_processing": null
+    },
+    "document_date_blueprint": {
+      "selector": "td.document-date",
+      "extraction_method": "TEXT",
+      "attribute_name": null,
+      "post_processing": null
+    },
+    "document_type_blueprint": {
+      "selector": "td.document-description",
+      "extraction_method": "TEXT",
+      "attribute_name": null,
+      "post_processing": null
+    },
+    "pagination_blueprint": null,
+    "batch_processing": null
+  }
+}

@@ -1,0 +1,111 @@
+{
+  "domain": "www.arun.gov.uk",
+  "plan_version": "3.0",
+  "last_updated": "2026-03-11T15:11:53.591926Z",
+  "instructions": [
+    {
+      "command": "GOTO_URL",
+      "params": {
+        "url": "https://www1.arun.gov.uk/aplanning/OcellaWeb/planningSearch"
+      },
+      "description": "Navigate to the search page."
+    },
+    {
+      "command": "FILL_INPUT",
+      "params": {
+        "selector": "input#reference",
+        "value": "{{REFERENCE_ID}}"
+      },
+      "description": "Fill the 'Reference' input field with the planning application ID."
+    },
+    {
+      "command": "CLICK_ELEMENT",
+      "params": {
+        "selector": "input[type=\"submit\"][value=\"Search\"]"
+      },
+      "description": "Click the 'Search' button to submit the form."
+    },
+    {
+      "command": "WAIT_FOR_SELECTOR",
+      "params": {
+        "selector": "table, h1:has-text(\"Application\"), h2:has-text(\"Application\")"
+      },
+      "description": "Wait for a results table or an application details header to appear on the page."
+    },
+    {
+      "command": "WAIT_FOR_SELECTOR",
+      "params": {
+        "selector": "table:has(th:has-text(\"Reference\")) > tbody > tr:has(td) >> td:first-child > a"
+      },
+      "description": "Wait for search results."
+    },
+    {
+      "command": "CLICK_ELEMENT",
+      "params": {
+        "selector": "table:has(th:has-text(\"Reference\")) > tbody > tr:has(td) >> td:first-child > a"
+      },
+      "description": "Click the search result to view details."
+    },
+    {
+      "command": "WAIT_FOR_SELECTOR",
+      "params": {
+        "selector": "input[name=\"ViewDocuments\"]"
+      },
+      "description": "Wait for detail page."
+    },
+    {
+      "command": "CLICK_ELEMENT",
+      "params": {
+        "selector": "input[name=\"ViewDocuments\"]"
+      },
+      "description": "Open Documents tab."
+    },
+    {
+      "command": "WAIT_FOR_SELECTOR",
+      "params": {
+        "selector": "body > table:nth-of-type(2) > tbody > tr"
+      },
+      "description": "Wait for documents table."
+    }
+  ],
+  "results_page_processing": {
+    "listing_container_selector": "table:has(th:has-text(\"Reference\")) > tbody > tr:has(td)",
+    "listing_link_blueprint": {
+      "selector": "td:first-child > a",
+      "extraction_method": "ATTRIBUTE",
+      "attribute_name": "href",
+      "post_processing": null
+    },
+    "listing_address_blueprint": {
+      "selector": "td:first-child > a",
+      "extraction_method": "TEXT",
+      "attribute_name": null,
+      "post_processing": null
+    },
+    "pagination_blueprint": null
+  },
+  "detail_page_processing": {},
+  "document_page_processing": {
+    "document_container_selector": "body > table:nth-of-type(2) > tbody > tr",
+    "document_link_blueprint": {
+      "selector": "td:nth-child(1) a",
+      "extraction_method": "ATTRIBUTE",
+      "attribute_name": "href",
+      "post_processing": null
+    },
+    "document_date_blueprint": {
+      "selector": "td:nth-child(3)",
+      "extraction_method": "TEXT",
+      "attribute_name": null,
+      "post_processing": null
+    },
+    "document_type_blueprint": {
+      "selector": "td:nth-child(1) a",
+      "extraction_method": "TEXT",
+      "attribute_name": null,
+      "post_processing": null
+    },
+    "pagination_blueprint": null,
+    "batch_processing": null
+  }
+}

@@ -1,0 +1,131 @@
+{
+  "domain": "www.gov.je",
+  "plan_version": "3.0",
+  "last_updated": "2026-03-24T19:20:13.059428Z",
+  "instructions": [
+    {
+      "command": "GOTO_URL",
+      "params": {
+        "url": "https://www.gov.je/citizen/Planning/Pages/Planning.aspx"
+      },
+      "description": "Navigate to the Jersey Planning application search page.",
+      "frame_name": null
+    },
+    {
+      "command": "TRY_CLICK_ELEMENT",
+      "params": {
+        "selector": "#CybotCookiebotDialogBodyLevelButtonLevelOptinAllowAll",
+        "timeout": 3000
+      },
+      "description": "Dismiss the cookie consent banner if it appears.",
+      "frame_name": null
+    },
+    {
+      "command": "FILL_INPUT",
+      "params": {
+        "selector": "input[name*='txtPlanningApplicationReferenceNumber']",
+        "value": "{{REFERENCE_ID}}"
+      },
+      "description": "Enter the Planning Application Reference ID into the search field located in the sidebar.",
+      "frame_name": null
+    },
+    {
+      "command": "CLICK_ELEMENT",
+      "params": {
+        "selector": "input[name*='btnPlanningApplicationSearchSubmit']"
+      },
+      "description": "Submit the search form.",
+      "frame_name": null
+    },
+    {
+      "command": "WAIT_FOR_SELECTOR",
+      "params": {
+        "selector": "#SearchResult article, .planningResults:not(:empty), #phSearchResults article",
+        "state": "visible"
+      },
+      "description": "Wait for the search results to populate on the page.",
+      "frame_name": null
+    },
+    {
+      "command": "WAIT_FOR_SELECTOR",
+      "params": {
+        "selector": "#planningSearchItems ul.results li >> h2.title a"
+      },
+      "description": "Wait for search results.",
+      "frame_name": null
+    },
+    {
+      "command": "CLICK_ELEMENT",
+      "params": {
+        "selector": "#planningSearchItems ul.results li >> h2.title a"
+      },
+      "description": "Click the search result to view details.",
+      "frame_name": null
+    },
+    {
+      "command": "WAIT_FOR_SELECTOR",
+      "params": {
+        "selector": "ul.nav-tabs a[href*='PlanningApplicationDocuments']"
+      },
+      "description": "Wait for detail page.",
+      "frame_name": null
+    },
+    {
+      "command": "CLICK_ELEMENT",
+      "params": {
+        "selector": "ul.nav-tabs a[href*='PlanningApplicationDocuments']"
+      },
+      "description": "Open Documents tab.",
+      "frame_name": null
+    },
+    {
+      "command": "WAIT_FOR_SELECTOR",
+      "params": {
+        "selector": "div.documentsTableRowBody"
+      },
+      "description": "Wait for documents table.",
+      "frame_name": null
+    }
+  ],
+  "results_page_processing": {
+    "listing_container_selector": "#planningSearchItems ul.results li",
+    "listing_link_blueprint": {
+      "selector": "h2.title a",
+      "extraction_method": "ATTRIBUTE",
+      "attribute_name": "href",
+      "post_processing": null
+    },
+    "listing_address_blueprint": {
+      "selector": "h2.title",
+      "extraction_method": "TEXT",
+      "attribute_name": null,
+      "post_processing": null
+    },
+    "pagination_blueprint": null
+  },
+  "detail_page_processing": {},
+  "document_page_processing": {
+    "document_tab_selector": null,
+    "document_container_selector": "div.documentsTableRowBody",
+    "document_link_blueprint": {
+      "selector": "a.documentdetailnamelink",
+      "extraction_method": "ATTRIBUTE",
+      "attribute_name": "href",
+      "post_processing": null
+    },
+    "document_date_blueprint": {
+      "selector": "div.row > div:nth-child(1)",
+      "extraction_method": "TEXT",
+      "attribute_name": null,
+      "post_processing": null
+    },
+    "document_type_blueprint": {
+      "selector": "a.documentdetailnamelink",
+      "extraction_method": "TEXT",
+      "attribute_name": null,
+      "post_processing": null
+    },
+    "pagination_blueprint": null,
+    "batch_processing": null
+  }
+}
