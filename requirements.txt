@@ -1,0 +1,12 @@
+# Core Application
+pydantic
+pydantic-settings
+python-dotenv
+jsonschema
+
+# AI & Web Interaction
+google-generativeai
+playwright
+beautifulsoup4
+jinja2
+Pillow

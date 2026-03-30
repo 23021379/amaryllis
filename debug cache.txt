@@ -1,0 +1,888 @@
+[DEBUG] Saving screenshot to: C:\Users\brand\AppData\Local\Temp\amaryllis_cache\Cumberland\candidate_11_889710.png
+[DEBUG] Candidate 12 captured.
+2026-01-26 18:31:34,979 - CognitiveProfiler - INFO - --- PHASE 1: DISCOVERY ---
+2026-01-26 18:31:34,979 - TriageAgent - INFO - Running triage on manifest with 13 artifacts.
+2026-01-26 18:31:34,979 - TriageAgent - INFO - Extracting metadata from 13 artifacts concurrently.
+2026-01-26 18:31:35,483 - TriageAgent - INFO - Successfully extracted metadata for 13 artifacts.
+2026-01-26 18:31:35,484 - GeminiService - INFO - Invoking Gemini API...
+2026-01-26 18:31:35,508 - google_genai.models - INFO - AFC is enabled with max remote calls: 10.
+2026-01-26 18:31:35,636 - httpx - INFO - HTTP Request: POST https://generativelanguage.googleapis.com/v1alpha/models/gemini-2.5-flash:generateContent "HTTP/1.1 429 Too Many Requests"
+2026-01-26 18:31:35,637 - GeminiService - WARNING - Quota Hit (Rotation 1/25). Rotating key...
+2026-01-26 18:31:35,637 - SimpleApiKeyManager - WARNING - Rotated to next API key (index 18).
+2026-01-26 18:31:35,660 - google_genai.models - INFO - AFC is enabled with max remote calls: 10.
+2026-01-26 18:31:50,526 - httpx - INFO - HTTP Request: POST https://generativelanguage.googleapis.com/v1alpha/models/gemini-2.5-flash:generateContent "HTTP/1.1 200 OK"
+2026-01-26 18:31:50,527 - TriageAgent - INFO - Parsing and validating Gemini response.
+2026-01-26 18:31:50,528 - TriageAgent - INFO - Successfully parsed and validated 13 classifications.
+2026-01-26 18:31:50,528 - TriageAgent - INFO - Validating candidate set of size 3.
+2026-01-26 18:31:50,528 - TriageAgent - INFO - Candidate set passed all validation checks.
+2026-01-26 18:31:50,528 - TriageAgent - INFO - Triage successful for domain 'www.cumberland.gov.uk'. Selected 3 candidates.
+2026-01-26 18:31:50,528 - CognitiveProfiler - INFO - DISCOVERY SUCCESS. Target Search Page: https://www.cumberland.gov.uk/planning-and-building-control/search-planning-applications
+2026-01-26 18:31:50,529 - CognitiveProfiler - INFO - --- PHASE 2: REFERENCE ID SEARCH ---
+2026-01-26 18:31:50,883 - StrategistAgent - INFO - Generating Planning Search Plan for https://www.cumberland.gov.uk/planning-and-building-control/search-planning-applications
+2026-01-26 18:31:50,884 - GeminiService - INFO - Invoking Gemini API...
+2026-01-26 18:31:50,909 - google_genai.models - INFO - AFC is enabled with max remote calls: 10.
+2026-01-26 18:32:14,603 - httpx - INFO - HTTP Request: POST https://generativelanguage.googleapis.com/v1alpha/models/gemini-2.5-flash:generateContent "HTTP/1.1 200 OK"
+2026-01-26 18:32:14,621 - StrategistAgent - INFO - Plan for 'planning search generation' passed canonical schema validation.
+2026-01-26 18:32:14,621 - CognitiveProfiler - INFO - Executing Reference Search for 2/2010/0982...
+2026-01-26 18:32:14,621 - ValidationAgent - INFO - Executing probe plan with 7 instructions.
+
+[DEBUG] --- START PROBE EXECUTION (7 steps) ---
+2026-01-26 18:32:14,662 - ValidationAgent - INFO - Instr 4: Substituted placeholder in 'value' -> '2/2010/0982'
+[DEBUG] PROBE Step: GOTO_URL params={'url': 'https://www.cumberland.gov.uk/planning-and-building-control/search-planning-applications'}
+    [SNAPSHOT] C:\Users\brand\AppData\Local\Temp\amaryllis_debug\probe_step_889750250.png
+[DEBUG] PROBE Step: CLICK_ELEMENT params={'selector': 'button.cookie-banner-button--accept:has-text("Accept other cookies")'}
+    [SNAPSHOT] C:\Users\brand\AppData\Local\Temp\amaryllis_debug\probe_step_889752488.png
+[DEBUG] PROBE Step: CLICK_ELEMENT params={'selector': 'a.lgd-action-link[data-area="carlisle"]:has-text("Carlisle")'}
+    [SNAPSHOT] C:\Users\brand\AppData\Local\Temp\amaryllis_debug\probe_step_889755840.png
+[DEBUG] PROBE Step: WAIT_FOR_NAVIGATION params={}
+    [SNAPSHOT] C:\Users\brand\AppData\Local\Temp\amaryllis_debug\probe_step_889755976.png
+[DEBUG] PROBE Step: FILL_INPUT params={'selector': 'input[placeholder*="Reference"], input[placeholder*="Application"], input[aria-label*="Reference Number"], input[aria-label*="Application Number"], input[name*="applicationNumber"], input[name*="reference"]', 'value': '2/2010/0982'}
+2026-01-26 18:32:50,808 - ValidationAgent - ERROR - Probe execution failed. Reason: Failed to fill input 'input[placeholder*="Reference"], input[placeholder*="Application"], input[aria-label*="Reference Number"], input[aria-label*="Application Number"], input[name*="applicationNumber"], input[name*="reference"]'. Error: Locator.wait_for: Timeout 30000ms exceeded.
+Call log:
+  - waiting for locator("input[placeholder*=\"Reference\"], input[placeholder*=\"Application\"], input[aria-label*=\"Reference Number\"], input[aria-label*=\"Application Number\"], input[name*=\"applicationNumber\"], input[name*=\"reference\"]").first to be visible
+
+2026-01-26 18:32:50,920 - ValidationAgent - INFO - Crash dump saved to C:\Users\brand\AppData\Local\Temp\tmpkxb4khn6\crash_dump_fr_2eykq.png
+2026-01-26 18:32:50,936 - CognitiveProfiler - WARNING - Phase 2 Search Failed (Attempt 1/2). Initiating Self-Healing...
+2026-01-26 18:32:50,937 - StrategistAgent - INFO - Timeout Diagnostics: No obvious signs of obstruction found.
+2026-01-26 18:32:50,937 - StrategistAgent - INFO - Correcting navigation plan with context reinforcement.
+2026-01-26 18:32:50,950 - GeminiService - INFO - Invoking Gemini API...
+2026-01-26 18:32:50,950 - GeminiService - INFO - Image provided for multimodal generation.
+2026-01-26 18:32:50,974 - google_genai.models - INFO - AFC is enabled with max remote calls: 10.
+2026-01-26 18:33:09,363 - httpx - INFO - HTTP Request: POST https://generativelanguage.googleapis.com/v1alpha/models/gemini-2.5-flash:generateContent "HTTP/1.1 200 OK"
+2026-01-26 18:33:09,380 - StrategistAgent - INFO - Plan for 'navigation plan correction' passed canonical schema validation.
+2026-01-26 18:33:09,380 - CognitiveProfiler - INFO - Applying Corrected Plan (Iter 1)...
+2026-01-26 18:33:09,380 - ValidationAgent - INFO - Executing probe plan with 6 instructions.
+
+[DEBUG] --- START PROBE EXECUTION (6 steps) ---
+2026-01-26 18:33:09,423 - ValidationAgent - INFO - Instr 3: Substituted placeholder in 'value' -> '2/2010/0982'
+[DEBUG] PROBE Step: GOTO_URL params={'url': 'https://www.cumberland.gov.uk/planning-and-building-control/search-planning-applications'}
+    [SNAPSHOT] C:\Users\brand\AppData\Local\Temp\amaryllis_debug\probe_step_889805000.png
+[DEBUG] PROBE Step: CLICK_ELEMENT params={'selector': 'a.lgd-action-link[data-area="carlisle"]:has-text("Carlisle")'}
+    [SNAPSHOT] C:\Users\brand\AppData\Local\Temp\amaryllis_debug\probe_step_889808305.png
+[DEBUG] PROBE Step: WAIT_FOR_NAVIGATION params={}
+    [SNAPSHOT] C:\Users\brand\AppData\Local\Temp\amaryllis_debug\probe_step_889808474.png
+[DEBUG] PROBE Step: FILL_INPUT params={'selector': 'input#simpleSearchString', 'value': '2/2010/0982'}
+    [SNAPSHOT] C:\Users\brand\AppData\Local\Temp\amaryllis_debug\probe_step_889808632.png
+[DEBUG] PROBE Step: PRESS_KEY params={'selector': 'input#simpleSearchString', 'key': 'Enter'}
+    [SNAPSHOT] C:\Users\brand\AppData\Local\Temp\amaryllis_debug\probe_step_889810074.png
+[DEBUG] PROBE Step: WAIT_FOR_SELECTOR params={'selector': '#searchresults, #simpleSearchResults, .search-results, h1:has-text("Summary"), h1:has-text("Details"), #tab_summary, #tab_details, .results-container, div[class*="Result"], [data-testid*="result"], div[role="list"]'}
+2026-01-26 18:33:45,022 - ValidationAgent - ERROR - Probe execution failed. Reason: Locator.wait_for: Timeout 30000ms exceeded.
+Call log:
+  - waiting for locator("#searchresults, #simpleSearchResults, .search-results, h1:has-text(\"Summary\"), h1:has-text(\"Details\"), #tab_summary, #tab_details, .results-container, div[class*=\"Result\"], [data-testid*=\"result\"], div[role=\"list\"]").first to be visible
+
+2026-01-26 18:33:45,152 - ValidationAgent - INFO - Crash dump saved to C:\Users\brand\AppData\Local\Temp\tmpkxb4khn6\crash_dump_gx2ljlhr.png
+2026-01-26 18:33:45,168 - CognitiveProfiler - WARNING - Phase 2 Search Failed (Attempt 2/2). Initiating Self-Healing...
+2026-01-26 18:33:45,168 - StrategistAgent - INFO - Timeout Diagnostics: No obvious signs of obstruction found.
+2026-01-26 18:33:45,168 - StrategistAgent - INFO - Correcting navigation plan with context reinforcement.
+2026-01-26 18:33:45,183 - GeminiService - INFO - Invoking Gemini API...
+2026-01-26 18:33:45,183 - GeminiService - INFO - Image provided for multimodal generation.
+2026-01-26 18:33:45,209 - google_genai.models - INFO - AFC is enabled with max remote calls: 10.
+2026-01-26 18:34:01,894 - httpx - INFO - HTTP Request: POST https://generativelanguage.googleapis.com/v1alpha/models/gemini-2.5-flash:generateContent "HTTP/1.1 200 OK"
+2026-01-26 18:34:01,912 - StrategistAgent - INFO - Plan for 'navigation plan correction' passed canonical schema validation.
+2026-01-26 18:34:01,912 - CognitiveProfiler - INFO - Applying Corrected Plan (Iter 2)...
+2026-01-26 18:34:01,913 - ValidationAgent - INFO - Executing probe plan with 6 instructions.
+
+[DEBUG] --- START PROBE EXECUTION (6 steps) ---
+2026-01-26 18:34:01,956 - ValidationAgent - INFO - Instr 3: Substituted placeholder in 'value' -> '2/2010/0982'
+[DEBUG] PROBE Step: GOTO_URL params={'url': 'https://www.cumberland.gov.uk/planning-and-building-control/search-planning-applications'}
+    [SNAPSHOT] C:\Users\brand\AppData\Local\Temp\amaryllis_debug\probe_step_889857472.png
+[DEBUG] PROBE Step: CLICK_ELEMENT params={'selector': 'a.lgd-action-link[data-area="carlisle"]:has-text("Carlisle")'}
+    [SNAPSHOT] C:\Users\brand\AppData\Local\Temp\amaryllis_debug\probe_step_889860814.png
+[DEBUG] PROBE Step: WAIT_FOR_NAVIGATION params={}
+    [SNAPSHOT] C:\Users\brand\AppData\Local\Temp\amaryllis_debug\probe_step_889860970.png
+[DEBUG] PROBE Step: FILL_INPUT params={'selector': 'input#simpleSearchString', 'value': '2/2010/0982'}
+    [SNAPSHOT] C:\Users\brand\AppData\Local\Temp\amaryllis_debug\probe_step_889861123.png
+[DEBUG] PROBE Step: CLICK_ELEMENT params={'selector': 'input[type="submit"][value="Search"]'}
+    [SNAPSHOT] C:\Users\brand\AppData\Local\Temp\amaryllis_debug\probe_step_889864576.png
+[DEBUG] PROBE Step: WAIT_FOR_SELECTOR params={'selector': '#searchresults, #simpleSearchResults, .search-results, h1:has-text("Summary"), h1:has-text("Details"), #tab_summary, #tab_details, .results-container, div[class*="Result"], [data-testid*="result"], div[role="list"]'}
+2026-01-26 18:34:39,451 - ValidationAgent - ERROR - Probe execution failed. Reason: Locator.wait_for: Timeout 30000ms exceeded.
+Call log:
+  - waiting for locator("#searchresults, #simpleSearchResults, .search-results, h1:has-text(\"Summary\"), h1:has-text(\"Details\"), #tab_summary, #tab_details, .results-container, div[class*=\"Result\"], [data-testid*=\"result\"], div[role=\"list\"]").first to be visible
+
+2026-01-26 18:34:39,569 - ValidationAgent - INFO - Crash dump saved to C:\Users\brand\AppData\Local\Temp\tmpkxb4khn6\crash_dump_toanjmoi.png
+2026-01-26 18:34:39,586 - CognitiveProfiler - ERROR - Pipeline failed: Reference ID Search failed after 2 corrections. Final Error: Locator.wait_for: Timeout 30000ms exceeded.
+Call log:
+  - waiting for locator("#searchresults, #simpleSearchResults, .search-results, h1:has-text(\"Summary\"), h1:has-text(\"Details\"), #tab_summary, #tab_details, .results-container, div[class*=\"Result\"], [data-testid*=\"result\"], div[role=\"list\"]").first to be visible
+Traceback (most recent call last):
+  File "c:\Users\brand\Desktop\renewables\amaryllis\cognitive_profiler\orchestrator.py", line 240, in run_pipeline
+    raise StrategyError(f"Reference ID Search failed after {correction_attempts} corrections. Final Error: {search_result.failure_reason}")
+cognitive_profiler.exceptions.StrategyError: Reference ID Search failed after 2 corrections. Final Error: Locator.wait_for: Timeout 30000ms exceeded.
+Call log:
+  - waiting for locator("#searchresults, #simpleSearchResults, .search-results, h1:has-text(\"Summary\"), h1:has-text(\"Details\"), #tab_summary, #tab_details, .results-container, div[class*=\"Result\"], [data-testid*=\"result\"], div[role=\"list\"]").first to be visible
+
+2026-01-26 18:34:39,587 - AmaryllisLocal - ERROR - FAILURE for Cumberland: Reference ID Search failed after 2 corrections. Final Error: Locator.wait_for: Timeout 30000ms exceeded.
+Call log:
+  - waiting for locator("#searchresults, #simpleSearchResults, .search-results, h1:has-text(\"Summary\"), h1:has-text(\"Details\"), #tab_summary, #tab_details, .results-container, div[class*=\"Result\"], [data-testid*=\"result\"], div[role=\"list\"]").first to be visible
+
+2026-01-26 18:34:41,597 - AmaryllisLocal - INFO - --- Starting Analysis for: Dacorum ---
+2026-01-26 18:34:41,598 - AmaryllisLocal - INFO - Test Subject: 4/02099/14/MFA | URL: https://www.dacorum.gov.uk/
+2026-01-26 18:34:41,599 - LocalCrawler - INFO - Crawling https://www.dacorum.gov.uk/ for Dacorum
+
+[DEBUG] Crawling started for Dacorum at https://www.dacorum.gov.uk/
+[DEBUG] Capturing homepage...
+[DEBUG] Saving screenshot to: C:\Users\brand\AppData\Local\Temp\amaryllis_cache\Dacorum\homepage_889898.png
+[DEBUG] Homepage captured.
+[DEBUG] Extracting links from homepage...
+2026-01-26 18:34:45,016 - LocalCrawler - INFO - Found 10 candidate links. Visiting top 30.
+[DEBUG] Found 10 candidate links. Top 5: ['https://www.dacorum.gov.uk/home/planning-development/planning-applications/search-comment-planning-applications', 'https://www.dacorum.gov.uk/home/planning-development', 'https://www.dacorum.gov.uk/home/planning-development/planning-applications/application-forms', 'https://www.youtube.com/dacorumbc', 'https://webapps.dacorum.gov.uk/search/']
+[DEBUG] Visiting candidate 1: https://www.dacorum.gov.uk/home/planning-development/planning-applications/search-comment-planning-applications
+[DEBUG] Capturing candidate 1...
+[DEBUG] Saving screenshot to: C:\Users\brand\AppData\Local\Temp\amaryllis_cache\Dacorum\candidate_0_889900.png
+[DEBUG] Candidate 1 captured.
+[DEBUG] Visiting candidate 2: https://www.dacorum.gov.uk/home/planning-development
+[DEBUG] Capturing candidate 2...
+[DEBUG] Saving screenshot to: C:\Users\brand\AppData\Local\Temp\amaryllis_cache\Dacorum\candidate_1_889900.png
+[DEBUG] Candidate 2 captured.
+[DEBUG] Visiting candidate 3: https://www.dacorum.gov.uk/home/planning-development/planning-applications/application-forms
+[DEBUG] Capturing candidate 3...
+[DEBUG] Saving screenshot to: C:\Users\brand\AppData\Local\Temp\amaryllis_cache\Dacorum\candidate_2_889901.png
+[DEBUG] Candidate 3 captured.
+[DEBUG] Visiting candidate 4: https://www.youtube.com/dacorumbc
+[DEBUG] Capturing candidate 4...
+[DEBUG] Saving screenshot to: C:\Users\brand\AppData\Local\Temp\amaryllis_cache\Dacorum\candidate_3_889902.png
+[DEBUG] Candidate 4 captured.
+[DEBUG] Visiting candidate 5: https://webapps.dacorum.gov.uk/search/
+[DEBUG] Capturing candidate 5...
+[DEBUG] Saving screenshot to: C:\Users\brand\AppData\Local\Temp\amaryllis_cache\Dacorum\candidate_4_889902.png
+[DEBUG] Candidate 5 captured.
+[DEBUG] Visiting candidate 6: https://www.dacorum.gov.uk/home/council-democracy
+[DEBUG] Capturing candidate 6...
+[DEBUG] Saving screenshot to: C:\Users\brand\AppData\Local\Temp\amaryllis_cache\Dacorum\candidate_5_889903.png
+[DEBUG] Candidate 6 captured.
+[DEBUG] Visiting candidate 7: https://x.com/DacorumBC
+[DEBUG] Capturing candidate 7...
+[DEBUG] Saving screenshot to: C:\Users\brand\AppData\Local\Temp\amaryllis_cache\Dacorum\candidate_6_889906.png
+[DEBUG] Candidate 7 captured.
+[DEBUG] Visiting candidate 8: https://www.instagram.com/dacorumbc/
+[DEBUG] Capturing candidate 8...
+[DEBUG] Saving screenshot to: C:\Users\brand\AppData\Local\Temp\amaryllis_cache\Dacorum\candidate_7_889907.png
+[DEBUG] Candidate 8 captured.
+[DEBUG] Visiting candidate 9: https://www.dacorum.gov.uk/home/news/all-news/2026/01/07/make-your-business-idea-a-reality-with-a--1-000-grant
+[DEBUG] Capturing candidate 9...
+[DEBUG] Saving screenshot to: C:\Users\brand\AppData\Local\Temp\amaryllis_cache\Dacorum\candidate_8_889908.png
+[DEBUG] Candidate 9 captured.
+[DEBUG] Visiting candidate 10: http://webapps.dacorum.gov.uk/dbcef2016/community_events/EventDetail.aspx?EventID=4357
+[DEBUG] Capturing candidate 10...
+[DEBUG] Saving screenshot to: C:\Users\brand\AppData\Local\Temp\amaryllis_cache\Dacorum\candidate_9_889908.png
+[DEBUG] Candidate 10 captured.
+2026-01-26 18:34:53,731 - CognitiveProfiler - INFO - --- PHASE 1: DISCOVERY ---
+2026-01-26 18:34:53,732 - TriageAgent - INFO - Running triage on manifest with 11 artifacts.
+2026-01-26 18:34:53,732 - TriageAgent - INFO - Extracting metadata from 11 artifacts concurrently.
+2026-01-26 18:34:54,294 - TriageAgent - INFO - Successfully extracted metadata for 11 artifacts.
+2026-01-26 18:34:54,295 - GeminiService - INFO - Invoking Gemini API...
+2026-01-26 18:34:54,316 - google_genai.models - INFO - AFC is enabled with max remote calls: 10.
+2026-01-26 18:35:04,354 - httpx - INFO - HTTP Request: POST https://generativelanguage.googleapis.com/v1alpha/models/gemini-2.5-flash:generateContent "HTTP/1.1 200 OK"
+2026-01-26 18:35:04,356 - TriageAgent - INFO - Parsing and validating Gemini response.
+2026-01-26 18:35:04,356 - TriageAgent - INFO - Successfully parsed and validated 11 classifications.
+2026-01-26 18:35:04,357 - TriageAgent - INFO - Validating candidate set of size 4.
+2026-01-26 18:35:04,357 - TriageAgent - INFO - Candidate set passed all validation checks.
+2026-01-26 18:35:04,357 - TriageAgent - INFO - Triage successful for domain 'www.dacorum.gov.uk'. Selected 4 candidates.
+2026-01-26 18:35:04,357 - CognitiveProfiler - INFO - DISCOVERY SUCCESS. Target Search Page: https://webapps.dacorum.gov.uk/search/
+2026-01-26 18:35:04,358 - CognitiveProfiler - INFO - --- PHASE 2: REFERENCE ID SEARCH ---
+2026-01-26 18:35:04,654 - StrategistAgent - INFO - Generating Planning Search Plan for https://webapps.dacorum.gov.uk/search/
+2026-01-26 18:35:04,655 - GeminiService - INFO - Invoking Gemini API...
+2026-01-26 18:35:04,681 - google_genai.models - INFO - AFC is enabled with max remote calls: 10.
+2026-01-26 18:35:40,468 - httpx - INFO - HTTP Request: POST https://generativelanguage.googleapis.com/v1alpha/models/gemini-2.5-flash:generateContent "HTTP/1.1 200 OK"
+2026-01-26 18:35:40,484 - StrategistAgent - INFO - Plan for 'planning search generation' passed canonical schema validation.
+2026-01-26 18:35:40,484 - CognitiveProfiler - INFO - Executing Reference Search for 4/02099/14/MFA...
+2026-01-26 18:35:40,484 - ValidationAgent - INFO - Executing probe plan with 7 instructions.
+
+[DEBUG] --- START PROBE EXECUTION (7 steps) ---
+2026-01-26 18:35:40,526 - ValidationAgent - INFO - Instr 4: Substituted placeholder in 'value' -> '4/02099/14/MFA'
+[DEBUG] PROBE Step: GOTO_URL params={'url': 'http://www.dacorum.gov.uk/search/'}
+    [SNAPSHOT] C:\Users\brand\AppData\Local\Temp\amaryllis_debug\probe_step_889955905.png
+[DEBUG] PROBE Step: CLICK_ELEMENT params={'selector': 'a#newConsentGranted'}
+2026-01-26 18:36:10,716 - ValidationAgent - WARNING - Soft Failure: Consent element 'a#newConsentGranted' not found in time. Proceeding.
+    [SNAPSHOT] C:\Users\brand\AppData\Local\Temp\amaryllis_debug\probe_step_889986012.png
+[DEBUG] PROBE Step: CLICK_ELEMENT params={'selector': 'a[accesskey="4"]'}
+2026-01-26 18:36:40,783 - ValidationAgent - WARNING - Click failed on visible filter for 'a[accesskey="4"]'. Reverting to raw locator with scroll+force.
+2026-01-26 18:36:45,788 - ValidationAgent - WARNING - Scroll into view failed for 'a[accesskey="4"]'. Attempting blind force click.
+2026-01-26 18:36:50,801 - ValidationAgent - WARNING - Force click failed for 'a[accesskey="4"]'. Attempting JS dispatch click. Error: Locator.click: Timeout 5000ms exceeded.
+Call log:
+  - waiting for locator("a[accesskey=\"4\"]").first
+
+2026-01-26 18:37:20,816 - ValidationAgent - ERROR - Probe execution failed. Reason: All click methods (standard, force, JS) failed for 'a[accesskey="4"]'. Final Error: Locator.evaluate: Timeout 30000ms exceeded.
+Call log:
+  - waiting for locator("a[accesskey=\"4\"]").first
+
+2026-01-26 18:37:20,902 - ValidationAgent - INFO - Crash dump saved to C:\Users\brand\AppData\Local\Temp\tmpk36r2oh5\crash_dump_vuslm8lk.png
+2026-01-26 18:37:20,921 - CognitiveProfiler - WARNING - Phase 2 Search Failed (Attempt 1/2). Initiating Self-Healing...
+2026-01-26 18:37:20,921 - StrategistAgent - INFO - Timeout Diagnostics: No obvious signs of obstruction found.
+2026-01-26 18:37:20,922 - StrategistAgent - INFO - Correcting navigation plan with context reinforcement.
+2026-01-26 18:37:20,934 - GeminiService - INFO - Invoking Gemini API...
+2026-01-26 18:37:20,934 - GeminiService - INFO - Image provided for multimodal generation.
+2026-01-26 18:37:20,961 - google_genai.models - INFO - AFC is enabled with max remote calls: 10.
+2026-01-26 18:37:47,789 - httpx - INFO - HTTP Request: POST https://generativelanguage.googleapis.com/v1alpha/models/gemini-2.5-flash:generateContent "HTTP/1.1 200 OK"
+2026-01-26 18:37:47,806 - StrategistAgent - INFO - Plan for 'navigation plan correction' passed canonical schema validation.
+2026-01-26 18:37:47,806 - CognitiveProfiler - INFO - Applying Corrected Plan (Iter 1)...
+2026-01-26 18:37:47,807 - ValidationAgent - INFO - Executing probe plan with 7 instructions.
+
+[DEBUG] --- START PROBE EXECUTION (7 steps) ---
+2026-01-26 18:37:47,849 - ValidationAgent - INFO - Instr 4: Substituted placeholder in 'value' -> '4/02099/14/MFA'
+[DEBUG] PROBE Step: GOTO_URL params={'url': 'http://www.dacorum.gov.uk/search/'}
+    [SNAPSHOT] C:\Users\brand\AppData\Local\Temp\amaryllis_debug\probe_step_890083305.png
+[DEBUG] PROBE Step: CLICK_ELEMENT params={'selector': 'a#newConsentGranted'}
+2026-01-26 18:38:18,102 - ValidationAgent - WARNING - Soft Failure: Consent element 'a#newConsentGranted' not found in time. Proceeding.
+    [SNAPSHOT] C:\Users\brand\AppData\Local\Temp\amaryllis_debug\probe_step_890113398.png
+[DEBUG] PROBE Step: CLICK_ELEMENT params={'selector': "a:has-text('Planning applications'), a:has-text('Public Access'), a[href*='planning'], a[href*='publicaccess']"}
+2026-01-26 18:38:48,177 - ValidationAgent - WARNING - Click failed on visible filter for 'a:has-text('Planning applications'), a:has-text('Public Access'), a[href*='planning'], a[href*='publicaccess']'. Reverting to raw locator with scroll+force.
+2026-01-26 18:38:53,182 - ValidationAgent - WARNING - Scroll into view failed for 'a:has-text('Planning applications'), a:has-text('Public Access'), a[href*='planning'], a[href*='publicaccess']'. Attempting blind force click.
+2026-01-26 18:38:58,185 - ValidationAgent - WARNING - Force click failed for 'a:has-text('Planning applications'), a:has-text('Public Access'), a[href*='planning'], a[href*='publicaccess']'. Attempting JS dispatch click. Error: Locator.click: Timeout 5000ms exceeded.
+Call log:
+  - waiting for locator("a:has-text('Planning applications'), a:has-text('Public Access'), a[href*='planning'], a[href*='publicaccess']").first
+
+2026-01-26 18:39:28,195 - ValidationAgent - ERROR - Probe execution failed. Reason: All click methods (standard, force, JS) failed for 'a:has-text('Planning applications'), a:has-text('Public Access'), a[href*='planning'], a[href*='publicaccess']'. Final Error: Locator.evaluate: Timeout 30000ms exceeded.
+Call log:
+  - waiting for locator("a:has-text('Planning applications'), a:has-text('Public Access'), a[href*='planning'], a[href*='publicaccess']").first
+
+2026-01-26 18:39:28,252 - ValidationAgent - INFO - Crash dump saved to C:\Users\brand\AppData\Local\Temp\tmpk36r2oh5\crash_dump_6wr8j0pa.png
+2026-01-26 18:39:28,269 - CognitiveProfiler - WARNING - Phase 2 Search Failed (Attempt 2/2). Initiating Self-Healing...
+2026-01-26 18:39:28,269 - StrategistAgent - INFO - Timeout Diagnostics: No obvious signs of obstruction found.
+2026-01-26 18:39:28,269 - StrategistAgent - INFO - Correcting navigation plan with context reinforcement.
+2026-01-26 18:39:28,285 - GeminiService - INFO - Invoking Gemini API...
+2026-01-26 18:39:28,285 - GeminiService - INFO - Image provided for multimodal generation.
+2026-01-26 18:39:28,315 - google_genai.models - INFO - AFC is enabled with max remote calls: 10.
+2026-01-26 18:40:00,060 - httpx - INFO - HTTP Request: POST https://generativelanguage.googleapis.com/v1alpha/models/gemini-2.5-flash:generateContent "HTTP/1.1 200 OK"
+2026-01-26 18:40:00,083 - StrategistAgent - INFO - Plan for 'navigation plan correction' passed canonical schema validation.
+2026-01-26 18:40:00,083 - CognitiveProfiler - INFO - Applying Corrected Plan (Iter 2)...
+2026-01-26 18:40:00,083 - ValidationAgent - INFO - Executing probe plan with 7 instructions.
+
+[DEBUG] --- START PROBE EXECUTION (7 steps) ---
+2026-01-26 18:40:00,137 - ValidationAgent - INFO - Instr 4: Substituted placeholder in 'value' -> '4/02099/14/MFA'
+[DEBUG] PROBE Step: GOTO_URL params={'url': 'http://www.dacorum.gov.uk/'}
+    [SNAPSHOT] C:\Users\brand\AppData\Local\Temp\amaryllis_debug\probe_step_890215823.png
+[DEBUG] PROBE Step: CLICK_ELEMENT params={'selector': 'a#newConsentGranted'}
+2026-01-26 18:40:31,280 - ValidationAgent - WARNING - Soft Failure: Consent element 'a#newConsentGranted' not found in time. Proceeding.
+    [SNAPSHOT] C:\Users\brand\AppData\Local\Temp\amaryllis_debug\probe_step_890246576.png
+[DEBUG] PROBE Step: CLICK_ELEMENT params={'selector': 'a:has-text("Planning applications"), a:has-text("Public Access"), a:has-text("Planning services"), a[href*="/planning-application-search"], a[href*="/public-access"]'}       
+    [SNAPSHOT] C:\Users\brand\AppData\Local\Temp\amaryllis_debug\probe_step_890249202.png
+[DEBUG] PROBE Step: WAIT_FOR_NAVIGATION params={}
+    [SNAPSHOT] C:\Users\brand\AppData\Local\Temp\amaryllis_debug\probe_step_890249430.png
+[DEBUG] PROBE Step: FILL_INPUT params={'selector': 'input[id*="reference"], input[name*="reference"], input[placeholder*="reference"], input[aria-label*="reference"], input[id*="application"], input[name*="application"], input[placeholder*="application"], input[aria-label*="application"], input[id*="number"], input[name*="number"], input[placeholder*="number"], input[aria-label*="number"]', 'value': '4/02099/14/MFA'}
+2026-01-26 18:41:04,365 - ValidationAgent - ERROR - Probe execution failed. Reason: Failed to fill input 'input[id*="reference"], input[name*="reference"], input[placeholder*="reference"], input[aria-label*="reference"], input[id*="application"], input[name*="application"], input[placeholder*="application"], input[aria-label*="application"], input[id*="number"], input[name*="number"], input[placeholder*="number"], input[aria-label*="number"]'. Error: Locator.wait_for: Timeout 30000ms exceeded.
+Call log:
+  - waiting for locator("input[id*=\"reference\"], input[name*=\"reference\"], input[placeholder*=\"reference\"], input[aria-label*=\"reference\"], input[id*=\"application\"], input[name*=\"application\"], input[placeholder*=\"application\"], input[aria-label*=\"application\"], input[id*=\"number\"], input[name*=\"number\"], input[placeholder*=\"number\"], input[aria-label*=\"number\"]").first to be visible
+
+2026-01-26 18:41:04,552 - ValidationAgent - INFO - Crash dump saved to C:\Users\brand\AppData\Local\Temp\tmpk36r2oh5\crash_dump_k4dt2ly2.png
+2026-01-26 18:41:04,564 - CognitiveProfiler - ERROR - Pipeline failed: Reference ID Search failed after 2 corrections. Final Error: Failed to fill input 'input[id*="reference"], input[name*="reference"], input[placeholder*="reference"], input[aria-label*="reference"], input[id*="application"], input[name*="application"], input[placeholder*="application"], input[aria-label*="application"], input[id*="number"], input[name*="number"], input[placeholder*="number"], input[aria-label*="number"]'. Error: Locator.wait_for: Timeout 30000ms exceeded.
+Call log:
+  - waiting for locator("input[id*=\"reference\"], input[name*=\"reference\"], input[placeholder*=\"reference\"], input[aria-label*=\"reference\"], input[id*=\"application\"], input[name*=\"application\"], input[placeholder*=\"application\"], input[aria-label*=\"application\"], input[id*=\"number\"], input[name*=\"number\"], input[placeholder*=\"number\"], input[aria-label*=\"number\"]").first to be visible
+Traceback (most recent call last):
+  File "c:\Users\brand\Desktop\renewables\amaryllis\cognitive_profiler\orchestrator.py", line 240, in run_pipeline
+    raise StrategyError(f"Reference ID Search failed after {correction_attempts} corrections. Final Error: {search_result.failure_reason}")
+cognitive_profiler.exceptions.StrategyError: Reference ID Search failed after 2 corrections. Final Error: Failed to fill input 'input[id*="reference"], input[name*="reference"], input[placeholder*="reference"], input[aria-label*="reference"], input[id*="application"], input[name*="application"], input[placeholder*="application"], input[aria-label*="application"], input[id*="number"], input[name*="number"], input[placeholder*="number"], input[aria-label*="number"]'. Error: Locator.wait_for: Timeout 30000ms exceeded.
+Call log:
+  - waiting for locator("input[id*=\"reference\"], input[name*=\"reference\"], input[placeholder*=\"reference\"], input[aria-label*=\"reference\"], input[id*=\"application\"], input[name*=\"application\"], input[placeholder*=\"application\"], input[aria-label*=\"application\"], input[id*=\"number\"], input[name*=\"number\"], input[placeholder*=\"number\"], input[aria-label*=\"number\"]").first to be visible
+
+2026-01-26 18:41:04,566 - AmaryllisLocal - ERROR - FAILURE for Dacorum: Reference ID Search failed after 2 corrections. Final Error: Failed to fill input 'input[id*="reference"], input[name*="reference"], input[placeholder*="reference"], input[aria-label*="reference"], input[id*="application"], input[name*="application"], input[placeholder*="application"], input[aria-label*="application"], input[id*="number"], input[name*="number"], input[placeholder*="number"], input[aria-label*="number"]'. Error: Locator.wait_for: Timeout 30000ms exceeded.
+Call log:
+  - waiting for locator("input[id*=\"reference\"], input[name*=\"reference\"], input[placeholder*=\"reference\"], input[aria-label*=\"reference\"], input[id*=\"application\"], input[name*=\"application\"], input[placeholder*=\"application\"], input[aria-label*=\"application\"], input[id*=\"number\"], input[name*=\"number\"], input[placeholder*=\"number\"], input[aria-label*=\"number\"]").first to be visible
+
+2026-01-26 18:41:06,571 - AmaryllisLocal - INFO - --- Starting Analysis for: Darlington ---
+2026-01-26 18:41:06,572 - AmaryllisLocal - INFO - Test Subject: 26438 | URL: https://www.darlington.gov.uk/
+2026-01-26 18:41:06,572 - LocalCrawler - INFO - Crawling https://www.darlington.gov.uk/ for Darlington
+
+[DEBUG] Crawling started for Darlington at https://www.darlington.gov.uk/
+[DEBUG] Capturing homepage...
+[DEBUG] Saving screenshot to: C:\Users\brand\AppData\Local\Temp\amaryllis_cache\Darlington\homepage_890282.png
+[DEBUG] Homepage captured.
+[DEBUG] Extracting links from homepage...
+2026-01-26 18:41:10,521 - LocalCrawler - INFO - Found 19 candidate links. Visiting top 30.
+[DEBUG] Found 19 candidate links. Top 5: ['https://www.darlington.gov.uk/planning-and-building-regs/planning/business-travel-planning/', 'https://www.darlington.gov.uk/planning-and-building-regs/planning/planning-and-environmental-policy/', 'https://www.darlington.gov.uk/planning-and-building-regs/planning/planning-application-and-permission/planning-permission/', 'https://www.darlington.gov.uk/planning-and-building-regs/planning/planning-application-and-permission/view-planning-applications-online/', 'https://www.darlington.gov.uk/planning-and-building-regs/']
+[DEBUG] Visiting candidate 1: https://www.darlington.gov.uk/planning-and-building-regs/planning/business-travel-planning/
+[DEBUG] Capturing candidate 1...
+[DEBUG] Saving screenshot to: C:\Users\brand\AppData\Local\Temp\amaryllis_cache\Darlington\candidate_0_890285.png
+[DEBUG] Candidate 1 captured.
+[DEBUG] Visiting candidate 2: https://www.darlington.gov.uk/planning-and-building-regs/planning/planning-and-environmental-policy/
+[DEBUG] Capturing candidate 2...
+[DEBUG] Saving screenshot to: C:\Users\brand\AppData\Local\Temp\amaryllis_cache\Darlington\candidate_1_890286.png
+[DEBUG] Candidate 2 captured.
+[DEBUG] Visiting candidate 3: https://www.darlington.gov.uk/planning-and-building-regs/planning/planning-application-and-permission/planning-permission/
+[DEBUG] Capturing candidate 3...
+[DEBUG] Saving screenshot to: C:\Users\brand\AppData\Local\Temp\amaryllis_cache\Darlington\candidate_2_890286.png
+[DEBUG] Candidate 3 captured.
+[DEBUG] Visiting candidate 4: https://www.darlington.gov.uk/planning-and-building-regs/planning/planning-application-and-permission/view-planning-applications-online/
+[DEBUG] Capturing candidate 4...
+[DEBUG] Saving screenshot to: C:\Users\brand\AppData\Local\Temp\amaryllis_cache\Darlington\candidate_3_890286.png
+[DEBUG] Candidate 4 captured.
+[DEBUG] Visiting candidate 5: https://www.darlington.gov.uk/planning-and-building-regs/
+[DEBUG] Capturing candidate 5...
+[DEBUG] Saving screenshot to: C:\Users\brand\AppData\Local\Temp\amaryllis_cache\Darlington\candidate_4_890287.png
+[DEBUG] Candidate 5 captured.
+[DEBUG] Visiting candidate 6: https://www.darlington.gov.uk/elections/parliamentary-boundary-review-2023/
+[DEBUG] Capturing candidate 6...
+[DEBUG] Saving screenshot to: C:\Users\brand\AppData\Local\Temp\amaryllis_cache\Darlington\candidate_5_890287.png
+[DEBUG] Candidate 6 captured.
+[DEBUG] Visiting candidate 7: https://www.darlington.gov.uk/births-deaths-and-marriages/registering-a-death/
+[DEBUG] Capturing candidate 7...
+[DEBUG] Saving screenshot to: C:\Users\brand\AppData\Local\Temp\amaryllis_cache\Darlington\candidate_6_890288.png
+[DEBUG] Candidate 7 captured.
+[DEBUG] Visiting candidate 8: https://www.darlington.gov.uk/town-centre/events/
+[DEBUG] Capturing candidate 8...
+[DEBUG] Saving screenshot to: C:\Users\brand\AppData\Local\Temp\amaryllis_cache\Darlington\candidate_7_890289.png
+[DEBUG] Candidate 8 captured.
+[DEBUG] Visiting candidate 9: https://www.darlington.gov.uk/town-centre/events/whats-on/115816
+[DEBUG] Capturing candidate 9...
+[DEBUG] Saving screenshot to: C:\Users\brand\AppData\Local\Temp\amaryllis_cache\Darlington\candidate_8_890297.png
+[DEBUG] Candidate 9 captured.
+[DEBUG] Visiting candidate 10: https://www.darlington.gov.uk/town-centre/events/whats-on/115789
+[DEBUG] Capturing candidate 10...
+[DEBUG] Saving screenshot to: C:\Users\brand\AppData\Local\Temp\amaryllis_cache\Darlington\candidate_9_890298.png
+[DEBUG] Candidate 10 captured.
+[DEBUG] Visiting candidate 11: https://www.darlington.gov.uk/town-centre/events/whats-on/115802
+[DEBUG] Capturing candidate 11...
+[DEBUG] Saving screenshot to: C:\Users\brand\AppData\Local\Temp\amaryllis_cache\Darlington\candidate_10_890298.png
+[DEBUG] Candidate 11 captured.
+[DEBUG] Visiting candidate 12: https://www.darlington.gov.uk/news/
+[DEBUG] Capturing candidate 12...
+[DEBUG] Saving screenshot to: C:\Users\brand\AppData\Local\Temp\amaryllis_cache\Darlington\candidate_11_890299.png
+[DEBUG] Candidate 12 captured.
+[DEBUG] Visiting candidate 13: https://democracy.darlington.gov.uk/ieDocHome.aspx?bcr=1
+[DEBUG] Capturing candidate 13...
+[DEBUG] Saving screenshot to: C:\Users\brand\AppData\Local\Temp\amaryllis_cache\Darlington\candidate_12_890299.png
+[DEBUG] Candidate 13 captured.
+[DEBUG] Visiting candidate 14: https://www.darlington.gov.uk/children-and-young-people/early-years-and-childcare/
+[DEBUG] Capturing candidate 14...
+[DEBUG] Saving screenshot to: C:\Users\brand\AppData\Local\Temp\amaryllis_cache\Darlington\candidate_13_890300.png
+[DEBUG] Candidate 14 captured.
+[DEBUG] Visiting candidate 15: https://www.darlington.gov.uk/elections/how-to-register-and-vote/
+[DEBUG] Capturing candidate 15...
+[DEBUG] Saving screenshot to: C:\Users\brand\AppData\Local\Temp\amaryllis_cache\Darlington\candidate_14_890300.png
+[DEBUG] Candidate 15 captured.
+[DEBUG] Visiting candidate 16: https://www.darlington.gov.uk/council-tax/council-tax-online/
+[DEBUG] Capturing candidate 16...
+[DEBUG] Saving screenshot to: C:\Users\brand\AppData\Local\Temp\amaryllis_cache\Darlington\candidate_15_890300.png
+[DEBUG] Candidate 16 captured.
+[DEBUG] Visiting candidate 17: https://www.darlington.gov.uk/register
+[DEBUG] Capturing candidate 17...
+[DEBUG] Saving screenshot to: C:\Users\brand\AppData\Local\Temp\amaryllis_cache\Darlington\candidate_16_890301.png
+[DEBUG] Candidate 17 captured.
+[DEBUG] Visiting candidate 18: https://www.darlington.gov.uk/births-deaths-and-marriages/registering-a-birth/
+[DEBUG] Capturing candidate 18...
+[DEBUG] Saving screenshot to: C:\Users\brand\AppData\Local\Temp\amaryllis_cache\Darlington\candidate_17_890301.png
+[DEBUG] Candidate 18 captured.
+[DEBUG] Visiting candidate 19: https://www.darlington.gov.uk/bins-waste-and-recycling/collection-day-lookup/
+[DEBUG] Capturing candidate 19...
+[DEBUG] Saving screenshot to: C:\Users\brand\AppData\Local\Temp\amaryllis_cache\Darlington\candidate_18_890301.png
+[DEBUG] Candidate 19 captured.
+2026-01-26 18:41:26,843 - CognitiveProfiler - INFO - --- PHASE 1: DISCOVERY ---
+2026-01-26 18:41:26,843 - TriageAgent - INFO - Running triage on manifest with 20 artifacts.
+2026-01-26 18:41:26,843 - TriageAgent - INFO - Extracting metadata from 20 artifacts concurrently.
+2026-01-26 18:41:27,815 - TriageAgent - INFO - Successfully extracted metadata for 20 artifacts.
+2026-01-26 18:41:27,815 - GeminiService - INFO - Invoking Gemini API...
+2026-01-26 18:41:27,840 - google_genai.models - INFO - AFC is enabled with max remote calls: 10.
+2026-01-26 18:41:45,940 - httpx - INFO - HTTP Request: POST https://generativelanguage.googleapis.com/v1alpha/models/gemini-2.5-flash:generateContent "HTTP/1.1 200 OK"
+2026-01-26 18:41:45,942 - TriageAgent - INFO - Parsing and validating Gemini response.
+2026-01-26 18:41:45,943 - TriageAgent - INFO - Successfully parsed and validated 20 classifications.
+2026-01-26 18:41:45,943 - TriageAgent - INFO - Validating candidate set of size 3.
+2026-01-26 18:41:45,943 - TriageAgent - INFO - Candidate set passed all validation checks.
+2026-01-26 18:41:45,943 - TriageAgent - INFO - Triage successful for domain 'www.darlington.gov.uk'. Selected 3 candidates.
+2026-01-26 18:41:45,943 - CognitiveProfiler - INFO - DISCOVERY SUCCESS. Target Search Page: https://www.darlington.gov.uk/planning-and-building-regs/planning/planning-application-and-permission/view-planning-applications-online/ 
+2026-01-26 18:41:45,943 - CognitiveProfiler - INFO - --- PHASE 2: REFERENCE ID SEARCH ---
+2026-01-26 18:41:46,230 - StrategistAgent - INFO - Generating Planning Search Plan for https://www.darlington.gov.uk/planning-and-building-regs/planning/planning-application-and-permission/view-planning-applications-online/
+2026-01-26 18:41:46,231 - GeminiService - INFO - Invoking Gemini API...
+2026-01-26 18:41:46,257 - google_genai.models - INFO - AFC is enabled with max remote calls: 10.
+2026-01-26 18:42:14,708 - httpx - INFO - HTTP Request: POST https://generativelanguage.googleapis.com/v1alpha/models/gemini-2.5-flash:generateContent "HTTP/1.1 200 OK"
+2026-01-26 18:42:14,725 - StrategistAgent - INFO - Plan for 'planning search generation' passed canonical schema validation.
+2026-01-26 18:42:14,725 - CognitiveProfiler - INFO - Executing Reference Search for 26438...
+2026-01-26 18:42:14,726 - ValidationAgent - INFO - Executing probe plan with 7 instructions.
+
+[DEBUG] --- START PROBE EXECUTION (7 steps) ---
+2026-01-26 18:42:14,767 - ValidationAgent - INFO - Instr 4: Substituted placeholder in 'value' -> '26438'
+[DEBUG] PROBE Step: GOTO_URL params={'url': 'https://www.darlington.gov.uk/planning-and-building-regs/planning/planning-application-and-permission/view-planning-applications-online/'}
+    [SNAPSHOT] C:\Users\brand\AppData\Local\Temp\amaryllis_debug\probe_step_890350269.png
+[DEBUG] PROBE Step: CLICK_ELEMENT params={'selector': 'button.cc-nb-okagree:has-text("I agree")'}
+    [SNAPSHOT] C:\Users\brand\AppData\Local\Temp\amaryllis_debug\probe_step_890352578.png
+[DEBUG] PROBE Step: CLICK_ELEMENT params={'selector': 'a.btn.btn-primary.btn-lg:has-text("Planning applications online")'}
+    [SNAPSHOT] C:\Users\brand\AppData\Local\Temp\amaryllis_debug\probe_step_890354885.png
+[DEBUG] PROBE Step: WAIT_FOR_NAVIGATION params={}
+2026-01-26 18:42:49,949 - ValidationAgent - ERROR - Probe execution failed. Reason: Timeout 30000ms exceeded.
+2026-01-26 18:42:50,111 - ValidationAgent - INFO - Crash dump saved to C:\Users\brand\AppData\Local\Temp\tmpqce89ycu\crash_dump_uqyzwpa2.png
+2026-01-26 18:42:50,127 - CognitiveProfiler - WARNING - Phase 2 Search Failed (Attempt 1/2). Initiating Self-Healing...
+2026-01-26 18:42:50,129 - StrategistAgent - WARNING - Timeout Diagnostics: Probable obstruction detected (High Confidence).
+2026-01-26 18:42:50,129 - StrategistAgent - INFO - Correcting navigation plan with context reinforcement.
+2026-01-26 18:42:50,143 - GeminiService - INFO - Invoking Gemini API...
+2026-01-26 18:42:50,143 - GeminiService - INFO - Image provided for multimodal generation.
+2026-01-26 18:42:50,171 - google_genai.models - INFO - AFC is enabled with max remote calls: 10.
+2026-01-26 18:43:15,699 - httpx - INFO - HTTP Request: POST https://generativelanguage.googleapis.com/v1alpha/models/gemini-2.5-flash:generateContent "HTTP/1.1 200 OK"
+2026-01-26 18:43:15,717 - StrategistAgent - INFO - Plan for 'navigation plan correction' passed canonical schema validation.
+2026-01-26 18:43:15,718 - CognitiveProfiler - INFO - Applying Corrected Plan (Iter 1)...
+2026-01-26 18:43:15,718 - ValidationAgent - INFO - Executing probe plan with 8 instructions.
+
+[DEBUG] --- START PROBE EXECUTION (8 steps) ---
+2026-01-26 18:43:15,761 - ValidationAgent - INFO - Instr 5: Substituted placeholder in 'value' -> '26438'
+[DEBUG] PROBE Step: GOTO_URL params={'url': 'https://www.darlington.gov.uk/planning-and-building-regs/planning/planning-application-and-permission/view-planning-applications-online/'}
+    [SNAPSHOT] C:\Users\brand\AppData\Local\Temp\amaryllis_debug\probe_step_890411495.png
+[DEBUG] PROBE Step: CLICK_ELEMENT params={'selector': 'button.cc-nb-okagree:has-text("I agree")'}
+2026-01-26 18:43:46,401 - ValidationAgent - WARNING - Soft Failure: Consent element 'button.cc-nb-okagree:has-text("I agree")' not found in time. Proceeding.
+    [SNAPSHOT] C:\Users\brand\AppData\Local\Temp\amaryllis_debug\probe_step_890441697.png
+[DEBUG] PROBE Step: CLICK_ELEMENT params={'selector': 'a.btn.btn-primary.btn-lg:has-text("Planning applications online")'}
+    [SNAPSHOT] C:\Users\brand\AppData\Local\Temp\amaryllis_debug\probe_step_890443946.png
+[DEBUG] PROBE Step: WAIT_FOR_NAVIGATION params={}
+    [SNAPSHOT] C:\Users\brand\AppData\Local\Temp\amaryllis_debug\probe_step_890444320.png
+[DEBUG] PROBE Step: CLICK_ELEMENT params={'selector': 'button:has-text("Accept"), button:has-text("Continue"), #CybotCookiebotDialogBodyLevelButtonLevelOptinAllowAll'}
+2026-01-26 18:44:19,212 - ValidationAgent - WARNING - Soft Failure: Consent element 'button:has-text("Accept"), button:has-text("Continue"), #CybotCookiebotDialogBodyLevelButtonLevelOptinAllowAll' not found in time. Proceeding.
+    [SNAPSHOT] C:\Users\brand\AppData\Local\Temp\amaryllis_debug\probe_step_890474508.png
+[DEBUG] PROBE Step: FILL_INPUT params={'selector': 'input#searchCriteria_application_number', 'value': '26438'}
+2026-01-26 18:44:49,394 - ValidationAgent - ERROR - Probe execution failed. Reason: Failed to fill input 'input#searchCriteria_application_number'. Error: Locator.wait_for: Timeout 30000ms exceeded.
+Call log:
+  - waiting for locator("input#searchCriteria_application_number").first to be visible
+
+2026-01-26 18:44:49,545 - ValidationAgent - INFO - Crash dump saved to C:\Users\brand\AppData\Local\Temp\tmpqce89ycu\crash_dump_cbp52lg8.png
+2026-01-26 18:44:49,575 - CognitiveProfiler - WARNING - Phase 2 Search Failed (Attempt 2/2). Initiating Self-Healing...
+2026-01-26 18:44:49,576 - StrategistAgent - WARNING - Timeout Diagnostics: Probable obstruction detected (High Confidence).
+2026-01-26 18:44:49,577 - StrategistAgent - INFO - Correcting navigation plan with context reinforcement.
+2026-01-26 18:44:49,592 - GeminiService - INFO - Invoking Gemini API...
+2026-01-26 18:44:49,593 - GeminiService - INFO - Image provided for multimodal generation.
+2026-01-26 18:44:49,620 - google_genai.models - INFO - AFC is enabled with max remote calls: 10.
+2026-01-26 18:45:24,161 - httpx - INFO - HTTP Request: POST https://generativelanguage.googleapis.com/v1alpha/models/gemini-2.5-flash:generateContent "HTTP/1.1 200 OK"
+2026-01-26 18:45:24,178 - StrategistAgent - INFO - Plan for 'navigation plan correction' passed canonical schema validation.
+2026-01-26 18:45:24,178 - CognitiveProfiler - INFO - Applying Corrected Plan (Iter 2)...
+2026-01-26 18:45:24,179 - ValidationAgent - INFO - Executing probe plan with 8 instructions.
+
+[DEBUG] --- START PROBE EXECUTION (8 steps) ---
+2026-01-26 18:45:24,221 - ValidationAgent - INFO - Instr 5: Substituted placeholder in 'value' -> '26438'
+[DEBUG] PROBE Step: GOTO_URL params={'url': 'https://www.darlington.gov.uk/planning-and-building-regs/planning/planning-application-and-permission/view-planning-applications-online/'}
+    [SNAPSHOT] C:\Users\brand\AppData\Local\Temp\amaryllis_debug\probe_step_890539899.png
+[DEBUG] PROBE Step: CLICK_ELEMENT params={'selector': 'button.cc-nb-okagree'}
+2026-01-26 18:45:54,784 - ValidationAgent - WARNING - Soft Failure: Consent element 'button.cc-nb-okagree' not found in time. Proceeding.
+    [SNAPSHOT] C:\Users\brand\AppData\Local\Temp\amaryllis_debug\probe_step_890570080.png
+[DEBUG] PROBE Step: CLICK_ELEMENT params={'selector': 'a.btn.btn-primary.btn-lg:has-text("Planning applications online")'}
+    [SNAPSHOT] C:\Users\brand\AppData\Local\Temp\amaryllis_debug\probe_step_890572349.png
+[DEBUG] PROBE Step: WAIT_FOR_NAVIGATION params={}
+    [SNAPSHOT] C:\Users\brand\AppData\Local\Temp\amaryllis_debug\probe_step_890574758.png
+[DEBUG] PROBE Step: CLICK_ELEMENT params={'selector': "a[id*='cookie']:has-text('Accept'), button[id*='cookie']:has-text('Accept'), button:has-text('Accept All Cookies'), button:has-text('I agree'), button.btn-primary:has-text('Accept')"}
+2026-01-26 18:46:29,631 - ValidationAgent - WARNING - Soft Failure: Consent element 'a[id*='cookie']:has-text('Accept'), button[id*='cookie']:has-text('Accept'), button:has-text('Accept All Cookies'), button:has-text('I agree'), button.btn-primary:has-text('Accept')' not found in time. Proceeding.
+    [SNAPSHOT] C:\Users\brand\AppData\Local\Temp\amaryllis_debug\probe_step_890604927.png
+[DEBUG] PROBE Step: FILL_INPUT params={'selector': 'input#searchCriteria_application_number', 'value': '26438'}
+2026-01-26 18:47:00,796 - ValidationAgent - ERROR - Probe execution failed. Reason: Failed to fill input 'input#searchCriteria_application_number'. Error: Locator.wait_for: Timeout 30000ms exceeded.
+Call log:
+  - waiting for locator("input#searchCriteria_application_number").first to be visible
+
+2026-01-26 18:47:01,948 - ValidationAgent - INFO - Crash dump saved to C:\Users\brand\AppData\Local\Temp\tmpqce89ycu\crash_dump_i5mcqa_1.png
+2026-01-26 18:47:01,972 - CognitiveProfiler - ERROR - Pipeline failed: Reference ID Search failed after 2 corrections. Final Error: Failed to fill input 'input#searchCriteria_application_number'. Error: Locator.wait_for: Timeout 30000ms exceeded.
+Call log:
+  - waiting for locator("input#searchCriteria_application_number").first to be visible
+Traceback (most recent call last):
+  File "c:\Users\brand\Desktop\renewables\amaryllis\cognitive_profiler\orchestrator.py", line 240, in run_pipeline
+    raise StrategyError(f"Reference ID Search failed after {correction_attempts} corrections. Final Error: {search_result.failure_reason}")
+cognitive_profiler.exceptions.StrategyError: Reference ID Search failed after 2 corrections. Final Error: Failed to fill input 'input#searchCriteria_application_number'. Error: Locator.wait_for: Timeout 30000ms exceeded.
+Call log:
+  - waiting for locator("input#searchCriteria_application_number").first to be visible
+
+2026-01-26 18:47:01,974 - AmaryllisLocal - ERROR - FAILURE for Darlington: Reference ID Search failed after 2 corrections. Final Error: Failed to fill input 'input#searchCriteria_application_number'. Error: Locator.wait_for: Timeout 30000ms exceeded.
+Call log:
+  - waiting for locator("input#searchCriteria_application_number").first to be visible
+
+2026-01-26 18:47:03,977 - AmaryllisLocal - INFO - --- Starting Analysis for: Dartford ---
+2026-01-26 18:47:03,978 - AmaryllisLocal - INFO - Test Subject: KCC/DA/0201/2013 | URL: https://www.dartford.gov.uk/
+2026-01-26 18:47:03,978 - LocalCrawler - INFO - Crawling https://www.dartford.gov.uk/ for Dartford
+
+[DEBUG] Crawling started for Dartford at https://www.dartford.gov.uk/
+[DEBUG] Capturing homepage...
+[DEBUG] Saving screenshot to: C:\Users\brand\AppData\Local\Temp\amaryllis_cache\Dartford\homepage_890642.png
+[DEBUG] Homepage captured.
+[DEBUG] Extracting links from homepage...
+2026-01-26 18:47:08,724 - LocalCrawler - INFO - Found 9 candidate links. Visiting top 30.
+[DEBUG] Found 9 candidate links. Top 5: ['https://www.dartford.gov.uk/applications-1/planning-applications', 'https://www.dartford.gov.uk/policy-1/planning-policy', 'https://www.dartford.gov.uk/homepage/10/planning', 'https://x.com/dartfordbc', 'https://www.dartford.gov.uk/council-democracy/devolution-local-government-reorganisation']
+[DEBUG] Visiting candidate 1: https://www.dartford.gov.uk/applications-1/planning-applications
+[DEBUG] Capturing candidate 1...
+[DEBUG] Saving screenshot to: C:\Users\brand\AppData\Local\Temp\amaryllis_cache\Dartford\candidate_0_890644.png
+[DEBUG] Candidate 1 captured.
+[DEBUG] Visiting candidate 2: https://www.dartford.gov.uk/policy-1/planning-policy
+[DEBUG] Capturing candidate 2...
+[DEBUG] Saving screenshot to: C:\Users\brand\AppData\Local\Temp\amaryllis_cache\Dartford\candidate_1_890644.png
+[DEBUG] Candidate 2 captured.
+[DEBUG] Visiting candidate 3: https://www.dartford.gov.uk/homepage/10/planning
+[DEBUG] Capturing candidate 3...
+[DEBUG] Saving screenshot to: C:\Users\brand\AppData\Local\Temp\amaryllis_cache\Dartford\candidate_2_890645.png
+[DEBUG] Candidate 3 captured.
+[DEBUG] Visiting candidate 4: https://x.com/dartfordbc
+[DEBUG] Capturing candidate 4...
+[DEBUG] Saving screenshot to: C:\Users\brand\AppData\Local\Temp\amaryllis_cache\Dartford\candidate_3_890648.png
+[DEBUG] Candidate 4 captured.
+[DEBUG] Visiting candidate 5: https://www.dartford.gov.uk/council-democracy/devolution-local-government-reorganisation
+[DEBUG] Capturing candidate 5...
+[DEBUG] Saving screenshot to: C:\Users\brand\AppData\Local\Temp\amaryllis_cache\Dartford\candidate_4_890648.png
+[DEBUG] Candidate 5 captured.
+[DEBUG] Visiting candidate 6: http://www.dartford.gov.uk/events
+[DEBUG] Capturing candidate 6...
+[DEBUG] Saving screenshot to: C:\Users\brand\AppData\Local\Temp\amaryllis_cache\Dartford\candidate_5_890649.png
+[DEBUG] Candidate 6 captured.
+[DEBUG] Visiting candidate 7: https://www.instagram.com/dartfordbc/
+[DEBUG] Capturing candidate 7...
+[DEBUG] Saving screenshot to: C:\Users\brand\AppData\Local\Temp\amaryllis_cache\Dartford\candidate_6_890650.png
+[DEBUG] Candidate 7 captured.
+[DEBUG] Visiting candidate 8: https://www.dartford.gov.uk/name-and-shame
+[DEBUG] Capturing candidate 8...
+[DEBUG] Saving screenshot to: C:\Users\brand\AppData\Local\Temp\amaryllis_cache\Dartford\candidate_7_890651.png
+[DEBUG] Candidate 8 captured.
+[DEBUG] Visiting candidate 9: https://www.dartford.gov.uk/building-control-1
+[DEBUG] Capturing candidate 9...
+[DEBUG] Saving screenshot to: C:\Users\brand\AppData\Local\Temp\amaryllis_cache\Dartford\candidate_8_890653.png
+[DEBUG] Candidate 9 captured.
+2026-01-26 18:47:18,469 - CognitiveProfiler - INFO - --- PHASE 1: DISCOVERY ---
+2026-01-26 18:47:18,470 - TriageAgent - INFO - Running triage on manifest with 10 artifacts.
+2026-01-26 18:47:18,470 - TriageAgent - INFO - Extracting metadata from 10 artifacts concurrently.
+2026-01-26 18:47:19,017 - TriageAgent - INFO - Successfully extracted metadata for 10 artifacts.
+2026-01-26 18:47:19,017 - GeminiService - INFO - Invoking Gemini API...
+2026-01-26 18:47:19,040 - google_genai.models - INFO - AFC is enabled with max remote calls: 10.
+2026-01-26 18:47:27,799 - httpx - INFO - HTTP Request: POST https://generativelanguage.googleapis.com/v1alpha/models/gemini-2.5-flash:generateContent "HTTP/1.1 200 OK"
+2026-01-26 18:47:27,801 - TriageAgent - INFO - Parsing and validating Gemini response.
+2026-01-26 18:47:27,802 - TriageAgent - INFO - Successfully parsed and validated 10 classifications.
+2026-01-26 18:47:27,802 - TriageAgent - INFO - Validating candidate set of size 3.
+2026-01-26 18:47:27,802 - TriageAgent - INFO - Candidate set passed all validation checks.
+2026-01-26 18:47:27,802 - TriageAgent - INFO - Triage successful for domain 'www.dartford.gov.uk'. Selected 3 candidates.
+2026-01-26 18:47:27,802 - CognitiveProfiler - INFO - DISCOVERY SUCCESS. Target Search Page: https://www.dartford.gov.uk/applications-1/planning-applications
+2026-01-26 18:47:27,802 - CognitiveProfiler - INFO - --- PHASE 2: REFERENCE ID SEARCH ---
+2026-01-26 18:47:28,459 - StrategistAgent - INFO - Generating Planning Search Plan for https://www.dartford.gov.uk/applications-1/planning-applications
+2026-01-26 18:47:28,460 - GeminiService - INFO - Invoking Gemini API...
+2026-01-26 18:47:28,485 - google_genai.models - INFO - AFC is enabled with max remote calls: 10.
+2026-01-26 18:47:54,114 - httpx - INFO - HTTP Request: POST https://generativelanguage.googleapis.com/v1alpha/models/gemini-2.5-flash:generateContent "HTTP/1.1 200 OK"
+2026-01-26 18:47:54,130 - StrategistAgent - INFO - Plan for 'planning search generation' passed canonical schema validation.
+2026-01-26 18:47:54,131 - CognitiveProfiler - INFO - Executing Reference Search for KCC/DA/0201/2013...
+2026-01-26 18:47:54,131 - ValidationAgent - INFO - Executing probe plan with 7 instructions.
+
+[DEBUG] --- START PROBE EXECUTION (7 steps) ---
+2026-01-26 18:47:54,170 - ValidationAgent - INFO - Instr 4: Substituted placeholder in 'value' -> 'KCC/DA/0201/2013'
+[DEBUG] PROBE Step: GOTO_URL params={'url': 'https://www.dartford.gov.uk/applications-1/planning-applications'}
+    [SNAPSHOT] C:\Users\brand\AppData\Local\Temp\amaryllis_debug\probe_step_890690013.png
+[DEBUG] PROBE Step: CLICK_ELEMENT params={'selector': 'button#ccc-notify-accept'}
+    [SNAPSHOT] C:\Users\brand\AppData\Local\Temp\amaryllis_debug\probe_step_890692299.png
+[DEBUG] PROBE Step: CLICK_ELEMENT params={'selector': 'a[href="https://publicaccess.dartford.gov.uk/online-applications/search.do"]'}
+    [SNAPSHOT] C:\Users\brand\AppData\Local\Temp\amaryllis_debug\probe_step_890695747.png
+[DEBUG] PROBE Step: WAIT_FOR_NAVIGATION params={}
+    [SNAPSHOT] C:\Users\brand\AppData\Local\Temp\amaryllis_debug\probe_step_890695849.png
+[DEBUG] PROBE Step: FILL_INPUT params={'selector': 'input[name="searchCriteria.applicationNumber"]', 'value': 'KCC/DA/0201/2013'}
+2026-01-26 18:48:30,650 - ValidationAgent - ERROR - Probe execution failed. Reason: Failed to fill input 'input[name="searchCriteria.applicationNumber"]'. Error: Locator.wait_for: Timeout 30000ms exceeded.
+Call log:
+  - waiting for locator("input[name=\"searchCriteria.applicationNumber\"]").first to be visible
+
+2026-01-26 18:48:30,745 - ValidationAgent - INFO - Crash dump saved to C:\Users\brand\AppData\Local\Temp\tmp4ayehh31\crash_dump_1bgw1g4i.png
+2026-01-26 18:48:30,762 - CognitiveProfiler - WARNING - Phase 2 Search Failed (Attempt 1/2). Initiating Self-Healing...
+2026-01-26 18:48:30,762 - StrategistAgent - INFO - Timeout Diagnostics: No obvious signs of obstruction found.
+2026-01-26 18:48:30,763 - StrategistAgent - INFO - Correcting navigation plan with context reinforcement.
+2026-01-26 18:48:30,775 - GeminiService - INFO - Invoking Gemini API...
+2026-01-26 18:48:30,776 - GeminiService - INFO - Image provided for multimodal generation.
+2026-01-26 18:48:30,801 - google_genai.models - INFO - AFC is enabled with max remote calls: 10.
+2026-01-26 18:48:51,171 - httpx - INFO - HTTP Request: POST https://generativelanguage.googleapis.com/v1alpha/models/gemini-2.5-flash:generateContent "HTTP/1.1 200 OK"
+2026-01-26 18:48:51,187 - StrategistAgent - INFO - Plan for 'navigation plan correction' passed canonical schema validation.
+2026-01-26 18:48:51,187 - CognitiveProfiler - INFO - Applying Corrected Plan (Iter 1)...
+2026-01-26 18:48:51,187 - ValidationAgent - INFO - Executing probe plan with 7 instructions.
+
+[DEBUG] --- START PROBE EXECUTION (7 steps) ---
+2026-01-26 18:48:51,232 - ValidationAgent - INFO - Instr 4: Substituted placeholder in 'value' -> 'KCC/DA/0201/2013'
+[DEBUG] PROBE Step: GOTO_URL params={'url': 'https://www.dartford.gov.uk/applications-1/planning-applications'}
+    [SNAPSHOT] C:\Users\brand\AppData\Local\Temp\amaryllis_debug\probe_step_890747060.png
+[DEBUG] PROBE Step: CLICK_ELEMENT params={'selector': 'button#ccc-notify-accept'}
+2026-01-26 18:49:21,915 - ValidationAgent - WARNING - Soft Failure: Consent element 'button#ccc-notify-accept' not found in time. Proceeding.
+    [SNAPSHOT] C:\Users\brand\AppData\Local\Temp\amaryllis_debug\probe_step_890777211.png
+[DEBUG] PROBE Step: CLICK_ELEMENT params={'selector': 'a[href="https://publicaccess.dartford.gov.uk/online-applications/search.do"]'}
+    [SNAPSHOT] C:\Users\brand\AppData\Local\Temp\amaryllis_debug\probe_step_890780572.png
+[DEBUG] PROBE Step: WAIT_FOR_NAVIGATION params={}
+    [SNAPSHOT] C:\Users\brand\AppData\Local\Temp\amaryllis_debug\probe_step_890780683.png
+[DEBUG] PROBE Step: FILL_INPUT params={'selector': 'input#simpleSearchString', 'value': 'KCC/DA/0201/2013'}
+    [SNAPSHOT] C:\Users\brand\AppData\Local\Temp\amaryllis_debug\probe_step_890780798.png
+[DEBUG] PROBE Step: PRESS_KEY params={'selector': 'input#simpleSearchString', 'key': 'Enter'}
+    [SNAPSHOT] C:\Users\brand\AppData\Local\Temp\amaryllis_debug\probe_step_890783642.png
+[DEBUG] PROBE Step: WAIT_FOR_SELECTOR params={'selector': '#searchresults, #simpleSearchResults, .search-results, h1:has-text("Summary"), h1:has-text("Details"), #tab_summary, #tab_details, .results-container, div[class*="Result"], [data-testid*="result"], div[role="list"]'}
+2026-01-26 18:49:58,553 - ValidationAgent - ERROR - Probe execution failed. Reason: Locator.wait_for: Timeout 30000ms exceeded.
+Call log:
+  - waiting for locator("#searchresults, #simpleSearchResults, .search-results, h1:has-text(\"Summary\"), h1:has-text(\"Details\"), #tab_summary, #tab_details, .results-container, div[class*=\"Result\"], [data-testid*=\"result\"], div[role=\"list\"]").first to be visible
+
+2026-01-26 18:49:58,641 - ValidationAgent - INFO - Crash dump saved to C:\Users\brand\AppData\Local\Temp\tmp4ayehh31\crash_dump_wlvirigq.png
+2026-01-26 18:49:58,658 - CognitiveProfiler - WARNING - Phase 2 Search Failed (Attempt 2/2). Initiating Self-Healing...
+2026-01-26 18:49:58,658 - StrategistAgent - INFO - Timeout Diagnostics: No obvious signs of obstruction found.
+2026-01-26 18:49:58,659 - StrategistAgent - INFO - Correcting navigation plan with context reinforcement.
+2026-01-26 18:49:58,670 - GeminiService - INFO - Invoking Gemini API...
+2026-01-26 18:49:58,671 - GeminiService - INFO - Image provided for multimodal generation.
+2026-01-26 18:49:58,696 - google_genai.models - INFO - AFC is enabled with max remote calls: 10.
+2026-01-26 18:50:20,323 - httpx - INFO - HTTP Request: POST https://generativelanguage.googleapis.com/v1alpha/models/gemini-2.5-flash:generateContent "HTTP/1.1 200 OK"
+2026-01-26 18:50:20,325 - CognitiveProfiler - ERROR - Pipeline failed: LLM response was valid JSON but not a dictionary: [{'command': 'GOTO_URL', 'params': {'url': 'https://www.dartford.gov.uk/applications-1/planning-applications'}, 'description': "Navigate to the planning applications information page on Dartford Borough Council's website."}, {'command': 'CLICK_ELEMENT', 'params': {'selector': 'button#ccc-notify-accept'}, 'description': "Dismiss the cookie consent modal by clicking the 'Accept' button to allow interaction with the main content on the initial domain, as per Rule 2."}, {'command': 'CLICK_ELEMENT', 'params': {'selector': 'a[href="https://publicaccess.dartford.gov.uk/online-applications/search.do"]'}, 'description': "Click the prominent link that leads to the actual 'Public Access' planning application search portal, as the current page is an intermediary landing page (Rule 9)."}, {'command': 'WAIT_FOR_NAVIGATION', 'params': {}, 'description': 'Wait for the browser to navigate to the dedicated Public Access planning search page.'}, {'command': 'FILL_INPUT', 'params': {'selector': 'input#simpleSearchString', 'value': '{{REFERENCE_ID}}'}, 'description': "On the Public Access simple search page, fill the main search input field (identified by its ID 'simpleSearchString') with the placeholder reference ID. The input is clearly visible, so no disclosure click is needed (Rule 3)."}, {'command': 'CLICK_ELEMENT', 'params': {'selector': 'input[type="submit"][value="Search"]'}, 'description': "Submit the search by clicking the explicit 'Search' button. This adheres to Rule 1 (non-repetition of submission strategy) by switching from PRESS_KEY to CLICK_ELEMENT, and Rule 8 (explicit submission) as a clear button is visible in the HTML."}, {'command': 'WAIT_FOR_SELECTOR', 'params': {'selector': '#searchresults, #simpleSearchResults, .search-results, h1:has-text("Summary"), h1:has-text("Details"), #tab_summary, #tab_details, .results-container, div[class*="Result"], [data-testid*="result"], div[role="list"]'}, 'description': 'Wait for the search results or a specific application summary/details section to become visible, indicating a successful search outcome, as mandated by Rule 4.4.'}]
+Traceback (most recent call last):
+  File "c:\Users\brand\Desktop\renewables\amaryllis\cognitive_profiler\orchestrator.py", line 227, in run_pipeline
+    corrected_instructions = await self.strategist_agent.correct_navigation_plan(failure_report)
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\brand\Desktop\renewables\amaryllis\cognitive_profiler\agents\strategist_agent.py", line 688, in correct_navigation_plan
+    data = await self._run_base_correction(report, self.navigation_correction_template)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\brand\Desktop\renewables\amaryllis\cognitive_profiler\agents\strategist_agent.py", line 710, in _run_base_correction
+    return self._parse_llm_json_response(response_text)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "c:\Users\brand\Desktop\renewables\amaryllis\cognitive_profiler\agents\strategist_agent.py", line 794, in _parse_llm_json_response
+    raise StrategyError(f"LLM response was valid JSON but not a dictionary: {data}")
+cognitive_profiler.exceptions.StrategyError: LLM response was valid JSON but not a dictionary: [{'command': 'GOTO_URL', 'params': {'url': 'https://www.dartford.gov.uk/applications-1/planning-applications'}, 'description': "Navigate to the planning applications information page on Dartford Borough Council's website."}, {'command': 'CLICK_ELEMENT', 'params': {'selector': 'button#ccc-notify-accept'}, 'description': "Dismiss the cookie consent modal by clicking the 'Accept' button to allow interaction with the main content on the initial domain, as per Rule 2."}, {'command': 'CLICK_ELEMENT', 'params': {'selector': 'a[href="https://publicaccess.dartford.gov.uk/online-applications/search.do"]'}, 'description': "Click the prominent link that leads to the actual 'Public Access' planning application search portal, as the current page is an intermediary landing page (Rule 9)."}, {'command': 'WAIT_FOR_NAVIGATION', 'params': {}, 'description': 'Wait for the browser to navigate to the dedicated Public Access planning search page.'}, {'command': 'FILL_INPUT', 'params': {'selector': 'input#simpleSearchString', 'value': '{{REFERENCE_ID}}'}, 'description': "On the Public Access simple search page, fill the main search input field (identified by its ID 'simpleSearchString') with the placeholder reference ID. The input is clearly visible, so no disclosure click is needed (Rule 3)."}, {'command': 'CLICK_ELEMENT', 'params': {'selector': 'input[type="submit"][value="Search"]'}, 'description': "Submit the search by clicking the explicit 'Search' button. This adheres to Rule 1 (non-repetition of submission strategy) by switching from PRESS_KEY to CLICK_ELEMENT, and Rule 8 (explicit submission) as a clear button is visible in the HTML."}, {'command': 'WAIT_FOR_SELECTOR', 'params': {'selector': '#searchresults, #simpleSearchResults, .search-results, h1:has-text("Summary"), h1:has-text("Details"), #tab_summary, #tab_details, .results-container, div[class*="Result"], [data-testid*="result"], div[role="list"]'}, 'description': 'Wait for the search results or a specific application summary/details section to become visible, indicating a successful search outcome, as mandated by Rule 4.4.'}]
+2026-01-26 18:50:20,327 - AmaryllisLocal - ERROR - FAILURE for Dartford: LLM response was valid JSON but not a dictionary: [{'command': 'GOTO_URL', 'params': {'url': 'https://www.dartford.gov.uk/applications-1/planning-applications'}, 'description': "Navigate to the planning applications information page on Dartford Borough Council's website."}, {'command': 'CLICK_ELEMENT', 'params': {'selector': 'button#ccc-notify-accept'}, 'description': "Dismiss the cookie consent modal by clicking the 'Accept' button to allow interaction with the main content on the initial domain, as per Rule 2."}, {'command': 'CLICK_ELEMENT', 'params': {'selector': 'a[href="https://publicaccess.dartford.gov.uk/online-applications/search.do"]'}, 'description': "Click the prominent link that leads to the actual 'Public Access' planning application search portal, as the current page is an intermediary landing page (Rule 9)."}, {'command': 'WAIT_FOR_NAVIGATION', 'params': {}, 'description': 'Wait for the browser to navigate to the dedicated Public Access planning search page.'}, {'command': 'FILL_INPUT', 'params': {'selector': 'input#simpleSearchString', 'value': '{{REFERENCE_ID}}'}, 'description': "On the Public Access simple search page, fill the main search input field (identified by its ID 'simpleSearchString') with the placeholder reference ID. The input is clearly visible, so no disclosure click is needed (Rule 3)."}, {'command': 'CLICK_ELEMENT', 'params': {'selector': 'input[type="submit"][value="Search"]'}, 'description': "Submit the search by clicking the explicit 'Search' button. This adheres to Rule 1 (non-repetition of submission strategy) by switching from PRESS_KEY to CLICK_ELEMENT, and Rule 8 (explicit submission) as a clear button is visible in the HTML."}, {'command': 'WAIT_FOR_SELECTOR', 'params': {'selector': '#searchresults, #simpleSearchResults, .search-results, h1:has-text("Summary"), h1:has-text("Details"), #tab_summary, #tab_details, .results-container, div[class*="Result"], [data-testid*="result"], div[role="list"]'}, 'description': 'Wait for the search results or a specific application summary/details section to become visible, indicating a successful search outcome, as mandated by Rule 4.4.'}]
+2026-01-26 18:50:22,344 - AmaryllisLocal - INFO - --- Starting Analysis for: Denbighshire ---
+2026-01-26 18:50:22,344 - AmaryllisLocal - INFO - Test Subject: 47/2012/1120 | URL: https://www.denbighshire.gov.uk/
+2026-01-26 18:50:22,344 - LocalCrawler - INFO - Crawling https://www.denbighshire.gov.uk/ for Denbighshire
+
+[DEBUG] Crawling started for Denbighshire at https://www.denbighshire.gov.uk/
+[DEBUG] Capturing homepage...
+[DEBUG] Saving screenshot to: C:\Users\brand\AppData\Local\Temp\amaryllis_cache\Denbighshire\homepage_890838.png
+[DEBUG] Homepage captured.
+[DEBUG] Extracting links from homepage...
+2026-01-26 18:50:23,566 - LocalCrawler - INFO - Found 2 candidate links. Visiting top 30.
+[DEBUG] Found 2 candidate links. Top 5: ['https://www.denbighshire.gov.uk/en/planning-and-building-regulations/planning-and-building-regulations.aspx', 'https://denbighshire.spydus.co.uk/cgi-bin/spydus.exe/MSGTRN/OPAC/HOME']
+[DEBUG] Visiting candidate 1: https://www.denbighshire.gov.uk/en/planning-and-building-regulations/planning-and-building-regulations.aspx
+[DEBUG] Capturing candidate 1...
+[DEBUG] Saving screenshot to: C:\Users\brand\AppData\Local\Temp\amaryllis_cache\Denbighshire\candidate_0_890838.png
+[DEBUG] Candidate 1 captured.
+[DEBUG] Visiting candidate 2: https://denbighshire.spydus.co.uk/cgi-bin/spydus.exe/MSGTRN/OPAC/HOME
+[DEBUG] Capturing candidate 2...
+[DEBUG] Saving screenshot to: C:\Users\brand\AppData\Local\Temp\amaryllis_cache\Denbighshire\candidate_1_890841.png
+[DEBUG] Candidate 2 captured.
+2026-01-26 18:50:26,513 - CognitiveProfiler - INFO - --- PHASE 1: DISCOVERY ---
+2026-01-26 18:50:26,513 - TriageAgent - INFO - Running triage on manifest with 3 artifacts.
+2026-01-26 18:50:26,513 - TriageAgent - INFO - Extracting metadata from 3 artifacts concurrently.
+2026-01-26 18:50:26,677 - TriageAgent - INFO - Successfully extracted metadata for 3 artifacts.
+2026-01-26 18:50:26,678 - GeminiService - INFO - Invoking Gemini API...
+2026-01-26 18:50:26,702 - google_genai.models - INFO - AFC is enabled with max remote calls: 10.
+2026-01-26 18:50:30,924 - httpx - INFO - HTTP Request: POST https://generativelanguage.googleapis.com/v1alpha/models/gemini-2.5-flash:generateContent "HTTP/1.1 200 OK"
+2026-01-26 18:50:30,926 - TriageAgent - INFO - Parsing and validating Gemini response.
+2026-01-26 18:50:30,926 - TriageAgent - INFO - Successfully parsed and validated 3 classifications.
+2026-01-26 18:50:30,926 - TriageAgent - INFO - Validating candidate set of size 2.
+2026-01-26 18:50:30,926 - TriageAgent - INFO - Candidate set passed all validation checks.
+2026-01-26 18:50:30,926 - TriageAgent - INFO - Triage successful for domain 'www.denbighshire.gov.uk'. Selected 2 candidates.
+2026-01-26 18:50:30,927 - CognitiveProfiler - INFO - DISCOVERY SUCCESS. Target Search Page: https://www.denbighshire.gov.uk/en/planning-and-building-regulations/planning-and-building-regulations.aspx
+2026-01-26 18:50:30,927 - CognitiveProfiler - INFO - --- PHASE 2: REFERENCE ID SEARCH ---
+2026-01-26 18:50:31,170 - StrategistAgent - INFO - Generating Planning Search Plan for https://www.denbighshire.gov.uk/en/planning-and-building-regulations/planning-and-building-regulations.aspx
+2026-01-26 18:50:31,171 - GeminiService - INFO - Invoking Gemini API...
+2026-01-26 18:50:31,197 - google_genai.models - INFO - AFC is enabled with max remote calls: 10.
+2026-01-26 18:50:54,834 - httpx - INFO - HTTP Request: POST https://generativelanguage.googleapis.com/v1alpha/models/gemini-2.5-flash:generateContent "HTTP/1.1 200 OK"
+2026-01-26 18:50:54,849 - StrategistAgent - INFO - Plan for 'planning search generation' passed canonical schema validation.
+2026-01-26 18:50:54,850 - CognitiveProfiler - INFO - Executing Reference Search for 47/2012/1120...
+2026-01-26 18:50:54,850 - ValidationAgent - INFO - Executing probe plan with 7 instructions.
+
+[DEBUG] --- START PROBE EXECUTION (7 steps) ---
+2026-01-26 18:50:54,894 - ValidationAgent - INFO - Instr 4: Substituted placeholder in 'value' -> '47/2012/1120'
+[DEBUG] PROBE Step: GOTO_URL params={'url': 'https://www.denbighshire.gov.uk/en/planning-and-building-regulations/planning-and-building-regulations.aspx'}
+    [SNAPSHOT] C:\Users\brand\AppData\Local\Temp\amaryllis_debug\probe_step_890870380.png
+[DEBUG] PROBE Step: CLICK_ELEMENT params={'selector': 'button:has-text("Accept all cookies")'}
+    [SNAPSHOT] C:\Users\brand\AppData\Local\Temp\amaryllis_debug\probe_step_890872621.png
+[DEBUG] PROBE Step: CLICK_ELEMENT params={'selector': 'a:has-text("Search and comment on applications")'}
+    [SNAPSHOT] C:\Users\brand\AppData\Local\Temp\amaryllis_debug\probe_step_890874884.png
+[DEBUG] PROBE Step: WAIT_FOR_NAVIGATION params={}
+    [SNAPSHOT] C:\Users\brand\AppData\Local\Temp\amaryllis_debug\probe_step_890875124.png
+[DEBUG] PROBE Step: FILL_INPUT params={'selector': "input[placeholder*='Application Number'], input[placeholder*='Reference Number'], input[id*='application_number'], input[name*='application_number'], input[id*='reference_number'], input[name*='reference_number']", 'value': '47/2012/1120'}
+2026-01-26 18:51:30,062 - ValidationAgent - ERROR - Probe execution failed. Reason: Failed to fill input 'input[placeholder*='Application Number'], input[placeholder*='Reference Number'], input[id*='application_number'], input[name*='application_number'], input[id*='reference_number'], input[name*='reference_number']'. Error: Locator.wait_for: Timeout 30000ms exceeded.
+Call log:
+  - waiting for locator("input[placeholder*='Application Number'], input[placeholder*='Reference Number'], input[id*='application_number'], input[name*='application_number'], input[id*='reference_number'], input[name*='reference_number']").first to be visible
+
+2026-01-26 18:51:30,301 - ValidationAgent - INFO - Crash dump saved to C:\Users\brand\AppData\Local\Temp\tmpw970vl0a\crash_dump_ydl_2804.png
+2026-01-26 18:51:30,332 - CognitiveProfiler - WARNING - Phase 2 Search Failed (Attempt 1/2). Initiating Self-Healing...
+2026-01-26 18:51:30,333 - StrategistAgent - INFO - Timeout Diagnostics: No obvious signs of obstruction found.
+2026-01-26 18:51:30,333 - StrategistAgent - INFO - Correcting navigation plan with context reinforcement.
+2026-01-26 18:51:30,349 - GeminiService - INFO - Invoking Gemini API...
+2026-01-26 18:51:30,349 - GeminiService - INFO - Image provided for multimodal generation.
+2026-01-26 18:51:30,385 - google_genai.models - INFO - AFC is enabled with max remote calls: 10.
+2026-01-26 18:51:55,208 - httpx - INFO - HTTP Request: POST https://generativelanguage.googleapis.com/v1alpha/models/gemini-2.5-flash:generateContent "HTTP/1.1 200 OK"
+2026-01-26 18:51:55,227 - StrategistAgent - INFO - Plan for 'navigation plan correction' passed canonical schema validation.
+2026-01-26 18:51:55,227 - CognitiveProfiler - INFO - Applying Corrected Plan (Iter 1)...
+2026-01-26 18:51:55,227 - ValidationAgent - INFO - Executing probe plan with 8 instructions.
+
+[DEBUG] --- START PROBE EXECUTION (8 steps) ---
+2026-01-26 18:51:55,281 - ValidationAgent - INFO - Instr 5: Substituted placeholder in 'value' -> '47/2012/1120'
+[DEBUG] PROBE Step: GOTO_URL params={'url': 'https://www.denbighshire.gov.uk/en/planning-and-building-regulations/planning-and-building-regulations.aspx'}
+    [SNAPSHOT] C:\Users\brand\AppData\Local\Temp\amaryllis_debug\probe_step_890930925.png
+[DEBUG] PROBE Step: CLICK_ELEMENT params={'selector': 'button:has-text("Accept all cookies")'}
+2026-01-26 18:52:25,808 - ValidationAgent - WARNING - Soft Failure: Consent element 'button:has-text("Accept all cookies")' not found in time. Proceeding.
+    [SNAPSHOT] C:\Users\brand\AppData\Local\Temp\amaryllis_debug\probe_step_890961104.png
+[DEBUG] PROBE Step: CLICK_ELEMENT params={'selector': 'a.cta:has-text("Find a planning application")'}
+2026-01-26 18:52:55,975 - ValidationAgent - WARNING - Click failed on visible filter for 'a.cta:has-text("Find a planning application")'. Reverting to raw locator with scroll+force.
+2026-01-26 18:53:00,989 - ValidationAgent - WARNING - Scroll into view failed for 'a.cta:has-text("Find a planning application")'. Attempting blind force click.
+2026-01-26 18:53:05,999 - ValidationAgent - WARNING - Force click failed for 'a.cta:has-text("Find a planning application")'. Attempting JS dispatch click. Error: Locator.click: Timeout 5000ms exceeded.
+Call log:
+  - waiting for locator("a.cta:has-text(\"Find a planning application\")").first
+
+2026-01-26 18:53:36,003 - ValidationAgent - ERROR - Probe execution failed. Reason: All click methods (standard, force, JS) failed for 'a.cta:has-text("Find a planning application")'. Final Error: Locator.evaluate: Timeout 30000ms exceeded.
+Call log:
+  - waiting for locator("a.cta:has-text(\"Find a planning application\")").first
+
+2026-01-26 18:53:36,156 - ValidationAgent - INFO - Crash dump saved to C:\Users\brand\AppData\Local\Temp\tmpw970vl0a\crash_dump_j5ru217s.png
+2026-01-26 18:53:36,177 - CognitiveProfiler - WARNING - Phase 2 Search Failed (Attempt 2/2). Initiating Self-Healing...
+2026-01-26 18:53:36,177 - StrategistAgent - INFO - Timeout Diagnostics: No obvious signs of obstruction found.
+2026-01-26 18:53:36,178 - StrategistAgent - INFO - Correcting navigation plan with context reinforcement.
+2026-01-26 18:53:36,190 - GeminiService - INFO - Invoking Gemini API...
+2026-01-26 18:53:36,191 - GeminiService - INFO - Image provided for multimodal generation.
+2026-01-26 18:53:36,216 - google_genai.models - INFO - AFC is enabled with max remote calls: 10.
+2026-01-26 18:53:55,929 - httpx - INFO - HTTP Request: POST https://generativelanguage.googleapis.com/v1alpha/models/gemini-2.5-flash:generateContent "HTTP/1.1 200 OK"
+2026-01-26 18:53:55,954 - StrategistAgent - INFO - Plan for 'navigation plan correction' passed canonical schema validation.
+2026-01-26 18:53:55,954 - CognitiveProfiler - INFO - Applying Corrected Plan (Iter 2)...
+2026-01-26 18:53:55,954 - ValidationAgent - INFO - Executing probe plan with 8 instructions.
+
+[DEBUG] --- START PROBE EXECUTION (8 steps) ---
+2026-01-26 18:53:56,013 - ValidationAgent - INFO - Instr 5: Substituted placeholder in 'value' -> '47/2012/1120'
+[DEBUG] PROBE Step: GOTO_URL params={'url': 'https://www.denbighshire.gov.uk/en/planning-and-building-regulations/planning-and-building-regulations.aspx'}
+    [SNAPSHOT] C:\Users\brand\AppData\Local\Temp\amaryllis_debug\probe_step_891051668.png
+[DEBUG] PROBE Step: CLICK_ELEMENT params={'selector': 'button:has-text("Accept all cookies")'}
+2026-01-26 18:54:26,543 - ValidationAgent - WARNING - Soft Failure: Consent element 'button:has-text("Accept all cookies")' not found in time. Proceeding.
+    [SNAPSHOT] C:\Users\brand\AppData\Local\Temp\amaryllis_debug\probe_step_891081838.png
+[DEBUG] PROBE Step: CLICK_ELEMENT params={'selector': 'a:has-text("Search and comment on applications")'}
+    [SNAPSHOT] C:\Users\brand\AppData\Local\Temp\amaryllis_debug\probe_step_891084163.png
+[DEBUG] PROBE Step: WAIT_FOR_NAVIGATION params={}
+    [SNAPSHOT] C:\Users\brand\AppData\Local\Temp\amaryllis_debug\probe_step_891084435.png
+[DEBUG] PROBE Step: CLICK_ELEMENT params={'selector': 'button:has-text("Accept"), button:has-text("Agree"), button:has-text("Continue"), #CybotCookiebotDialogBodyLevelButtonLevelOptinAllowAll, button.btn-primary:has-text("Accept")', 'optional': True}
+2026-01-26 18:54:59,412 - ValidationAgent - WARNING - Soft Failure: Consent element 'button:has-text("Accept"), button:has-text("Agree"), button:has-text("Continue"), #CybotCookiebotDialogBodyLevelButtonLevelOptinAllowAll, button.btn-primary:has-text("Accept")' not found in time. Proceeding.
+    [SNAPSHOT] C:\Users\brand\AppData\Local\Temp\amaryllis_debug\probe_step_891114708.png
+[DEBUG] PROBE Step: FILL_INPUT params={'selector': "input[name*='searchReference'], input[name*='applicationNo'], input[id*='search_term'], input[class*='search-input'], input[aria-label*='Application Number'], input[placeholder*='Application']", 'value': '47/2012/1120'}
+2026-01-26 18:55:29,638 - ValidationAgent - ERROR - Probe execution failed. Reason: Failed to fill input 'input[name*='searchReference'], input[name*='applicationNo'], input[id*='search_term'], input[class*='search-input'], input[aria-label*='Application Number'], input[placeholder*='Application']'. Error: Locator.wait_for: Timeout 30000ms exceeded.
+Call log:
+  - waiting for locator("input[name*='searchReference'], input[name*='applicationNo'], input[id*='search_term'], input[class*='search-input'], input[aria-label*='Application Number'], input[placeholder*='Application']").first to be visible
+
+2026-01-26 18:55:29,862 - ValidationAgent - INFO - Crash dump saved to C:\Users\brand\AppData\Local\Temp\tmpw970vl0a\crash_dump_ot7bcgcz.png
+2026-01-26 18:55:29,883 - CognitiveProfiler - ERROR - Pipeline failed: Reference ID Search failed after 2 corrections. Final Error: Failed to fill input 'input[name*='searchReference'], input[name*='applicationNo'], input[id*='search_term'], input[class*='search-input'], input[aria-label*='Application Number'], input[placeholder*='Application']'. Error: Locator.wait_for: Timeout 30000ms exceeded.
+Call log:
+  - waiting for locator("input[name*='searchReference'], input[name*='applicationNo'], input[id*='search_term'], input[class*='search-input'], input[aria-label*='Application Number'], input[placeholder*='Application']").first to be visible
+Traceback (most recent call last):
+  File "c:\Users\brand\Desktop\renewables\amaryllis\cognitive_profiler\orchestrator.py", line 240, in run_pipeline
+    raise StrategyError(f"Reference ID Search failed after {correction_attempts} corrections. Final Error: {search_result.failure_reason}")
+cognitive_profiler.exceptions.StrategyError: Reference ID Search failed after 2 corrections. Final Error: Failed to fill input 'input[name*='searchReference'], input[name*='applicationNo'], input[id*='search_term'], input[class*='search-input'], input[aria-label*='Application Number'], input[placeholder*='Application']'. Error: Locator.wait_for: Timeout 30000ms exceeded.
+Call log:
+  - waiting for locator("input[name*='searchReference'], input[name*='applicationNo'], input[id*='search_term'], input[class*='search-input'], input[aria-label*='Application Number'], input[placeholder*='Application']").first to be visible
+
+2026-01-26 18:55:29,885 - AmaryllisLocal - ERROR - FAILURE for Denbighshire: Reference ID Search failed after 2 corrections. Final Error: Failed to fill input 'input[name*='searchReference'], input[name*='applicationNo'], input[id*='search_term'], input[class*='search-input'], input[aria-label*='Application Number'], input[placeholder*='Application']'. Error: Locator.wait_for: Timeout 30000ms exceeded.
+Call log:
+  - waiting for locator("input[name*='searchReference'], input[name*='applicationNo'], input[id*='search_term'], input[class*='search-input'], input[aria-label*='Application Number'], input[placeholder*='Application']").first to be visible
+
+2026-01-26 18:55:31,892 - AmaryllisLocal - INFO - --- Starting Analysis for: Derby ---
+2026-01-26 18:55:31,893 - AmaryllisLocal - INFO - Test Subject: CW4/1114/98 | URL: https://myselfservice.ne-derbyshire.gov.uk/
+2026-01-26 18:55:31,893 - LocalCrawler - INFO - Crawling https://myselfservice.ne-derbyshire.gov.uk/ for Derby
+
+[DEBUG] Crawling started for Derby at https://myselfservice.ne-derbyshire.gov.uk/
+[DEBUG] Capturing homepage...
+[DEBUG] Saving screenshot to: C:\Users\brand\AppData\Local\Temp\amaryllis_cache\Derby\homepage_891150.png
+[DEBUG] Homepage captured.
+[DEBUG] Extracting links from homepage...
+2026-01-26 18:55:35,102 - LocalCrawler - INFO - Found 3 candidate links. Visiting top 30.
+[DEBUG] Found 3 candidate links. Top 5: ['https://myselfservice.ne-derbyshire.gov.uk/planning', 'https://myselfservice.ne-derbyshire.gov.uk/onlineservices', 'https://myselfservice.ne-derbyshire.gov.uk/ssauth/register?return_url=https%3A%2F%2Fmyselfservice.ne-derbyshire.gov.uk%2Fen&lang=en']
+[DEBUG] Visiting candidate 1: https://myselfservice.ne-derbyshire.gov.uk/planning
+[DEBUG] Capturing candidate 1...
+[DEBUG] Saving screenshot to: C:\Users\brand\AppData\Local\Temp\amaryllis_cache\Derby\candidate_0_891153.png
+[DEBUG] Candidate 1 captured.
+[DEBUG] Visiting candidate 2: https://myselfservice.ne-derbyshire.gov.uk/onlineservices
+[DEBUG] Capturing candidate 2...
+[DEBUG] Saving screenshot to: C:\Users\brand\AppData\Local\Temp\amaryllis_cache\Derby\candidate_1_891154.png
+[DEBUG] Candidate 2 captured.
+[DEBUG] Visiting candidate 3: https://myselfservice.ne-derbyshire.gov.uk/ssauth/register?return_url=https%3A%2F%2Fmyselfservice.ne-derbyshire.gov.uk%2Fen&lang=en
+[DEBUG] Capturing candidate 3...
+[DEBUG] Saving screenshot to: C:\Users\brand\AppData\Local\Temp\amaryllis_cache\Derby\candidate_2_891156.png
+[DEBUG] Candidate 3 captured.
+2026-01-26 18:55:41,733 - CognitiveProfiler - INFO - --- PHASE 1: DISCOVERY ---
+2026-01-26 18:55:41,733 - TriageAgent - INFO - Running triage on manifest with 4 artifacts.
+2026-01-26 18:55:41,734 - TriageAgent - INFO - Extracting metadata from 4 artifacts concurrently.
+2026-01-26 18:55:42,008 - TriageAgent - INFO - Successfully extracted metadata for 4 artifacts.
+2026-01-26 18:55:42,009 - GeminiService - INFO - Invoking Gemini API...
+2026-01-26 18:55:42,030 - google_genai.models - INFO - AFC is enabled with max remote calls: 10.
+2026-01-26 18:55:55,627 - httpx - INFO - HTTP Request: POST https://generativelanguage.googleapis.com/v1alpha/models/gemini-2.5-flash:generateContent "HTTP/1.1 200 OK"
+2026-01-26 18:55:55,629 - TriageAgent - INFO - Parsing and validating Gemini response.
+2026-01-26 18:55:55,630 - TriageAgent - INFO - Successfully parsed and validated 4 classifications.
+2026-01-26 18:55:55,630 - TriageAgent - INFO - Validating candidate set of size 1.
+2026-01-26 18:55:55,630 - TriageAgent - INFO - Candidate set passed all validation checks.
+2026-01-26 18:55:55,630 - TriageAgent - INFO - Triage successful for domain 'myselfservice.ne-derbyshire.gov.uk'. Selected 1 candidates.
+2026-01-26 18:55:55,631 - CognitiveProfiler - INFO - No explicit SEARCH_PAGE found. Promoting top candidate: https://myselfservice.ne-derbyshire.gov.uk/planning
+2026-01-26 18:55:55,631 - CognitiveProfiler - INFO - DISCOVERY SUCCESS. Target Search Page: https://myselfservice.ne-derbyshire.gov.uk/planning
+2026-01-26 18:55:55,631 - CognitiveProfiler - INFO - --- PHASE 2: REFERENCE ID SEARCH ---
+2026-01-26 18:55:56,320 - StrategistAgent - INFO - Generating Planning Search Plan for https://myselfservice.ne-derbyshire.gov.uk/planning
+2026-01-26 18:55:56,321 - GeminiService - INFO - Invoking Gemini API...
+2026-01-26 18:55:56,349 - google_genai.models - INFO - AFC is enabled with max remote calls: 10.
+2026-01-26 18:55:56,492 - httpx - INFO - HTTP Request: POST https://generativelanguage.googleapis.com/v1alpha/models/gemini-2.5-flash:generateContent "HTTP/1.1 429 Too Many Requests"
+2026-01-26 18:55:56,493 - GeminiService - WARNING - Quota Hit (Rotation 1/25). Rotating key...
+2026-01-26 18:55:56,494 - SimpleApiKeyManager - WARNING - Rotated to next API key (index 19).
+2026-01-26 18:55:56,518 - google_genai.models - INFO - AFC is enabled with max remote calls: 10.
+2026-01-26 18:56:47,978 - httpx - INFO - HTTP Request: POST https://generativelanguage.googleapis.com/v1alpha/models/gemini-2.5-flash:generateContent "HTTP/1.1 200 OK"
+2026-01-26 18:56:47,999 - StrategistAgent - INFO - Plan for 'planning search generation' passed canonical schema validation.
+2026-01-26 18:56:48,000 - CognitiveProfiler - INFO - Executing Reference Search for CW4/1114/98...
+2026-01-26 18:56:48,000 - ValidationAgent - INFO - Executing probe plan with 5 instructions.
+
+[DEBUG] --- START PROBE EXECUTION (5 steps) ---
+2026-01-26 18:56:48,044 - ValidationAgent - INFO - Instr 2: Substituted placeholder in 'value' -> 'CW4/1114/98'
+[DEBUG] PROBE Step: GOTO_URL params={'url': 'https://myselfservice.ne-derbyshire.gov.uk/appshost/firmstep/self/apps/custompage/planning?language=en'}
+    [SNAPSHOT] C:\Users\brand\AppData\Local\Temp\amaryllis_debug\probe_step_891223708.png
+[DEBUG] PROBE Step: CLICK_ELEMENT params={'selector': 'button#close-cookie-message'}
+2026-01-26 18:57:18,715 - ValidationAgent - WARNING - Soft Failure: Consent element 'button#close-cookie-message' not found in time. Proceeding.
+    [SNAPSHOT] C:\Users\brand\AppData\Local\Temp\amaryllis_debug\probe_step_891254011.png
+[DEBUG] PROBE Step: FILL_INPUT params={'selector': 'input[placeholder*="reference"]', 'value': 'CW4/1114/98'}
+2026-01-26 18:57:48,852 - ValidationAgent - ERROR - Probe execution failed. Reason: Failed to fill input 'input[placeholder*="reference"]'. Error: Locator.wait_for: Timeout 30000ms exceeded.
+Call log:
+  - waiting for locator("input[placeholder*=\"reference\"]").first to be visible
+
+2026-01-26 18:57:48,962 - ValidationAgent - INFO - Crash dump saved to C:\Users\brand\AppData\Local\Temp\tmpo5qkzjnr\crash_dump_6amxpqpp.png
+2026-01-26 18:57:48,978 - CognitiveProfiler - WARNING - Phase 2 Search Failed (Attempt 1/2). Initiating Self-Healing...
+2026-01-26 18:57:48,979 - StrategistAgent - INFO - Timeout Diagnostics: No obvious signs of obstruction found.
+2026-01-26 18:57:48,979 - StrategistAgent - INFO - Correcting navigation plan with context reinforcement.
+2026-01-26 18:57:48,994 - GeminiService - INFO - Invoking Gemini API...
+2026-01-26 18:57:48,995 - GeminiService - INFO - Image provided for multimodal generation.
+2026-01-26 18:57:49,019 - google_genai.models - INFO - AFC is enabled with max remote calls: 10.
+2026-01-26 18:58:07,479 - httpx - INFO - HTTP Request: POST https://generativelanguage.googleapis.com/v1alpha/models/gemini-2.5-flash:generateContent "HTTP/1.1 200 OK"
+2026-01-26 18:58:07,496 - StrategistAgent - INFO - Plan for 'navigation plan correction' passed canonical schema validation.
+2026-01-26 18:58:07,497 - CognitiveProfiler - INFO - Applying Corrected Plan (Iter 1)...
+2026-01-26 18:58:07,497 - ValidationAgent - INFO - Executing probe plan with 6 instructions.
+
+[DEBUG] --- START PROBE EXECUTION (6 steps) ---
+2026-01-26 18:58:07,538 - ValidationAgent - INFO - Instr 3: Substituted placeholder in 'value' -> 'CW4/1114/98'
+[DEBUG] PROBE Step: GOTO_URL params={'url': 'https://myselfservice.ne-derbyshire.gov.uk/appshost/firmstep/self/apps/custompage/planning?language=en'}
+    [SNAPSHOT] C:\Users\brand\AppData\Local\Temp\amaryllis_debug\probe_step_891304305.png
+[DEBUG] PROBE Step: CLICK_ELEMENT params={'selector': 'a:has-text("Find an Application")'}
+2026-01-26 18:58:11,507 - ValidationAgent - INFO - New tab detected! Switching context to new page: https://planapps-online.ne-derbyshire.gov.uk/online-applications/
+    [SNAPSHOT] C:\Users\brand\AppData\Local\Temp\amaryllis_debug\probe_step_891306802.png
+[DEBUG] PROBE Step: WAIT_FOR_NAVIGATION params={}
+    [SNAPSHOT] C:\Users\brand\AppData\Local\Temp\amaryllis_debug\probe_step_891306923.png
+[DEBUG] PROBE Step: FILL_INPUT params={'selector': "input[name='searchCriteria.reference']", 'value': 'CW4/1114/98'}
+2026-01-26 18:58:41,743 - ValidationAgent - ERROR - Probe execution failed. Reason: Failed to fill input 'input[name='searchCriteria.reference']'. Error: Locator.wait_for: Timeout 30000ms exceeded.
+Call log:
+  - waiting for locator("input[name='searchCriteria.reference']").first to be visible
+
+2026-01-26 18:58:41,837 - ValidationAgent - INFO - Crash dump saved to C:\Users\brand\AppData\Local\Temp\tmpo5qkzjnr\crash_dump_ccsesfxp.png
+2026-01-26 18:58:41,854 - CognitiveProfiler - WARNING - Phase 2 Search Failed (Attempt 2/2). Initiating Self-Healing...
+2026-01-26 18:58:41,854 - StrategistAgent - INFO - Timeout Diagnostics: No obvious signs of obstruction found.
+2026-01-26 18:58:41,855 - StrategistAgent - INFO - Correcting navigation plan with context reinforcement.
+2026-01-26 18:58:41,868 - GeminiService - INFO - Invoking Gemini API...
+2026-01-26 18:58:41,868 - GeminiService - INFO - Image provided for multimodal generation.
+2026-01-26 18:58:41,893 - google_genai.models - INFO - AFC is enabled with max remote calls: 10.
+2026-01-26 18:58:57,293 - httpx - INFO - HTTP Request: POST https://generativelanguage.googleapis.com/v1alpha/models/gemini-2.5-flash:generateContent "HTTP/1.1 200 OK"
+2026-01-26 18:58:57,315 - StrategistAgent - INFO - Plan for 'navigation plan correction' passed canonical schema validation.
+2026-01-26 18:58:57,315 - CognitiveProfiler - INFO - Applying Corrected Plan (Iter 2)...
+2026-01-26 18:58:57,315 - ValidationAgent - INFO - Executing probe plan with 6 instructions.
+
+[DEBUG] --- START PROBE EXECUTION (6 steps) ---
+2026-01-26 18:58:57,358 - ValidationAgent - INFO - Instr 3: Substituted placeholder in 'value' -> 'CW4/1114/98'
+[DEBUG] PROBE Step: GOTO_URL params={'url': 'https://myselfservice.ne-derbyshire.gov.uk/appshost/firmstep/self/apps/custompage/planning?language=en'}
+    [SNAPSHOT] C:\Users\brand\AppData\Local\Temp\amaryllis_debug\probe_step_891352965.png
+[DEBUG] PROBE Step: CLICK_ELEMENT params={'selector': 'a:has-text("Find an Application")'}
+2026-01-26 18:59:02,985 - ValidationAgent - INFO - New tab detected! Switching context to new page: https://planapps-online.ne-derbyshire.gov.uk/online-applications/
+    [SNAPSHOT] C:\Users\brand\AppData\Local\Temp\amaryllis_debug\probe_step_891358281.png
+[DEBUG] PROBE Step: WAIT_FOR_NAVIGATION params={}
+2026-01-26 18:59:33,076 - ValidationAgent - ERROR - Probe execution failed. Reason: Timeout 30000ms exceeded.
+2026-01-26 18:59:33,167 - ValidationAgent - INFO - Crash dump saved to C:\Users\brand\AppData\Local\Temp\tmpo5qkzjnr\crash_dump_6ieutzhh.png
+2026-01-26 18:59:33,186 - CognitiveProfiler - ERROR - Pipeline failed: Reference ID Search failed after 2 corrections. Final Error: Timeout 30000ms exceeded.
+Traceback (most recent call last):
+  File "c:\Users\brand\Desktop\renewables\amaryllis\cognitive_profiler\orchestrator.py", line 240, in run_pipeline
+    raise StrategyError(f"Reference ID Search failed after {correction_attempts} corrections. Final Error: {search_result.failure_reason}")
+cognitive_profiler.exceptions.StrategyError: Reference ID Search failed after 2 corrections. Final Error: Timeout 30000ms exceeded.
+2026-01-26 18:59:33,187 - AmaryllisLocal - ERROR - FAILURE for Derby: Reference ID Search failed after 2 corrections. Final Error: Timeout 30000ms exceeded.
+2026-01-26 18:59:35,202 - AmaryllisLocal - INFO - --- Starting Analysis for: Derbyshire Dales ---
+2026-01-26 18:59:35,204 - AmaryllisLocal - INFO - Test Subject: 14/00450/FUL | URL: https://www.derbyshiredales.gov.uk/
+2026-01-26 18:59:35,205 - LocalCrawler - INFO - Crawling https://www.derbyshiredales.gov.uk/ for Derbyshire Dales
+
+[DEBUG] Crawling started for Derbyshire Dales at https://www.derbyshiredales.gov.uk/
+[DEBUG] Capturing homepage...
+[DEBUG] Saving screenshot to: C:\Users\brand\AppData\Local\Temp\amaryllis_cache\Derbyshire Dales\homepage_891391.png
+[DEBUG] Homepage captured.
+[DEBUG] Extracting links from homepage...
+2026-01-26 18:59:38,136 - LocalCrawler - INFO - Found 6 candidate links. Visiting top 30.
+[DEBUG] Found 6 candidate links. Top 5: ['https://www.derbyshiredales.gov.uk/planning/planning-policy-and-local-plan/neighbourhood-planning', 'https://www.derbyshiredales.gov.uk/planning/planning-policy-and-local-plan/supplementary-planning-documents', 'https://www.derbyshiredales.gov.uk/planning/planning-applications-and-advice', 'https://www.derbyshiredales.gov.uk/planning/planning-policy-and-local-plan', 'https://www.derbyshiredales.gov.uk/planning'] 
+[DEBUG] Visiting candidate 1: https://www.derbyshiredales.gov.uk/planning/planning-policy-and-local-plan/neighbourhood-planning
+[DEBUG] Capturing candidate 1...
+[DEBUG] Saving screenshot to: C:\Users\brand\AppData\Local\Temp\amaryllis_cache\Derbyshire Dales\candidate_0_891393.png
+[DEBUG] Candidate 1 captured.
+[DEBUG] Visiting candidate 2: https://www.derbyshiredales.gov.uk/planning/planning-policy-and-local-plan/supplementary-planning-documents
+[DEBUG] Capturing candidate 2...
+[DEBUG] Saving screenshot to: C:\Users\brand\AppData\Local\Temp\amaryllis_cache\Derbyshire Dales\candidate_1_891393.png
+[DEBUG] Candidate 2 captured.
+[DEBUG] Visiting candidate 3: https://www.derbyshiredales.gov.uk/planning/planning-applications-and-advice
+[DEBUG] Capturing candidate 3...
+[DEBUG] Saving screenshot to: C:\Users\brand\AppData\Local\Temp\amaryllis_cache\Derbyshire Dales\candidate_2_891394.png
+[DEBUG] Candidate 3 captured.
+[DEBUG] Visiting candidate 4: https://www.derbyshiredales.gov.uk/planning/planning-policy-and-local-plan
+(base) PS C:\Users\brand\Desktop\renewables>
